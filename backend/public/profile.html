@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Janiuay Business Permit System</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="alternate icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="/css/modern-ui.css">
+    <link rel="stylesheet" href="/css/user-dashboard.css">
+    <link rel="stylesheet" href="/css/enhanced-design.css">
+    <link rel="stylesheet" href="/css/modern-2025.css">
+    <link rel="stylesheet" href="/css/advanced-features.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: 600;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-avatar-upload {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #3b82f6;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid white;
+        }
+        
+        .profile-avatar-upload:hover {
+            background: #1e40af;
+        }
+        
+        .profile-info h1 {
+            font-size: 1.5rem;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        .profile-info p {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+        }
+        
+        .form-section h3 {
+            font-size: 1.125rem;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        @media (max-width: 640px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container nav-container">
+                <a href="/" class="logo">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #1e40af, #3b82f6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">J</div>
+                    <div class="logo-text">
+                        <span class="logo-title">Janiuay BPLO</span>
+                        <span class="logo-subtitle">Online Permit System</span>
+                    </div>
+                </a>
+                <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="/dashboard.html" class="nav-link">My Permits</a></li>
+                    <li><a href="/profile.html" class="nav-link active">Profile</a></li>
+                    <li><a href="/contact.html" class="nav-link">Contact</a></li>
+                    <li id="adminNavLink" style="display: none;"><a href="/admin-demo.html" class="nav-link">Admin</a></li>
+                    <li class="user-menu" id="userMenu">
+                        <span id="userName" style="font-size: 0.875rem; color: var(--gray-600);"></span>
+                        <button class="btn btn-outline" id="logoutBtn">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Profile Content -->
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div style="position: relative;">
+                    <div class="profile-avatar" id="profileAvatar">
+                        <img src="" alt="Profile" id="profileImage" style="display: none;">
+                        <span id="profileInitials">U</span>
+                    </div>
+                    <label class="profile-avatar-upload" title="Upload Photo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                        <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                    </label>
+                </div>
+                <div class="profile-info">
+                    <h1 id="profileName">User Name</h1>
+                    <p id="profileEmail">user@email.com</p>
+                </div>
+            </div>
+
+            <form id="profileForm">
+                <div class="form-section">
+                    <h3>Personal Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="firstName">First Name</label>
+                            <input type="text" id="firstName" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="lastName">Last Name</label>
+                            <input type="text" id="lastName" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address</label>
+                        <input type="email" id="email" class="form-input" readonly style="background: #f3f4f6;">
+                        <small style="color: #6b7280;">Email cannot be changed</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="phone">Phone Number</label>
+                        <input type="tel" id="phone" class="form-input" placeholder="09XXXXXXXXX">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Address Information</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="address">Street Address</label>
+                        <input type="text" id="address" class="form-input" placeholder="Enter your street address">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="barangay">Barangay</label>
+                            <select id="barangay" class="form-input">
+                                <option value="">Select Barangay</option>
+                                <option value="Poblacion">Poblacion</option>
+                                <option value="Aganan">Aganan</option>
+                                <option value="Aquino">Aquino (Pilot)</option>
+                                <option value="Balabago">Balabago</option>
+                                <option value="Barasalon">Barasalon</option>
+                                <option value="Bongol">Bongol</option>
+                                <option value="Bucari">Bucari</option>
+                                <option value="Calinog">Calinog</option>
+                                <option value="Carpenter">Carpenter</option>
+                                <option value="Crispin">Crispin</option>
+                                <option value="Daja">Daja</option>
+                                <option value="Dongon">Dongon</option>
+                                <option value="Guinobatan">Guinobatan</option>
+                                <option value="Latawan">Latawan</option>
+                                <option value="Lopez Jaena">Lopez Jaena</option>
+                                <option value="Lubot">Lubot</option>
+                                <option value="Moroboro">Moroboro</option>
+                                <option value="Pitogo">Pitogo</option>
+                                <option value="Quipot">Quipot</option>
+                                <option value="San Julian">San Julian</option>
+                                <option value="San Pedro">San Pedro</option>
+                                <option value="Santo Tomas">Santo Tomas</option>
+                                <option value="Sara">Sara</option>
+                                <option value="Tambal">Tambal</option>
+                                <option value="Tibiao">Tibiao</option>
+                                <option value="Yabon">Yabon</option>
+                                <option value="Zarragoza">Zarragoza</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="city">City/Municipality</label>
+                            <input type="text" id="city" class="form-input" value="Janiuay" readonly style="background: #f3f4f6;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Security</h3>
+                    <button type="button" class="btn btn-outline" id="changePasswordBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="vertical-align: middle; margin-right: 0.5rem;">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Change Password
+                    </button>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="/dashboard.html" class="btn btn-outline">Back to My Permits</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Municipality of Janiuay. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot Widget -->
+    <div class="chatbot-widget" id="chatbotWidget">
+        <button class="chatbot-toggle" id="chatbotToggle" aria-label="Open chat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+        </button>
+        <div class="chatbot-container hidden" id="chatbotContainer">
+            <div class="chatbot-header">
+                <h4>Janiuay BPLO Assistant</h4>
+                <button class="chatbot-close" id="chatbotClose" aria-label="Close chat">&times;</button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot-message">
+                    <p>Hello! I'm your Janiuay BPLO Assistant. How can I help you with your business permit today?</p>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Type your question..." autocomplete="off">
+                <button id="chatbotSend" aria-label="Send message">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="/js/utils.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/chatbot.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/sample-test-data.js"></script>
+
+    <script>
+        // Check authentication
+        if (!auth.isAuthenticated()) {
+            window.location.href = '/login.html';
+        }
+
+        // Load user data
+        const user = auth.getUser();
+        
+        function loadProfile() {
+            if (user) {
+                // Header info
+                document.getElementById('userName').textContent = `${user.firstName || ''} ${user.lastName || ''}`;
+                
+                // Show admin link if user is admin
+                if (auth.isAdmin()) {
+                    document.getElementById('adminNavLink').style.display = 'block';
+                }
+                
+                // Profile header
+                const initials = `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase() || 'U';
+                document.getElementById('profileInitials').textContent = initials;
+                document.getElementById('profileName').textContent = `${user.firstName || ''} ${user.lastName || ''}`;
+                document.getElementById('profileEmail').textContent = user.email || '';
+                
+                // Load profile picture if exists
+                if (user.avatar || user.profilePicture) {
+                    const img = document.getElementById('profileImage');
+                    img.src = user.avatar || user.profilePicture;
+                    img.style.display = 'block';
+                    document.getElementById('profileInitials').style.display = 'none';
+                }
+                
+                // Form fields
+                document.getElementById('firstName').value = user.firstName || '';
+                document.getElementById('lastName').value = user.lastName || '';
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('phone').value = user.phone || '';
+                document.getElementById('address').value = user.address || '';
+                document.getElementById('barangay').value = user.barangay || '';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            ui.init();
+            chatbot.init();
+            loadProfile();
+
+            // Setup logout
+            document.getElementById('logoutBtn').addEventListener('click', () => auth.logout());
+
+            // Change password button
+            document.getElementById('changePasswordBtn').addEventListener('click', () => {
+                window.location.href = '/change-password.html';
+            });
+
+            // Avatar upload handler
+            document.getElementById('avatarUpload').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.getElementById('profileImage');
+                        img.src = e.target.result;
+                        img.style.display = 'block';
+                        document.getElementById('profileInitials').style.display = 'none';
+                        
+                        // Save to localStorage (demo purposes)
+                        const user = JSON.parse(localStorage.getItem('user') || '{}');
+                        user.avatar = e.target.result;
+                        localStorage.setItem('user', JSON.stringify(user));
+                        ui.toast.success('Profile picture updated!');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Form submission
+            document.getElementById('profileForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const userData = {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    phone: document.getElementById('phone').value,
+                    address: document.getElementById('address').value,
+                    barangay: document.getElementById('barangay').value
+                };
+
+                try {
+                    const response = await api.updateProfile(userData);
+                    if (response.success) {
+                        // Update stored user data
+                        auth.updateUser(userData);
+                        ui.toast.success('Profile updated successfully!');
+                        loadProfile(); // Reload to show changes
+                    } else {
+                        ui.toast.error(response.message || 'Failed to update profile');
+                    }
+                } catch (error) {
+                    console.error('Profile update error:', error);
+                    ui.toast.error('Failed to update profile. Please try again.');
+                }
+            });
+        });
+    </script>
+    <script src="/js/modern-2025.js"></script>
+    <script src="/js/advanced-features.js"></script>
+    <script src="/js/chatbot-2025.js"></script>
+</body>
+</html>

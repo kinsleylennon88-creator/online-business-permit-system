@@ -1,0 +1,272 @@
+/* WCAG AA Accessibility & Focus Styles */
+
+/* Focus Indicators */
+*:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+
+/* Skip to content link */
+.skip-to-content {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e40af;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 0 0 8px 8px;
+    font-weight: 600;
+    z-index: 10000;
+    transition: top 0.3s ease;
+}
+
+.skip-to-content:focus {
+    top: 0;
+    outline: none;
+}
+
+/* Screen reader only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ARIA Live Regions */
+[aria-live="polite"] {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+}
+
+/* Form Accessibility */
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.form-label .required {
+    color: #dc2626;
+    margin-left: 4px;
+}
+
+.form-hint {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.form-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 6px;
+}
+
+/* Input states */
+.form-input[aria-invalid="true"],
+.form-select[aria-invalid="true"] {
+    border-color: #dc2626;
+    background-color: #fef2f2;
+}
+
+.form-input[aria-invalid="true"]:focus,
+.form-select[aria-invalid="true"]:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* Contrast improvements */
+.btn-primary {
+    background: #1e40af;
+    color: white;
+}
+
+.btn-outline {
+    border-color: #374151;
+    color: #374151;
+}
+
+.badge-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.badge-approved {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .btn-primary {
+        border: 2px solid black;
+    }
+    
+    .form-input,
+    .form-select {
+        border-width: 2px;
+    }
+    
+    a {
+        text-decoration: underline;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Landmarks */
+[role="banner"] {
+    position: relative;
+}
+
+[role="navigation"] {
+    position: relative;
+}
+
+[role="main"] {
+    outline: none;
+}
+
+[role="contentinfo"] {
+    position: relative;
+}
+
+/* Status messages */
+.status-message {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.status-message.success {
+    background: #d1fae5;
+    color: #065f46;
+    border-left: 4px solid #10b981;
+}
+
+.status-message.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border-left: 4px solid #ef4444;
+}
+
+.status-message.warning {
+    background: #fef3c7;
+    color: #92400e;
+    border-left: 4px solid #f59e0b;
+}
+
+/* Progress indicators for accessibility */
+.progress-bar {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #1e40af;
+    transition: width 0.3s ease;
+}
+
+/* Accessible tables */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    background: #f3f4f6;
+    font-weight: 600;
+    text-align: left;
+    padding: 12px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.data-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.data-table tr:hover {
+    background: #f9fafb;
+}
+
+/* Collapsible sections */
+.collapsible {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.collapsible-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    cursor: pointer;
+    background: #f9fafb;
+    border: none;
+    width: 100%;
+    text-align: left;
+}
+
+.collapsible-header:hover {
+    background: #f3f4f6;
+}
+
+.collapsible-content {
+    padding: 16px;
+    display: none;
+}
+
+.collapsible.open .collapsible-content {
+    display: block;
+}
+
+.collapsible-icon {
+    transition: transform 0.2s ease;
+}
+
+.collapsible.open .collapsible-icon {
+    transform: rotate(180deg);
+}

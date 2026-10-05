@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Janiuay Business Permit System</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container nav-container">
+                <a href="/" class="logo">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img src="/images/favicon.svg" alt="Janiuay BPLO" style="width: 40px; height: 40px;">
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-title">Janiuay BPLO</span>
+                        <span class="logo-subtitle">Admin Portal</span>
+                    </div>
+                </a>
+                <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="/admin-dashboard.html" class="nav-link active">Dashboard</a></li>
+                    <li><a href="/admin-permits.html" class="nav-link">Permits</a></li>
+                    <li><a href="/admin-users.html" class="nav-link">Users</a></li>
+                    <li><a href="/admin-reports.html" class="nav-link">Reports</a></li>
+                    <li class="user-menu" id="userMenu">
+                        <span id="userName" style="font-size: 0.875rem; color: var(--gray-600);"></span>
+                        <button class="btn btn-outline" id="logoutBtn">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="dashboard">
+        <div class="container">
+            <div class="main-content">
+                <h1 style="font-family: var(--font-heading); font-size: 1.75rem; margin-bottom: 2rem;">Admin Dashboard</h1>
+                
+                <!-- Stats Cards -->
+                <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #dbeafe; color: #1e40af;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="totalApplications">0</div>
+                        <div class="stat-label">Total Applications</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #fef3c7; color: #d97706;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="pendingApplications">0</div>
+                        <div class="stat-label">Pending Review</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #d1fae5; color: #059669;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="approvedApplications">0</div>
+                        <div class="stat-label">Approved</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #fce7f3; color: #db2777;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-value" id="totalRevenue">₱0</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Applications by Status</h3>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <canvas id="statusChart" height="250"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Monthly Applications</h3>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <canvas id="monthlyChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Applications -->
+                <div class="card">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 class="card-title">Recent Applications</h3>
+                        <a href="/admin-permits.html" class="btn btn-outline btn-sm">View All</a>
+                    </div>
+                    <div id="recentApplicationsTable">
+                        <!-- Table will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/utils.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    
+    <script>
+        // Check authentication and admin status
+        if (!auth.isAuthenticated() || !auth.isAdmin()) {
+            window.location.href = '/dashboard.html';
+        }
+        
+        // Load user data
+        const user = auth.getUser();
+        if (user) {
+            document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
+        }
+        
+        // Setup logout
+        document.getElementById('logoutBtn').addEventListener('click', () => auth.logout());
+        
+        // Chart instances
+        let statusChart, monthlyChart;
+        
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                const response = await api.getAdminStats();
+                
+                if (response.success) {
+                    const data = response.data;
+                    
+                    // Update stats
+                    document.getElementById('totalApplications').textContent = data.totalApplications || 0;
+                    document.getElementById('pendingApplications').textContent = data.pendingApplications || 0;
+                    document.getElementById('approvedApplications').textContent = data.approvedApplications || 0;
+                    document.getElementById('totalRevenue').textContent = format.currency(data.totalRevenue || 0);
+                    
+                    // Render charts
+                    renderStatusChart(data.statusCounts);
+                    renderMonthlyChart(data.monthlyData);
+                    
+                    // Render recent applications
+                    renderRecentApplications(data.recentApplications);
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                ui.toast.error('Failed to load dashboard data');
+            }
+        }
+        
+        // Render status pie chart
+        function renderStatusChart(statusCounts) {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            
+            const data = {
+                labels: ['Submitted', 'Under Review', 'Approved', 'Rejected', 'Issued'],
+                datasets: [{
+                    data: [
+                        statusCounts?.submitted || 0,
+                        statusCounts?.under_review || 0,
+                        statusCounts?.approved || 0,
+                        statusCounts?.rejected || 0,
+                        statusCounts?.issued || 0
+                    ],
+                    backgroundColor: [
+                        '#f59e0b',
+                        '#3b82f6',
+                        '#10b981',
+                        '#ef4444',
+                        '#8b5cf6'
+                    ],
+                    borderWidth: 0
+                }]
+            };
+            
+            statusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Render monthly bar chart
+        function renderMonthlyChart(monthlyData) {
+            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            
+            const labels = monthlyData?.map(d => d.month) || [];
+            const data = monthlyData?.map(d => d.count) || [];
+            
+            monthlyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Applications',
+                        data: data,
+                        backgroundColor: '#1e40af',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Render recent applications table
+        function renderRecentApplications(applications) {
+            const container = document.getElementById('recentApplicationsTable');
+            
+            if (!applications || applications.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--gray-500);">No recent applications</p>';
+                return;
+            }
+            
+            const columns = [
+                { header: 'Business Name', key: 'businessName' },
+                { header: 'Applicant', key: 'applicantName' },
+                { header: 'Barangay', key: 'barangay' },
+                { 
+                    header: 'Status', 
+                    key: 'status',
+                    format: (v) => `<span class="badge badge-${v.toLowerCase()}">${v.replace('_', ' ')}</span>`
+                },
+                { 
+                    header: 'Date', 
+                    key: 'createdAt',
+                    format: (v) => format.date(v)
+                }
+            ];
+            
+            table.render('recentApplicationsTable', applications.slice(0, 5), columns);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            ui.init();
+            loadDashboardData();
+        });
+    </script>
+</body>
+</html>

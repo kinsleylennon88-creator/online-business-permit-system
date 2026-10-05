@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Janiuay Business Permit System</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="alternate icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="/css/modern-ui.css">
+    <link rel="stylesheet" href="/css/enhanced-design.css">
+    <link rel="stylesheet" href="/css/modern-2025.css">
+    <link rel="stylesheet" href="/css/advanced-features.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e3a8f 0%, #312e81 50%, #1e1b4b 100%);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .auth-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(251, 191, 36, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.3) 0%, transparent 50%);
+        }
+        
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            z-index: 1;
+            animation: authSlideUp 0.6s ease-out;
+        }
+        
+        @keyframes authSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 10px 30px rgba(30, 64, 175, 0.3);
+            overflow: hidden;
+        }
+        
+        .auth-logo-icon img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+        
+        .auth-logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e40af;
+            margin: 0;
+        }
+        
+        .auth-logo p {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin: 0.25rem 0 0;
+        }
+        
+        .form-floating {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-floating input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 1rem;
+            font-size: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        .form-floating label {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            padding: 0 0.5rem;
+            color: #6b7280;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .form-floating input:focus,
+        .form-floating input:not(:placeholder-shown) {
+            border-color: #1e40af;
+            box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
+        }
+        
+        .form-floating input:focus ~ label,
+        .form-floating input:not(:placeholder-shown) ~ label {
+            top: 0;
+            font-size: 0.75rem;
+            color: #1e40af;
+            font-weight: 600;
+        }
+        
+        .btn-auth {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(30, 64, 175, 0.4);
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .form-footer a {
+            color: #1e40af;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon">
+                    <img src="/images/favicon.svg" alt="Janiuay BPLO">
+                </div>
+                <h1>Janiuay BPLO</h1>
+                <p>Business Permits & Licensing Office</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-floating">
+                    <input type="email" id="email" placeholder=" " required>
+                    <label for="email">Email Address</label>
+                </div>
+                
+                <div class="form-floating">
+                    <input type="password" id="password" placeholder=" " required>
+                    <label for="password">Password</label>
+                </div>
+                
+                <button type="submit" class="btn-auth">
+                    Sign In
+                </button>
+            </form>
+            
+            <div class="form-footer">
+                <p>Don't have an account? <a href="/register.html">Register</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/utils.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    
+    <script>
+        // Check if already logged in
+        if (auth.isAuthenticated()) {
+            window.location.href = '/dashboard.html';
+        }
+        
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Validation
+            if (!email || !password) {
+                ui.toast.error('Please fill in all fields');
+                return;
+            }
+            
+            // Show loading
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+            
+            try {
+                const result = await auth.login(email, password);
+                
+                if (result.success) {
+                    ui.toast.success('Login successful! Redirecting...');
+                    
+                    // Redirect based on role
+                    setTimeout(() => {
+                        if (auth.isAdmin()) {
+                            window.location.href = '/admin-demo.html';
+                        } else {
+                            window.location.href = '/dashboard.html';
+                        }
+                    }, 1000);
+                } else {
+                    ui.toast.error(result.error || 'Invalid credentials');
+                }
+            } catch (error) {
+                ui.toast.error(error.message || 'Login failed. Please try again.');
+            } finally {
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Initialize UI
+        ui.init();
+    </script>
+    <script src="/js/modern-2025.js"></script>
+    <script src="/js/advanced-features.js"></script>
+    <script src="/js/chatbot-2025.js"></script>
+</body>
+</html>

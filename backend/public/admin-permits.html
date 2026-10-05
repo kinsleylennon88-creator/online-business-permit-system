@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permit Management - Janiuay Business Permit System</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Admin Permit Management Styles */
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .admin-header h1 {
+            font-family: var(--font-heading);
+            font-size: 1.75rem;
+            color: var(--gray-900);
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-bar select,
+        .filter-bar input {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+        
+        .filter-bar input {
+            min-width: 250px;
+        }
+        
+        .permits-table {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .permits-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .permits-table th {
+            background: var(--gray-50);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .permits-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.875rem;
+        }
+        
+        .permits-table tr:hover {
+            background: var(--gray-50);
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-draft { background: #f3f4f6; color: #6b7280; }
+        .status-submitted { background: #fef3c7; color: #d97706; }
+        .status-under-review { background: #dbeafe; color: #1e40af; }
+        .status-approved { background: #d1fae5; color: #059669; }
+        .status-rejected { background: #fee2e2; color: #dc2626; }
+        .status-paid { background: #e0e7ff; color: #4338ca; }
+        .status-issued { background: #c7d2fe; color: #3730a3; }
+        
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+        
+        .btn-view {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .btn-view:hover {
+            opacity: 0.9;
+        }
+        
+        /* Document Viewer Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .modal-header h2 {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            color: var(--gray-900);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-500);
+            padding: 0.25rem;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .permit-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .detail-section {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .detail-section h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+        
+        .detail-value {
+            font-weight: 500;
+            color: var(--gray-900);
+            font-size: 0.875rem;
+        }
+        
+        /* Document List */
+        .documents-section {
+            margin-top: 2rem;
+        }
+        
+        .documents-section h3 {
+            font-family: var(--font-heading);
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            color: var(--gray-900);
+        }
+        
+        .document-list {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .document-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .document-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .document-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gray-100);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+        
+        .document-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .document-info {
+            flex: 1;
+        }
+        
+        .document-name {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+        
+        .document-meta {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+        
+        .document-status {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .document-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-approve {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .btn-reject {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .btn-preview {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: none;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        /* Document Preview Modal */
+        .preview-modal .modal-content {
+            max-width: 800px;
+        }
+        
+        .preview-container {
+            background: var(--gray-100);
+            border-radius: 8px;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .preview-container img {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 8px;
+        }
+        
+        .preview-container iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: 8px;
+        }
+        
+        .preview-placeholder {
+            text-align: center;
+            color: var(--gray-500);
+        }
+        
+        /* Action Buttons */
+        .permit-actions {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+        
+        .btn-approve-permit {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .btn-reject-permit {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .btn-assess {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gray-300);
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        
+        .pagination button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-500);
+        }
+        
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Loading State */
+        .loading-row td {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Remarks Input */
+        .remarks-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container nav-container">
+                <a href="/" class="logo">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img src="/images/favicon.svg" alt="Janiuay BPLO" style="width: 40px; height: 40px;">
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-title">Janiuay BPLO</span>
+                        <span class="logo-subtitle">Admin Portal</span>
+                    </div>
+                </a>
+                <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="/admin-dashboard.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="/admin-permits.html" class="nav-link active">Permits</a></li>
+                    <li><a href="/admin-users.html" class="nav-link">Users</a></li>
+                    <li><a href="/admin-reports.html" class="nav-link">Reports</a></li>
+                    <li class="user-menu" id="userMenu">
+                        <span id="userName" style="font-size: 0.875rem; color: var(--gray-600);"></span>
+                        <button class="btn btn-outline" id="logoutBtn">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="admin-container">
+        <div class="admin-header">
+            <h1>Permit Applications</h1>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-outline" onclick="exportPermits()">Export CSV</button>
+                <button class="btn btn-primary" onclick="refreshPermits()">Refresh</button>
+            </div>
+        </div>
+        
+        <div class="filter-bar">
+            <select id="statusFilter" onchange="filterPermits()">
+                <option value="">All Status</option>
+                <option value="draft">Draft</option>
+                <option value="submitted">Submitted</option>
+                <option value="under-review">Under Review</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+                <option value="paid">Paid</option>
+                <option value="issued">Issued</option>
+            </select>
+            <input type="text" id="searchInput" placeholder="Search by business name, owner, or ID..." onkeyup="searchPermits()">
+        </div>
+        
+        <div class="permits-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Business Name</th>
+                        <th>Owner</th>
+                        <th>Status</th>
+                        <th>Documents</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="permitsTableBody">
+                    <tr class="loading-row">
+                        <td colspan="7">
+                            <div class="loading-spinner"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="pagination" id="pagination"></div>
+    </main>
+    
+    <!-- Permit Detail Modal -->
+    <div class="modal-overlay" id="permitModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Permit Details</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+            <div class="permit-actions" id="permitActions">
+                <!-- Dynamic actions -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Document Preview Modal -->
+    <div class="modal-overlay preview-modal" id="previewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="previewTitle">Document Preview</h2>
+                <button class="modal-close" onclick="closePreviewModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="preview-container" id="previewContainer">
+                    <!-- Dynamic preview -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/ui.js"></script>
+    <script>
+        // Global state
+        let currentPermits = [];
+        let currentPage = 1;
+        let currentPermitId = null;
+        
+        // Document type labels
+        const docTypeLabels = {
+            'dti': 'DTI/SEC Registration',
+            'id': 'Valid Government ID',
+            'signature': 'E-Signature',
+            'lease': 'Lease Contract/Land Title',
+            'barangay': 'Barangay Clearance',
+            'cedula': 'Cedula (CTC)',
+            'other': 'Other Document'
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAdminAuth();
+            loadPermits();
+        });
+        
+        // Check admin authentication
+        function checkAdminAuth() {
+            const user = auth.getUser();
+            if (!user || user.role !== 'admin') {
+                window.location.href = '/login.html';
+                return;
+            }
+            document.getElementById('userName').textContent = user.firstName + ' ' + user.lastName;
+        }
+        
+        // Load permits
+        async function loadPermits(page = 1) {
+            currentPage = page;
+            const status = document.getElementById('statusFilter').value;
+            
+            try {
+                const response = await api.getPermitsAdmin({ 
+                    page, 
+                    limit: 20, 
+                    status: status || undefined 
+                });
+                
+                if (response.success) {
+                    currentPermits = response.data.permits;
+                    renderPermitsTable(currentPermits);
+                    renderPagination(response.data.pagination);
+                }
+            } catch (error) {
+                console.error('Error loading permits:', error);
+                ui.toast.error('Failed to load permits');
+            }
+        }
+        
+        // Render permits table
+        function renderPermitsTable(permits) {
+            const tbody = document.getElementById('permitsTableBody');
+            
+            if (permits.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p>No permits found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = permits.map(permit => {
+                const docsUploaded = permit.documents ? permit.documents.length : 0;
+                const docsApproved = permit.documents ? permit.documents.filter(d => d.status === 'approved').length : 0;
+                
+                return `
+                    <tr>
+                        <td>#${permit._id.slice(-6).toUpperCase()}</td>
+                        <td><strong>${permit.businessInfo.businessName}</strong></td>
+                        <td>${permit.ownerInfo.firstName} ${permit.ownerInfo.lastName}</td>
+                        <td><span class="status-badge status-${permit.status}">${formatStatus(permit.status)}</span></td>
+                        <td>${docsApproved}/${docsUploaded} approved</td>
+                        <td>${new Date(permit.createdAt).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn-sm btn-view" onclick="viewPermit('${permit._id}')">
+                                View Details
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // Format status for display
+        function formatStatus(status) {
+            return status.split('-').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+        }
+        
+        // Render pagination
+        function renderPagination(pagination) {
+            const container = document.getElementById('pagination');
+            const { current, pages } = pagination;
+            
+            let html = `
+                <button onclick="loadPermits(${current - 1})" ${current === 1 ? 'disabled' : ''}>Previous</button>
+            `;
+            
+            for (let i = 1; i <= pages; i++) {
+                html += `<button class="${i === current ? 'active' : ''}" onclick="loadPermits(${i})">${i}</button>`;
+            }
+            
+            html += `
+                <button onclick="loadPermits(${current + 1})" ${current === pages ? 'disabled' : ''}>Next</button>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        // Filter permits
+        function filterPermits() {
+            loadPermits(1);
+        }
+        
+        // Search permits
+        function searchPermits() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = currentPermits.filter(permit => 
+                permit.businessInfo.businessName.toLowerCase().includes(query) ||
+                permit.ownerInfo.firstName.toLowerCase().includes(query) ||
+                permit.ownerInfo.lastName.toLowerCase().includes(query) ||
+                permit._id.toLowerCase().includes(query)
+            );
+            renderPermitsTable(filtered);
+        }
+        
+        // View permit details
+        async function viewPermit(permitId) {
+            currentPermitId = permitId;
+            
+            try {
+                const response = await api.getPermit(permitId);
+                if (response.success) {
+                    renderPermitModal(response.data.permit);
+                    document.getElementById('permitModal').classList.add('active');
+                }
+            } catch (error) {
+                console.error('Error loading permit:', error);
+                ui.toast.error('Failed to load permit details');
+            }
+        }
+        
+        // Render permit modal
+        function renderPermitModal(permit) {
+            const modalBody = document.getElementById('modalBody');
+            const actionsDiv = document.getElementById('permitActions');
+            
+            // Build documents HTML
+            const documentsHtml = permit.documents && permit.documents.length > 0 
+                ? permit.documents.map(doc => `
+                    <div class="document-card">
+                        <div class="document-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                        </div>
+                        <div class="document-info">
+                            <div class="document-name">${docTypeLabels[doc.docType] || doc.name}</div>
+                            <div class="document-meta">
+                                ${doc.originalName || doc.name} • ${formatFileSize(doc.fileSize)} • ${new Date(doc.uploadedAt).toLocaleDateString()}
+                            </div>
+                            ${doc.remarks ? `<div style="color: var(--gray-600); font-size: 0.75rem; margin-top: 0.25rem;">Remarks: ${doc.remarks}</div>` : ''}
+                        </div>
+                        <div class="document-status">
+                            <span class="status-badge status-${doc.status}">${formatStatus(doc.status)}</span>
+                            <div class="document-actions">
+                                <button class="btn-preview" onclick="previewDocument('${permit._id}', '${doc._id}')">Preview</button>
+                                ${doc.status === 'pending' ? `
+                                    <button class="btn-approve" onclick="reviewDocument('${permit._id}', '${doc._id}', 'approved')">Approve</button>
+                                    <button class="btn-reject" onclick="showRejectDocModal('${permit._id}', '${doc._id}')">Reject</button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('')
+                : '<p style="color: var(--gray-500);">No documents uploaded yet.</p>';
+            
+            modalBody.innerHTML = `
+                <div class="permit-details">
+                    <div class="detail-section">
+                        <h4>Business Information</h4>
+                        <div class="detail-row">
+                            <span class="detail-label">Business Name</span>
+                            <span class="detail-value">${permit.businessInfo.businessName}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Business Type</span>
+                            <span class="detail-value">${permit.businessInfo.businessType}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Nature of Business</span>
+                            <span class="detail-value">${permit.businessInfo.businessNature}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Capitalization</span>
+                            <span class="detail-value">₱${permit.businessInfo.capitalization?.toLocaleString() || '0'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h4>Owner Information</h4>
+                        <div class="detail-row">
+                            <span class="detail-label">Full Name</span>
+                            <span class="detail-value">${permit.ownerInfo.firstName} ${permit.ownerInfo.lastName}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Email</span>
+                            <span class="detail-value">${permit.ownerInfo.email}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Phone</span>
+                            <span class="detail-value">${permit.ownerInfo.phone}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h4>Location</h4>
+                        <div class="detail-row">
+                            <span class="detail-label">Barangay</span>
+                            <span class="detail-value">${permit.businessInfo.businessAddress.barangay}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Street Address</span>
+                            <span class="detail-value">${permit.businessInfo.businessAddress.street || 'N/A'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h4>Application Status</h4>
+                        <div class="detail-row">
+                            <span class="detail-label">Current Status</span>
+                            <span class="detail-value"><span class="status-badge status-${permit.status}">${formatStatus(permit.status)}</span></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Submitted</span>
+                            <span class="detail-value">${new Date(permit.createdAt).toLocaleString()}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Last Updated</span>
+                            <span class="detail-value">${new Date(permit.updatedAt).toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="documents-section">
+                    <h3>Uploaded Documents</h3>
+                    <div class="document-list">
+                        ${documentsHtml}
+                    </div>
+                </div>
+            `;
+            
+            // Set actions based on status
+            if (permit.status === 'submitted' || permit.status === 'under-review') {
+                actionsDiv.innerHTML = `
+                    <button class="btn-assess" onclick="showAssessmentModal('${permit._id}')">Set Assessment</button>
+                    <button class="btn-approve-permit" onclick="approvePermit('${permit._id}')">Approve Permit</button>
+                    <button class="btn-reject-permit" onclick="showRejectModal('${permit._id}')">Reject Permit</button>
+                `;
+            } else if (permit.status === 'approved') {
+                actionsDiv.innerHTML = `
+                    <span style="color: #059669; font-weight: 600; flex: 1; text-align: center;">✓ Permit Approved</span>
+                `;
+            } else if (permit.status === 'rejected') {
+                actionsDiv.innerHTML = `
+                    <span style="color: #dc2626; font-weight: 600; flex: 1; text-align: center;">✗ Permit Rejected</span>
+                    ${permit.remarks ? `<div style="flex: 2; text-align: center; color: var(--gray-600);">Reason: ${permit.remarks}</div>` : ''}
+                `;
+            } else {
+                actionsDiv.innerHTML = '';
+            }
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (!bytes) return 'Unknown';
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+        }
+        
+        // Preview document
+        async function previewDocument(permitId, docId) {
+            try {
+                const response = await api.getPermit(permitId);
+                if (!response.success) return;
+                
+                const doc = response.data.permit.documents.find(d => d._id === docId);
+                if (!doc) return;
+                
+                document.getElementById('previewTitle').textContent = docTypeLabels[doc.docType] || doc.name;
+                
+                const container = document.getElementById('previewContainer');
+                const fileUrl = doc.fileUrl.startsWith('http') ? doc.fileUrl : '/uploads/' + doc.fileUrl;
+                
+                if (doc.mimeType && doc.mimeType.startsWith('image/')) {
+                    container.innerHTML = `<img src="${fileUrl}" alt="${doc.name}" onerror="this.parentElement.innerHTML='<div class=preview-placeholder>Failed to load image</div>'">`;
+                } else if (doc.mimeType === 'application/pdf') {
+                    container.innerHTML = `<iframe src="${fileUrl}" title="${doc.name}"></iframe>`;
+                } else {
+                    container.innerHTML = `
+                        <div class="preview-placeholder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="64" height="64">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            <p>Preview not available for this file type</p>
+                            <a href="${fileUrl}" target="_blank" class="btn btn-primary" style="margin-top: 1rem;">Download File</a>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('previewModal').classList.add('active');
+            } catch (error) {
+                console.error('Error previewing document:', error);
+                ui.toast.error('Failed to load document preview');
+            }
+        }
+        
+        // Review document
+        async function reviewDocument(permitId, docId, status) {
+            const remarks = status === 'rejected' 
+                ? prompt('Enter rejection reason:') 
+                : '';
+            
+            if (status === 'rejected' && !remarks) return;
+            
+            try {
+                const response = await api.reviewDocument(permitId, docId, { status, remarks });
+                if (response.success) {
+                    ui.toast.success(`Document ${status} successfully`);
+                    viewPermit(permitId); // Refresh modal
+                }
+            } catch (error) {
+                console.error('Error reviewing document:', error);
+                ui.toast.error('Failed to review document');
+            }
+        }
+        
+        // Show reject document modal
+        function showRejectDocModal(permitId, docId) {
+            const remarks = prompt('Enter rejection reason:');
+            if (remarks) {
+                reviewDocument(permitId, docId, 'rejected');
+            }
+        }
+        
+        // Approve permit
+        async function approvePermit(permitId) {
+            const remarks = prompt('Optional approval remarks:');
+            
+            try {
+                const response = await api.updatePermitStatus(permitId, { 
+                    status: 'approved',
+                    remarks: remarks || ''
+                });
+                if (response.success) {
+                    ui.toast.success('Permit approved successfully');
+                    closeModal();
+                    loadPermits(currentPage);
+                }
+            } catch (error) {
+                console.error('Error approving permit:', error);
+                ui.toast.error('Failed to approve permit');
+            }
+        }
+        
+        // Show reject permit modal
+        function showRejectModal(permitId) {
+            const reason = prompt('Enter rejection reason (required):');
+            if (!reason) return;
+            
+            rejectPermit(permitId, reason);
+        }
+        
+        // Reject permit
+        async function rejectPermit(permitId, reason) {
+            try {
+                const response = await api.updatePermitStatus(permitId, {
+                    status: 'rejected',
+                    reason: reason
+                });
+                if (response.success) {
+                    ui.toast.success('Permit rejected');
+                    closeModal();
+                    loadPermits(currentPage);
+                }
+            } catch (error) {
+                console.error('Error rejecting permit:', error);
+                ui.toast.error('Failed to reject permit');
+            }
+        }
+        
+        // Show assessment modal
+        function showAssessmentModal(permitId) {
+            const mayorFee = prompt('Mayor\'s Permit Fee:');
+            if (!mayorFee) return;
+            
+            const businessTax = prompt('Business Tax:');
+            const sanitaryFee = prompt('Sanitary Fee:');
+            const fireFee = prompt('Fire Safety Fee:');
+            const envFee = prompt('Environmental Fee:');
+            
+            updateAssessment(permitId, {
+                businessTax: parseFloat(businessTax) || 0,
+                mayorsPermit: parseFloat(mayorFee) || 0,
+                sanitaryFee: parseFloat(sanitaryFee) || 0,
+                fireSafetyFee: parseFloat(fireFee) || 0,
+                environmentalFee: parseFloat(envFee) || 0
+            });
+        }
+        
+        // Update assessment
+        async function updateAssessment(permitId, fees) {
+            try {
+                const response = await api.updateAssessment(permitId, { fees });
+                if (response.success) {
+                    ui.toast.success('Assessment updated successfully');
+                    closeModal();
+                    loadPermits(currentPage);
+                }
+            } catch (error) {
+                console.error('Error updating assessment:', error);
+                ui.toast.error('Failed to update assessment');
+            }
+        }
+        
+        // Close modals
+        function closeModal() {
+            document.getElementById('permitModal').classList.remove('active');
+            currentPermitId = null;
+        }
+        
+        function closePreviewModal() {
+            document.getElementById('previewModal').classList.remove('active');
+        }
+        
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+        
+        // Refresh permits
+        function refreshPermits() {
+            loadPermits(currentPage);
+        }
+        
+        // Export permits to CSV
+        function exportPermits() {
+            const csvContent = [
+                ['ID', 'Business Name', 'Owner', 'Status', 'Documents', 'Submitted', 'Last Updated'].join(','),
+                ...currentPermits.map(p => [
+                    p._id,
+                    `"${p.businessInfo.businessName}"`,
+                    `"${p.ownerInfo.firstName} ${p.ownerInfo.lastName}"`,
+                    p.status,
+                    `${p.documents?.filter(d => d.status === 'approved').length || 0}/${p.documents?.length || 0}`,
+                    new Date(p.createdAt).toLocaleDateString(),
+                    new Date(p.updatedAt).toLocaleDateString()
+                ].join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `permits-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Logout
+        document.getElementById('logoutBtn')?.addEventListener('click', () => {
+            auth.logout();
+            window.location.href = '/login.html';
+        });
+        
+        // Mobile nav toggle
+        document.getElementById('navToggle')?.addEventListener('click', () => {
+            document.getElementById('navMenu').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

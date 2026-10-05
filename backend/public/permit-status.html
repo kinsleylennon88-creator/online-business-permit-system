@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permit Status - Janiuay Business Permit System</title>
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding-top: 70px;
+            padding-bottom: 2rem;
+        }
+        
+        /* Fix for notification bell icon size */
+        .notification-center {
+            position: fixed;
+            top: 80px;
+            right: 1rem;
+            z-index: 1000;
+        }
+        
+        .notification-bell {
+            width: 48px !important;
+            height: 48px !important;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .notification-bell svg {
+            width: 24px !important;
+            height: 24px !important;
+            color: white;
+            display: block;
+        }
+        
+        .notification-bell .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
+            background: #f59e0b;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+        
+        /* Notification dropdown */
+        .notification-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            width: 360px;
+            max-height: 480px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        
+        .notification-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .navbar {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--gray-800);
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--gray-800);
+        }
+        
+        .logo-subtitle {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+        
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            list-style: none;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.875rem;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gray-300);
+            color: var(--gray-600);
+        }
+        
+        .btn-outline:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+        }
+        
+        /* Main Content */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+        
+        .back-link:hover {
+            opacity: 1;
+        }
+        
+        /* Status Card */
+        .status-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--gray-100);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-badge.draft {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        .status-badge.review {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-badge.approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-badge.rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .business-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-top: 0.5rem;
+        }
+        
+        .permit-id {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-top: 0.25rem;
+        }
+        
+        .date-section {
+            text-align: right;
+        }
+        
+        .date-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--gray-400);
+            letter-spacing: 0.5px;
+        }
+        
+        .date-value {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-top: 0.25rem;
+        }
+        
+        /* Details Grid */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .detail-item {
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 12px;
+        }
+        
+        .detail-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--gray-400);
+            letter-spacing: 0.5px;
+            margin-bottom: 0.4rem;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 0.95rem;
+        }
+        
+        .detail-full {
+            grid-column: 1 / -1;
+        }
+        
+        /* Timeline */
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 32px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--success), var(--primary));
+            border-radius: 3px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+        }
+        
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: -28px;
+            top: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--gray-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .timeline-item.completed .timeline-dot {
+            background: var(--success);
+            border-color: var(--success);
+        }
+        
+        .timeline-item.completed .timeline-dot::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .timeline-item.active .timeline-dot {
+            background: var(--primary);
+            border-color: var(--primary);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(79, 70, 229, 0); }
+        }
+        
+        .timeline-content h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 0.25rem;
+        }
+        
+        .timeline-content p {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        
+        /* Help Section */
+        .help-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+        
+        .help-title {
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .help-text {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+        
+        .contact-info {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+            font-size: 0.875rem;
+        }
+        
+        .contact-info p {
+            margin: 0.25rem 0;
+            color: var(--gray-600);
+        }
+        
+        /* Documents Section */
+        .documents-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .document-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--gray-50);
+            border-radius: 12px;
+            border: 1px solid var(--gray-100);
+            transition: all 0.2s;
+        }
+        
+        .document-item:hover {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .document-icon {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .document-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .document-name {
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--gray-800);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0;
+        }
+        
+        .document-meta {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin: 0.25rem 0 0;
+        }
+        
+        .document-view {
+            padding: 0.4rem 0.75rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        
+        .document-view:hover {
+            background: var(--primary-dark);
+        }
+        
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-icon {
+            width: 64px;
+            height: 64px;
+            background: #fee2e2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Responsive */
+        @media (max-width: 640px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .status-header {
+                flex-direction: column;
+            }
+            
+            .date-section {
+                text-align: left;
+            }
+            
+            .status-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-title">Janiuay BPLO</span>
+                    <span class="logo-subtitle">Online Permit System</span>
+                </div>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/dashboard.html" class="nav-link">My Permits</a></li>
+                <li><a href="/permit-application.html" class="nav-link">Apply</a></li>
+                <li><a href="/profile.html" class="nav-link">Profile</a></li>
+                <li class="user-menu">
+                    <span id="userName" style="font-size: 0.875rem; color: var(--gray-600);"></span>
+                    <button class="btn btn-outline" id="logoutBtn">Logout</button>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <a href="/dashboard.html" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to My Permits
+        </a>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="status-card">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p style="color: var(--gray-500);">Loading permit details...</p>
+            </div>
+        </div>
+
+        <!-- Permit Details -->
+        <div id="permitDetails" style="display: none;">
+            <div class="status-card">
+                <div class="status-header">
+                    <div>
+                        <span id="permitStatus" class="status-badge pending">Pending</span>
+                        <h1 id="businessName" class="business-name">Loading...</h1>
+                        <p id="permitId" class="permit-id">ID: --</p>
+                    </div>
+                    <div class="date-section">
+                        <div class="date-label">Applied On</div>
+                        <div id="appliedDate" class="date-value">--</div>
+                    </div>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Business Type</div>
+                        <div id="businessType" class="detail-value">--</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">DTI/SEC Number</div>
+                        <div id="dtiNumber" class="detail-value">--</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">TIN</div>
+                        <div id="tin" class="detail-value">--</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Capitalization</div>
+                        <div id="capitalization" class="detail-value">--</div>
+                    </div>
+                    <div class="detail-item detail-full">
+                        <div class="detail-label">Business Address</div>
+                        <div id="businessAddress" class="detail-value">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Timeline -->
+            <div class="status-card">
+                <h3 class="section-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--primary);">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    Uploaded Documents
+                </h3>
+                <div id="documentsList" class="documents-list">
+                    <!-- Documents will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Status Timeline -->
+            <div class="status-card">
+                <h3 class="section-title">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--primary);">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    Application Progress
+                </h3>
+                <div class="timeline" id="timeline">
+                    <!-- Timeline items will be populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" class="status-card" style="display: none;">
+            <div class="error-state">
+                <div class="error-icon">⚠️</div>
+                <h3 style="color: var(--gray-800);">Permit Not Found</h3>
+                <p style="color: var(--gray-500);">We couldn't find the permit you're looking for.</p>
+                <a href="/dashboard.html" class="btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    Back to My Permits
+                </a>
+            </div>
+        </div>
+
+        <!-- Help Card -->
+        <div class="help-card">
+            <div class="help-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--primary);">
+                    <path d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                Need Help?
+            </div>
+            <p class="help-text">If you have questions about your permit application, contact the BPLO office.</p>
+            <div class="contact-info">
+                <p>📞 <strong>Phone:</strong> (033) 123-4567</p>
+                <p>📧 <strong>Email:</strong> bplo@janiuay.gov.ph</p>
+                <p>🕐 <strong>Office Hours:</strong> Monday - Friday, 8:00 AM - 5:00 PM</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        // Get permit ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const permitId = urlParams.get('id');
+
+        if (!permitId) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+        }
+
+        // Load permit details
+        async function loadPermitDetails() {
+            try {
+                let permit = null;
+                
+                // Try API first
+                try {
+                    const response = await api.getPermit(permitId);
+                    if (response.success && response.data) {
+                        permit = response.data.permit || response.data;
+                    }
+                } catch (apiError) {
+                    console.log('API error, falling back to localStorage:', apiError);
+                }
+                
+                // Fallback to localStorage if API fails or returns no data
+                if (!permit) {
+                    const storageKeys = ['userPermits', 'permits', 'allPermits', 'submittedPermits'];
+                    for (const key of storageKeys) {
+                        const stored = localStorage.getItem(key);
+                        if (stored) {
+                            try {
+                                const permits = JSON.parse(stored);
+                                if (Array.isArray(permits)) {
+                                    permit = permits.find(p => (p._id || p.permitNumber || p.id) === permitId);
+                                    if (permit) break;
+                                }
+                            } catch (e) {}
+                        }
+                    }
+                    
+                    // Also check for any permit stored by ID directly
+                    const allKeys = Object.keys(localStorage);
+                    for (const key of allKeys) {
+                        if (key.includes('permit') || key.includes('application')) {
+                            const stored = localStorage.getItem(key);
+                            if (stored) {
+                                try {
+                                    const parsed = JSON.parse(stored);
+                                    if (Array.isArray(parsed)) {
+                                        permit = parsed.find(p => (p._id || p.permitNumber || p.id) === permitId);
+                                        if (permit) break;
+                                    } else if (parsed && typeof parsed === 'object' && (parsed._id || parsed.permitNumber || parsed.id) === permitId) {
+                                        permit = parsed;
+                                        break;
+                                    }
+                                } catch (e) {}
+                            }
+                        }
+                    }
+                }
+                
+                if (!permit) {
+                    throw new Error('Permit not found in API or localStorage');
+                }
+
+                // Hide loading, show details
+                const loadingState = document.getElementById('loadingState');
+                const permitDetails = document.getElementById('permitDetails');
+                if (loadingState) loadingState.style.display = 'none';
+                if (permitDetails) permitDetails.style.display = 'block';
+                
+                // Extract data safely with multiple fallbacks
+                const businessName = permit.businessInfo?.businessName || permit.businessName || 'Unknown Business';
+                const businessType = permit.businessInfo?.businessType || permit.businessType || 'N/A';
+                const businessNature = permit.businessInfo?.businessNature || permit.businessNature || businessType;
+                const createdAt = permit.createdAt || permit.dateSubmitted || permit.submittedAt;
+                const status = permit.status || 'draft';
+                
+                // Handle address in different formats
+                let address = 'N/A';
+                if (permit.businessInfo?.businessAddress) {
+                    const addr = permit.businessInfo.businessAddress;
+                    if (typeof addr === 'string') {
+                        address = addr;
+                    } else if (addr.street || addr.barangay) {
+                        const parts = [addr.street, addr.barangay, addr.municipality, addr.province].filter(Boolean);
+                        address = parts.join(', ');
+                    }
+                } else if (permit.businessAddress) {
+                    address = typeof permit.businessAddress === 'string' ? permit.businessAddress : 'N/A';
+                }
+                
+                // Populate permit details with null checks
+                const businessNameEl = document.getElementById('businessName');
+                if (businessNameEl) businessNameEl.textContent = businessName;
+                
+                const permitIdEl = document.getElementById('permitId');
+                if (permitIdEl) permitIdEl.textContent = `ID: ${permit._id || permitId}`;
+                
+                const appliedDateEl = document.getElementById('appliedDate');
+                if (appliedDateEl) {
+                    appliedDateEl.textContent = createdAt ? new Date(createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'N/A';
+                }
+                
+                const businessTypeEl = document.getElementById('businessType');
+                if (businessTypeEl) businessTypeEl.textContent = formatBusinessType(businessNature) || 'N/A';
+                
+                const businessAddressEl = document.getElementById('businessAddress');
+                if (businessAddressEl) businessAddressEl.textContent = address;
+                
+                const dtiNumberEl = document.getElementById('dtiNumber');
+                if (dtiNumberEl) dtiNumberEl.textContent = permit.dtiNumber || permit.registrationNumber || 'N/A';
+                
+                const tinEl = document.getElementById('tin');
+                if (tinEl) tinEl.textContent = permit.tin || 'N/A';
+                
+                const capitalizationEl = document.getElementById('capitalization');
+                if (capitalizationEl) {
+                    const cap = permit.businessInfo?.capitalization || permit.capitalization;
+                    capitalizationEl.textContent = cap ? `₱${Number(cap).toLocaleString()}` : 'N/A';
+                }
+                
+                const grossSalesEl = document.getElementById('grossSales');
+                if (grossSalesEl) {
+                    const sales = permit.businessInfo?.grossSales || permit.grossSales;
+                    grossSalesEl.textContent = sales ? `₱${Number(sales).toLocaleString()}` : 'N/A';
+                }
+                
+                // Debug: Log documents to console
+                console.log('Permit documents:', permit.documents);
+                console.log('Full permit data:', permit);
+                
+                // Render uploaded documents
+                renderDocuments(permit.documents || []);
+                
+                // Update status badge with proper styling
+                const statusBadge = document.getElementById('permitStatus');
+                if (statusBadge) {
+                    // Map status to display text and badge style
+                    const statusMap = {
+                        'draft': { text: 'Draft', class: 'draft' },
+                        'submitted': { text: 'Submitted', class: 'pending' },
+                        'under_review': { text: 'Under Review', class: 'review' },
+                        'approved': { text: 'Approved', class: 'approved' },
+                        'rejected': { text: 'Rejected', class: 'rejected' },
+                        'issued': { text: 'Issued', class: 'approved' },
+                        'expired': { text: 'Expired', class: 'rejected' }
+                    };
+                    
+                    const statusInfo = statusMap[status.toLowerCase()] || { text: status, class: 'pending' };
+                    statusBadge.textContent = statusInfo.text;
+                    statusBadge.className = 'status-badge ' + statusInfo.class;
+                }
+                
+                // Build timeline
+                buildTimeline(permit);
+                
+            } catch (error) {
+                console.error('Error loading permit:', error);
+                const loadingState = document.getElementById('loadingState');
+                const errorState = document.getElementById('errorState');
+                if (loadingState) loadingState.style.display = 'none';
+                if (errorState) errorState.style.display = 'block';
+            }
+        }
+
+        function formatBusinessType(type) {
+            if (!type) return 'N/A';
+            return type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+
+        function formatAddress(address) {
+            if (!address) return 'N/A';
+            const parts = [address.street, address.barangay, address.municipality, address.province].filter(Boolean);
+            return parts.join(', ') || 'N/A';
+        }
+
+        function renderDocuments(documents) {
+            const container = document.getElementById('documentsList');
+            if (!container) return;
+            
+            if (!documents || documents.length === 0) {
+                container.innerHTML = '<p style="color: var(--gray-500); font-size: 0.875rem;">No documents uploaded</p>';
+                return;
+            }
+            
+            const docTypeLabels = {
+                'dti': 'DTI Registration',
+                'sec': 'SEC Registration',
+                'cdo': 'CDA Registration',
+                'barangay': 'Barangay Clearance',
+                'zoning': 'Zoning Clearance',
+                'sanitary': 'Sanitary Permit',
+                'fire': 'Fire Safety Permit',
+                'occupancy': 'Occupancy Permit',
+                'lease': 'Contract of Lease',
+                'title': 'Land Title',
+                'id': 'Valid ID',
+                'cedula': 'Community Tax Certificate',
+                'picture': 'Business Photo',
+                'signature': 'E-Signature',
+                'other': 'Other Document'
+            };
+            
+            container.innerHTML = documents.map(doc => {
+                const label = docTypeLabels[doc.docType] || doc.name || 'Document';
+                const uploadDate = doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString() : 'N/A';
+                const fileSize = doc.fileSize ? formatFileSize(doc.fileSize) : '';
+                
+                // Check if it's an image
+                const isImage = doc.mimeType?.startsWith('image/') || doc.filePath?.match(/\.(jpg|jpeg|png|gif|webp)$/i);
+                
+                return `
+                    <div class="document-item">
+                        <div class="document-icon">
+                            ${isImage 
+                                ? `<img src="${doc.filePath || doc.url || ''}" alt="${label}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`
+                                : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <path d="M12 18v-6"/>
+                                    <path d="M9 15l3-3 3 3"/>
+                                </svg>`
+                            }
+                        </div>
+                        <div class="document-info">
+                            <p class="document-name">${label}</p>
+                            <p class="document-meta">${uploadDate} ${fileSize ? '• ' + fileSize : ''}</p>
+                        </div>
+                        ${doc.filePath || doc.url ? `<a href="${doc.filePath || doc.url}" target="_blank" class="document-view">View</a>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function formatFileSize(bytes) {
+            if (!bytes) return '';
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function buildTimeline(permit) {
+            const timeline = document.getElementById('timeline');
+            const status = (permit.status || 'draft').toLowerCase();
+            const createdAt = permit.createdAt ? new Date(permit.createdAt) : new Date();
+            const submittedAt = permit.submittedAt ? new Date(permit.submittedAt) : createdAt;
+            const reviewedAt = permit.reviewedAt ? new Date(permit.reviewedAt) : null;
+            const approvedAt = permit.approvedAt ? new Date(permit.approvedAt) : null;
+            
+            // Map status to workflow steps
+            const workflow = [
+                { 
+                    title: 'Application Submitted', 
+                    desc: 'Your application has been received and is being processed',
+                    date: submittedAt,
+                    completed: ['submitted', 'under_review', 'approved', 'rejected', 'issued'].includes(status)
+                },
+                { 
+                    title: 'Under Review', 
+                    desc: 'BPLO staff is reviewing your documents and business details',
+                    date: reviewedAt || (status === 'under_review' ? new Date() : null),
+                    completed: ['under_review', 'approved', 'rejected', 'issued'].includes(status)
+                },
+                { 
+                    title: 'Documents Verified', 
+                    desc: 'All requirements have been checked and validated',
+                    date: approvedAt || (status === 'approved' ? new Date() : null),
+                    completed: ['approved', 'rejected', 'issued'].includes(status)
+                },
+                { 
+                    title: status === 'rejected' ? 'Application Rejected' : 'Permit Approved', 
+                    desc: status === 'rejected' 
+                        ? (permit.remarks || 'Your application did not meet requirements. Contact BPLO for details.')
+                        : (status === 'issued' 
+                            ? `Permit issued: ${permit.permitNumber || 'N/A'}` 
+                            : 'Your business permit has been approved and is ready for issuance'),
+                    date: approvedAt,
+                    completed: ['approved', 'rejected', 'issued'].includes(status),
+                    isRejection: status === 'rejected'
+                }
+            ];
+            
+            let activeSet = false;
+            timeline.innerHTML = workflow.map((step, index) => {
+                const isCompleted = step.completed;
+                const isActive = !isCompleted && !activeSet && (index === 0 || workflow[index - 1].completed);
+                if (isActive) activeSet = true;
+                
+                const stepClass = isCompleted 
+                    ? (step.isRejection ? 'rejected' : 'completed') 
+                    : (isActive ? 'active' : '');
+                const dateText = step.date 
+                    ? step.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
+                    : 'Pending';
+                
+                // For rejected status, show red styling
+                const dotStyle = step.isRejection ? 'style="background: #ef4444; border-color: #ef4444;"' : '';
+                const titleStyle = step.isRejection ? 'style="color: #ef4444;"' : '';
+                
+                return `
+                    <div class="timeline-item ${stepClass}">
+                        <div class="timeline-dot" ${dotStyle}></div>
+                        <div class="timeline-content">
+                            <h5 ${titleStyle}>${step.title}</h5>
+                            <p>${step.desc} • ${dateText}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // If rejected, show special notice
+            if (status === 'rejected') {
+                timeline.innerHTML += `
+                    <div style="margin-top: 1.5rem; padding: 1rem; background: #fee2e2; border-radius: 8px; border-left: 4px solid #ef4444;">
+                        <p style="color: #991b1b; font-weight: 600; margin-bottom: 0.5rem;">⚠️ Application Rejected</p>
+                        <p style="color: #7f1d1d; font-size: 0.875rem;">${permit.remarks || 'Please contact BPLO office for more information about why your application was rejected.'}</p>
+                    </div>
+                `;
+            }
+            
+            // If issued, show permit number
+            if (status === 'issued' && permit.permitNumber) {
+                timeline.innerHTML += `
+                    <div style="margin-top: 1.5rem; padding: 1.5rem; background: #d1fae5; border-radius: 8px; text-align: center;">
+                        <p style="color: #065f46; font-size: 0.875rem; margin-bottom: 0.5rem;">Your Permit Number</p>
+                        <p style="color: #047857; font-size: 1.5rem; font-weight: 700; letter-spacing: 1px;">${permit.permitNumber}</p>
+                        ${permit.expiresAt ? `<p style="color: #059669; font-size: 0.875rem; margin-top: 0.5rem;">Valid until: ${new Date(permit.expiresAt).toLocaleDateString()}</p>` : ''}
+                    </div>
+                `;
+            }
+        }
+
+        // Load permit details when page loads
+        if (permitId) {
+            loadPermitDetails();
+        }
+    </script>
+    <script src="/js/modern-2025.js"></script>
+    <script src="/js/advanced-features.js"></script>
+    <script src="/js/chatbot-2025.js"></script>
+</body>
+</html>

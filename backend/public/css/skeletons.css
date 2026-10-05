@@ -1,0 +1,114 @@
+/* Loading Skeletons */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--gray-100) 25%,
+        var(--gray-200) 50%,
+        var(--gray-100) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-text {
+    height: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.skeleton-text.short {
+    width: 40%;
+}
+
+.skeleton-text.medium {
+    width: 70%;
+}
+
+.skeleton-title {
+    height: 1.5rem;
+    width: 60%;
+    margin-bottom: 1rem;
+}
+
+.skeleton-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.skeleton-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.skeleton-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.skeleton-table {
+    width: 100%;
+}
+
+.skeleton-table-row {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.skeleton-table-cell {
+    height: 1rem;
+    flex: 1;
+}
+
+.skeleton-table-cell:nth-child(1) { flex: 2; }
+.skeleton-table-cell:nth-child(2) { flex: 1; }
+.skeleton-table-cell:nth-child(3) { flex: 1; }
+.skeleton-table-cell:nth-child(4) { flex: 0.5; }
+
+.skeleton-button {
+    height: 2.5rem;
+    width: 120px;
+    border-radius: var(--radius-md);
+}
+
+.skeleton-input {
+    height: 2.75rem;
+    width: 100%;
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+}
+
+.skeleton-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.skeleton-stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+}
+
+.skeleton-stat-value {
+    height: 2rem;
+    width: 40%;
+    margin-bottom: 0.5rem;
+}
+
+.skeleton-stat-label {
+    height: 1rem;
+    width: 60%;
+}

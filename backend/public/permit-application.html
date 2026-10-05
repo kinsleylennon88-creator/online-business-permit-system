@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Permit - Janiuay Business Permit System</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/tracker-checklist.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container nav-container">
+                <a href="/" class="logo">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img src="/images/favicon.svg" alt="Janiuay BPLO" style="width: 40px; height: 40px;">
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-title">Janiuay BPLO</span>
+                        <span class="logo-subtitle">Online Permit System</span>
+                    </div>
+                </a>
+                <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="/dashboard.html" class="nav-link">My Permits</a></li>
+                    <li><a href="/permit-application.html" class="nav-link active">Apply</a></li>
+                    <li><a href="/profile.html" class="nav-link">Profile</a></li>
+                    <li class="user-menu" id="userMenu">
+                        <span id="userName" style="font-size: 0.875rem; color: var(--gray-600);"></span>
+                        <button class="btn btn-outline" id="logoutBtn">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="dashboard">
+        <div class="container">
+            <div class="main-content">
+                <!-- Government Seal -->
+                <div class="government-seal" style="margin-bottom: 2rem;">
+                    <div class="government-seal-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                    </div>
+                    <div class="government-seal-text">
+                        <span class="government-seal-title">Republic of the Philippines</span>
+                        <span class="government-seal-name">Municipality of Janiuay</span>
+                        <span class="government-seal-dept">Business Permits & Licensing Office</span>
+                    </div>
+                </div>
+
+                <h1 style="font-family: var(--font-heading); font-size: 1.75rem; margin-bottom: 0.5rem;">Business Permit Application</h1>
+                <p style="color: var(--gray-600); margin-bottom: 2rem;">Complete this step-by-step form to apply for your business permit</p>
+
+                <!-- Wizard Container -->
+                <div id="permitWizard"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/utils.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/wizard.js"></script>
+    <script src="/js/tracker-checklist.js"></script>
+    <script src="/js/privacy-footer.js"></script>
+    
+    <script>
+        // Check authentication
+        if (!auth.isAuthenticated()) {
+            window.location.href = '/login.html';
+        }
+        
+        // Load user data
+        const user = auth.getUser();
+        if (user) {
+            document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
+        }
+        
+        // Setup logout
+        document.getElementById('logoutBtn').addEventListener('click', () => auth.logout());
+        
+        // Initialize document checklist
+        if (typeof documentChecklist !== 'undefined') {
+            documentChecklist.init('documentChecklist');
+        }
+        
+        // Define wizard steps
+        const wizardSteps = [
+            {
+                title: 'Business Info',
+                content: `
+                    <div class="form-section">
+                        <h4 class="form-section-title">Business Information</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="businessName">Business Name *</label>
+                                <input type="text" id="businessName" class="form-input" placeholder="Your Business Name" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="businessType">Business Type *</label>
+                                <select id="businessType" class="form-select" required>
+                                    <option value="">Select type</option>
+                                    <option value="sole_proprietorship">Sole Proprietorship</option>
+                                    <option value="partnership">Partnership</option>
+                                    <option value="corporation">Corporation</option>
+                                    <option value="cooperative">Cooperative</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="dtiNumber">DTI/SEC/CDA Registration *</label>
+                                <input type="text" id="dtiNumber" class="form-input" placeholder="Registration number" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="tin">TIN</label>
+                                <input type="text" id="tin" class="form-input" placeholder="Tax ID Number">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="businessActivities">Business Activities *</label>
+                            <textarea id="businessActivities" class="form-textarea" rows="3" placeholder="Describe your business activities..." required></textarea>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: 'Location',
+                content: `
+                    <div class="form-section">
+                        <h4 class="form-section-title">Business Location</h4>
+                        <div class="form-group">
+                            <label class="form-label" for="businessAddress">Business Address *</label>
+                            <input type="text" id="businessAddress" class="form-input" placeholder="Complete business address" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="businessBarangay">Barangay *</label>
+                                <select id="businessBarangay" class="form-select" required>
+                                    <option value="">Select barangay</option>
+                                    <option value="Abangay">Abangay</option>
+                                    <option value="Agcarope">Agcarope</option>
+                                    <option value="Aglobong">Aglobong</option>
+                                    <option value="Aguingay">Aguingay</option>
+                                    <option value="Anhawan">Anhawan</option>
+                                    <option value="Aquino Nobleza East">Aquino Nobleza East</option>
+                                    <option value="Aquino Nobleza West">Aquino Nobleza West</option>
+                                    <option value="Atimonan">Atimonan</option>
+                                    <option value="Balanac">Balanac</option>
+                                    <option value="Barasalon">Barasalon</option>
+                                    <option value="Bongol">Bongol</option>
+                                    <option value="Cabantog">Cabantog</option>
+                                    <option value="Calmay">Calmay</option>
+                                    <option value="Canawili">Canawili</option>
+                                    <option value="Canawillian">Canawillian</option>
+                                    <option value="Capt. A. Tirador">Capt. A. Tirador</option>
+                                    <option value="Caranas">Caranas</option>
+                                    <option value="Caraudan">Caraudan</option>
+                                    <option value="Carigangan">Carigangan</option>
+                                    <option value="Concepcion Poblacion">Concepcion Poblacion</option>
+                                    <option value="Crispin Salazar North">Crispin Salazar North</option>
+                                    <option value="Crispin Salazar South">Crispin Salazar South</option>
+                                    <option value="Cunsad">Cunsad</option>
+                                    <option value="Dabong">Dabong</option>
+                                    <option value="Damires">Damires</option>
+                                    <option value="Damo-ong">Damo-ong</option>
+                                    <option value="Danao">Danao</option>
+                                    <option value="Don T. Lutero Center">Don T. Lutero Center</option>
+                                    <option value="Don T. Lutero East">Don T. Lutero East</option>
+                                    <option value="Don T. Lutero West Poblacion">Don T. Lutero West Poblacion</option>
+                                    <option value="Gines">Gines</option>
+                                    <option value="Golgota">Golgota</option>
+                                    <option value="Guadalupe">Guadalupe</option>
+                                    <option value="Jibolo">Jibolo</option>
+                                    <option value="Kuyot">Kuyot</option>
+                                    <option value="Locsin">Locsin</option>
+                                    <option value="Madong">Madong</option>
+                                    <option value="Manacabac">Manacabac</option>
+                                    <option value="Mangil">Mangil</option>
+                                    <option value="Matag-ub">Matag-ub</option>
+                                    <option value="Monte-Magapa">Monte-Magapa</option>
+                                    <option value="Pangilihan">Pangilihan</option>
+                                    <option value="Panuran">Panuran</option>
+                                    <option value="Pararinga">Pararinga</option>
+                                    <option value="Patong-patong">Patong-patong</option>
+                                    <option value="Quipot">Quipot</option>
+                                    <option value="R. Armada">R. Armada</option>
+                                    <option value="S. M. Villa">S. M. Villa</option>
+                                    <option value="San Julian">San Julian</option>
+                                    <option value="San Pedro">San Pedro</option>
+                                    <option value="Santa Rita">Santa Rita</option>
+                                    <option value="Santo Tomas">Santo Tomas</option>
+                                    <option value="Sarawag">Sarawag</option>
+                                    <option value="Tambal">Tambal</option>
+                                    <option value="Tamu-an">Tamu-an</option>
+                                    <option value="Tiringanan">Tiringanan</option>
+                                    <option value="Tolarucan">Tolarucan</option>
+                                    <option value="Tuburan">Tuburan</option>
+                                    <option value="Ubian">Ubian</option>
+                                    <option value="Yabon">Yabon</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="contactNumber">Contact Number *</label>
+                                <input type="tel" id="contactNumber" class="form-input" placeholder="09XXXXXXXXX" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="email">Business Email</label>
+                            <input type="email" id="email" class="form-input" placeholder="business@example.com">
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: 'Financial',
+                content: `
+                    <div class="form-section">
+                        <h4 class="form-section-title">Financial Information</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="capitalization">Capitalization (PHP) *</label>
+                                <input type="number" id="capitalization" class="form-input" placeholder="100000" min="0" required oninput="calculateFees()">
+                                <p class="form-hint">Total investment/capital for the business</p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="grossSales">Estimated Annual Gross Sales (PHP)</label>
+                                <input type="number" id="grossSales" class="form-input" placeholder="500000" min="0">
+                            </div>
+                        </div>
+                        
+                        <div class="fee-calculator" style="margin-top: 24px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="color: var(--primary);">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M12 6v6l4 2"></path>
+                                </svg>
+                                <span style="font-weight: 700; color: var(--gray-800);">Fee Estimate Calculator</span>
+                            </div>
+                            <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 16px;">Based on your capitalization:</p>
+                            
+                            <div class="fee-breakdown" style="display: grid; gap: 12px; margin-bottom: 16px;">
+                                <div class="fee-row" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #e2e8f0;">
+                                    <span style="color: var(--gray-600);">Mayor's Permit Fee</span>
+                                    <span id="feeMayors" style="font-weight: 600; color: var(--gray-800);">₱0</span>
+                                </div>
+                                <div class="fee-row" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #e2e8f0;">
+                                    <span style="color: var(--gray-600);">Business Tax</span>
+                                    <span id="feeTax" style="font-weight: 600; color: var(--gray-800);">₱0</span>
+                                </div>
+                                <div class="fee-row" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #e2e8f0;">
+                                    <span style="color: var(--gray-600);">Sanitary Permit</span>
+                                    <span id="feeSanitary" style="font-weight: 600; color: var(--gray-800);">₱150</span>
+                                </div>
+                                <div class="fee-row" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #e2e8f0;">
+                                    <span style="color: var(--gray-600);">Fire Safety Inspection</span>
+                                    <span id="feeFire" style="font-weight: 600; color: var(--gray-800);">₱100</span>
+                                </div>
+                                <div class="fee-row" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #e2e8f0;">
+                                    <span style="color: var(--gray-600);">Environmental Fee</span>
+                                    <span id="feeEnv" style="font-weight: 600; color: var(--gray-800);">₱50</span>
+                                </div>
+                            </div>
+                            
+                            <div class="fee-total" style="display: flex; justify-content: space-between; padding: 12px 16px; background: var(--primary); border-radius: 8px; color: white;">
+                                <span style="font-weight: 600;">Total Estimated Fees</span>
+                                <span id="feeTotal" style="font-weight: 700; font-size: 1.125rem;">₱300</span>
+                            </div>
+                            
+                            <p style="color: var(--gray-500); font-size: 0.75rem; margin-top: 12px; text-align: center;">
+                                *Final fees will be calculated by the BPLO office upon submission
+                            </p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: 'Documents',
+                content: `
+                    <div class="form-section">
+                        <h4 class="form-section-title">Required Documents</h4>
+                        <p style="color: var(--gray-600); margin-bottom: 20px;">Upload the following documents to complete your application.</p>
+                        
+                        <div class="document-upload-grid">
+                            <!-- DTI/SEC Registration -->
+                            <div class="upload-card required">
+                                <div class="upload-card-header">
+                                    <span class="upload-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                                        </svg>
+                                    </span>
+                                    <div class="upload-title-group">
+                                        <span class="upload-title">DTI/SEC Registration</span>
+                                        <span class="upload-badge required">Required</span>
+                                    </div>
+                                </div>
+                                <p class="upload-desc">Business name registration certificate from DTI or SEC</p>
+                                <div class="upload-zone" id="uploadZone1" data-doc="dti">
+                                    <input type="file" id="file1" class="file-input" accept=".pdf,.jpg,.jpeg,.png" data-doc="dti">
+                                    <div class="upload-placeholder">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        <span>Click to upload or drag & drop</span>
+                                        <small>PDF, JPG, PNG (Max 5MB)</small>
+                                    </div>
+                                    <div class="upload-preview" id="preview1"></div>
+                                </div>
+                            </div>
+
+                            <!-- Valid ID -->
+                            <div class="upload-card required">
+                                <div class="upload-card-header">
+                                    <span class="upload-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                                            <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                                            <circle cx="9" cy="10" r="2"></circle>
+                                            <line x1="15" y1="8" x2="15" y2="12"></line>
+                                            <line x1="15" y1="14" x2="15" y2="14"></line>
+                                        </svg>
+                                    </span>
+                                    <div class="upload-title-group">
+                                        <span class="upload-title">Valid Government ID</span>
+                                        <span class="upload-badge required">Required</span>
+                                    </div>
+                                </div>
+                                <p class="upload-desc">Passport, Driver's License, National ID, or any valid government-issued ID</p>
+                                <div class="upload-zone" id="uploadZone2" data-doc="id">
+                                    <input type="file" id="file2" class="file-input" accept=".pdf,.jpg,.jpeg,.png" data-doc="id">
+                                    <div class="upload-placeholder">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        <span>Click to upload or drag & drop</span>
+                                        <small>PDF, JPG, PNG (Max 5MB)</small>
+                                    </div>
+                                    <div class="upload-preview" id="preview2"></div>
+                                </div>
+                            </div>
+
+                            <!-- Signature -->
+                            <div class="upload-card required">
+                                <div class="upload-card-header">
+                                    <span class="upload-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                                            <path d="M12 2l3 6 6 1-4 4 1 6-6-3-6 3 1-6-4-4 6-1z"></path>
+                                        </svg>
+                                    </span>
+                                    <div class="upload-title-group">
+                                        <span class="upload-title">E-Signature</span>
+                                        <span class="upload-badge required">Required</span>
+                                    </div>
+                                </div>
+                                <p class="upload-desc">Your handwritten signature on white paper, clearly scanned or photographed</p>
+                                <div class="upload-zone" id="uploadZone3" data-doc="signature">
+                                    <input type="file" id="file3" class="file-input" accept=".jpg,.jpeg,.png" data-doc="signature">
+                                    <div class="upload-placeholder">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        <span>Click to upload signature</span>
+                                        <small>JPG, PNG (Max 2MB)</small>
+                                    </div>
+                                    <div class="upload-preview" id="preview3"></div>
+                                </div>
+                            </div>
+
+                            <!-- Lease Contract / Land Title -->
+                            <div class="upload-card required">
+                                <div class="upload-card-header">
+                                    <span class="upload-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                                            <line x1="9" y1="21" x2="9" y2="9"></line>
+                                        </svg>
+                                    </span>
+                                    <div class="upload-title-group">
+                                        <span class="upload-title">Lease Contract / Land Title</span>
+                                        <span class="upload-badge required">Required</span>
+                                    </div>
+                                </div>
+                                <p class="upload-desc">Proof of occupancy - lease agreement or property ownership document</p>
+                                <div class="upload-zone" id="uploadZone4" data-doc="lease">
+                                    <input type="file" id="file4" class="file-input" accept=".pdf,.jpg,.jpeg,.png" data-doc="lease">
+                                    <div class="upload-placeholder">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        <span>Click to upload or drag & drop</span>
+                                        <small>PDF, JPG, PNG (Max 5MB)</small>
+                                    </div>
+                                    <div class="upload-preview" id="preview4"></div>
+                                </div>
+                            </div>
+
+                            <!-- Barangay Clearance -->
+                            <div class="upload-card required">
+                                <div class="upload-card-header">
+                                    <span class="upload-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                        </svg>
+                                    </span>
+                                    <div class="upload-title-group">
+                                        <span class="upload-title">Barangay Clearance</span>
+                                        <span class="upload-badge required">Required</span>
+                                    </div>
+                                </div>
+                                <p class="upload-desc">Clearance from the barangay where your business is located</p>
+                                <div class="upload-zone" id="uploadZone5" data-doc="barangay">
+                                    <input type="file" id="file5" class="file-input" accept=".pdf,.jpg,.jpeg,.png" data-doc="barangay">
+                                    <div class="upload-placeholder">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        <span>Click to upload or drag & drop</span>
+                                        <small>PDF, JPG, PNG (Max 5MB)</small>
+                                    </div>
+                                    <div class="upload-preview" id="preview5"></div>
+                                </div>
+                            </div>
+
+                            <!-- Cedula / Community Tax Certificate -->
+                            <div class="upload-card optional">
+                                <div class="upload-card-header">
+                                    <span class="upload-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                        </svg>
+                                    </span>
+                                    <div class="upload-title-group">
+                                        <span class="upload-title">Cedula (CTC)</span>
+                                        <span class="upload-badge optional">Optional</span>
+                                    </div>
+                                </div>
+                                <p class="upload-desc">Community Tax Certificate from the municipal treasurer's office</p>
+                                <div class="upload-zone" id="uploadZone6" data-doc="cedula">
+                                    <input type="file" id="file6" class="file-input" accept=".pdf,.jpg,.jpeg,.png" data-doc="cedula">
+                                    <div class="upload-placeholder">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="17 8 12 3 7 8"></polyline>
+                                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                                        </svg>
+                                        <span>Click to upload or drag & drop</span>
+                                        <small>PDF, JPG, PNG (Max 5MB)</small>
+                                    </div>
+                                    <div class="upload-preview" id="preview6"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="documents-progress" style="margin-top: 24px; padding: 16px; background: #f8fafc; border-radius: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-weight: 600; color: var(--gray-700);">Required Documents</span>
+                                <span id="docsProgress" style="font-weight: 700; color: var(--primary);">0/5 uploaded</span>
+                            </div>
+                            <div class="progress-bar" style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                                <div id="docsProgressBar" style="height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease;"></div>
+                            </div>
+                            <p style="color: var(--gray-500); font-size: 0.875rem; margin-top: 8px;">All required documents must be uploaded before submitting.</p>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: 'Review',
+                content: `
+                    <div class="form-section">
+                        <h4 class="form-section-title">Review Your Application</h4>
+                        <p style="color: var(--gray-600); margin-bottom: 20px;">Please review your information before submitting.</p>
+                        
+                        <div class="review-section">
+                            <div class="review-section-title">
+                                Business Information
+                                <button type="button" class="review-section-edit" data-edit-step="0">Edit</button>
+                            </div>
+                            <div class="review-row">
+                                <span class="review-label">Business Name</span>
+                                <span class="review-value" id="reviewBusinessName">-</span>
+                            </div>
+                            <div class="review-row">
+                                <span class="review-label">Business Type</span>
+                                <span class="review-value" id="reviewBusinessType">-</span>
+                            </div>
+                        </div>
+                        
+                        <div class="review-section">
+                            <div class="review-section-title">
+                                Location
+                                <button type="button" class="review-section-edit" data-edit-step="1">Edit</button>
+                            </div>
+                            <div class="review-row">
+                                <span class="review-label">Barangay</span>
+                                <span class="review-value" id="reviewBarangay">-</span>
+                            </div>
+                        </div>
+                        
+                        <div style="background: #eff6ff; border: 1px solid #93c5fd; border-radius: 8px; padding: 16px; margin-top: 20px;">
+                            <div style="display: flex; align-items: center; gap: 8px; color: #1e40af; font-weight: 600; margin-bottom: 8px;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                </svg>
+                                Declaration
+                            </div>
+                            <p style="color: #3b82f6; font-size: 0.875rem; line-height: 1.5;">
+                                I hereby declare that all information provided is true and accurate.
+                            </p>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+        
+        // Initialize wizard when DOM is ready
+        if (typeof wizard !== 'undefined') {
+            wizard.init('permitWizard', wizardSteps);
+            
+            // Add event listeners for edit buttons after wizard renders
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('review-section-edit')) {
+                    const step = parseInt(e.target.dataset.editStep);
+                    if (!isNaN(step) && wizard) {
+                        wizard.showStep(step);
+                    }
+                }
+            });
+        }
+        
+        // Function to populate review step with form data
+        function populateReviewStep() {
+            const formData = wizard.collectData();
+            
+            // Map business type values to readable labels
+            const businessTypeMap = {
+                'sole_proprietorship': 'Sole Proprietorship',
+                'partnership': 'Partnership',
+                'corporation': 'Corporation',
+                'cooperative': 'Cooperative'
+            };
+            
+            // Populate review fields
+            const reviewFields = {
+                'reviewBusinessName': formData.businessName || '-',
+                'reviewBusinessType': businessTypeMap[formData.businessType] || formData.businessType || '-',
+                'reviewBarangay': formData.businessBarangay || '-'
+            };
+            
+            Object.entries(reviewFields).forEach(([id, value]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = value;
+                }
+            });
+        }
+        
+        wizard.submit = async function() {
+            // Validate all previous steps have data
+            const formData = this.collectData();
+            console.log('Form data collected:', formData);
+            
+            const requiredFields = ['businessName', 'businessType', 'businessBarangay'];
+            const missingFields = requiredFields.filter(field => !formData[field] || !formData[field].trim());
+            
+            if (missingFields.length > 0) {
+                console.error('Missing required fields:', missingFields);
+                ui.toast.error(`Please fill in: ${missingFields.join(', ')}`);
+                return;
+            }
+            
+            this.isSubmitting = true;
+            this.formData = formData;
+            
+            const submitBtn = document.querySelector('#wizardNext');
+            if (submitBtn) {
+                submitBtn.classList.add('btn-loading');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+            }
+            
+            try {
+                // Get current user for owner info
+                const user = auth.getUser();
+                
+                const permitData = {
+                    businessInfo: {
+                        businessName: this.formData.businessName,
+                        businessType: this.formData.businessType,
+                        businessAddress: {
+                            street: this.formData.businessAddress,
+                            barangay: this.formData.businessBarangay,
+                            municipality: 'Janiuay',
+                            province: 'Iloilo'
+                        },
+                        businessNature: this.formData.businessActivities,
+                        capitalization: Number(this.formData.capitalization),
+                        grossSales: Number(this.formData.grossSales)
+                    },
+                    ownerInfo: {
+                        firstName: user?.firstName || 'KK',
+                        lastName: user?.lastName || 'User',
+                        phone: this.formData.contactNumber,
+                        email: this.formData.email
+                    },
+                    dtiNumber: this.formData.dtiNumber,
+                    tin: this.formData.tin,
+                    businessActivities: this.formData.businessActivities
+                };
+                
+                const response = await api.createPermit(permitData);
+                
+                console.log('API Response:', response);
+                
+                if (response.success) {
+                    const permitId = response.data.permit._id;
+                    
+                    // Upload documents if any
+                    const filesToUpload = Object.entries(uploadedFiles);
+                    if (filesToUpload.length > 0) {
+                        const formData = new FormData();
+                        const docTypes = {};
+                        
+                        filesToUpload.forEach(([docType, file], index) => {
+                            formData.append('documents', file);
+                            docTypes[file.name] = docType;
+                        });
+                        
+                        formData.append('docTypes', JSON.stringify(docTypes));
+                        
+                        try {
+                            await api.uploadDocuments(permitId, formData);
+                            console.log('Documents uploaded successfully');
+                        } catch (docError) {
+                            console.error('Error uploading documents:', docError);
+                            ui.toast.warning('Permit created but some documents failed to upload');
+                        }
+                    }
+                    
+                    localStorage.removeItem('wizard_progress');
+                    localStorage.removeItem('documentChecklist');
+                    this.showComplete();
+                    ui.toast.success('Application submitted successfully!');
+                } else {
+                    console.error('API Error:', response.message, response.errors);
+                    ui.toast.error(response.message || 'Failed to submit');
+                    this.isSubmitting = false;
+                    if (submitBtn) {
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Submit';
+                    }
+                }
+            } catch (error) {
+                console.error('Submit Error:', error);
+                ui.toast.error(error.message || 'An error occurred');
+                this.isSubmitting = false;
+                if (submitBtn) {
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit';
+                }
+            }
+        };
+        
+        // Initialize UI
+        if (typeof ui !== 'undefined') {
+            ui.init();
+        }
+        
+        // Autofill feature for testing (Ctrl+Shift+F)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'F') {
+                e.preventDefault();
+                autofillTestData();
+            }
+        });
+        
+        function autofillTestData() {
+            const fields = {
+                'businessName': 'KK Trading Store',
+                'businessType': 'sole_proprietorship',
+                'dtiNumber': 'DTI-12345678',
+                'tin': '123-456-789-000',
+                'businessAddress': '123 Main Street, Poblacion, Janiuay, Iloilo',
+                'businessBarangay': 'Poblacion',
+                'contactNumber': '09123456789',
+                'email': 'kk.trading@email.com',
+                'capitalization': '150000',
+                'grossSales': '500000',
+                'businessActivities': 'Retail trading of general merchandise including household items, groceries, and personal care products.'
+            };
+            
+            Object.entries(fields).forEach(([id, value]) => {
+                const field = document.getElementById(id);
+                if (field) {
+                    field.value = value;
+                    field.dispatchEvent(new Event('input', { bubbles: true }));
+                    field.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+            
+            // Calculate fees after autofill
+            calculateFees();
+            
+            // Show toast notification
+            if (typeof ui !== 'undefined' && ui.toast) {
+                ui.toast.success('Test data autofilled for user KK! (Ctrl+Shift+F)');
+            } else {
+                console.log('Test data autofilled for user KK!');
+            }
+        }
+        
+        // Fee Calculator Function
+        function calculateFees() {
+            const capInput = document.getElementById('capitalization');
+            if (!capInput) return;
+            
+            const capitalization = parseFloat(capInput.value) || 0;
+            
+            // Calculate Mayor's Permit Fee (progressive rate)
+            let mayorsFee = 0;
+            if (capitalization <= 50000) {
+                mayorsFee = 500;
+            } else if (capitalization <= 100000) {
+                mayorsFee = 1000;
+            } else if (capitalization <= 500000) {
+                mayorsFee = 1500;
+            } else if (capitalization <= 1000000) {
+                mayorsFee = 2500;
+            } else {
+                mayorsFee = 5000;
+            }
+            
+            // Calculate Business Tax (0.5% of gross sales estimate)
+            const grossSalesInput = document.getElementById('grossSales');
+            const grossSales = parseFloat(grossSalesInput?.value) || capitalization * 5;
+            const businessTax = Math.round(grossSales * 0.005);
+            
+            // Fixed fees
+            const sanitaryFee = 150;
+            const fireFee = 100;
+            const envFee = 50;
+            
+            const total = mayorsFee + businessTax + sanitaryFee + fireFee + envFee;
+            
+            // Update display
+            const feeMayors = document.getElementById('feeMayors');
+            const feeTax = document.getElementById('feeTax');
+            const feeSanitary = document.getElementById('feeSanitary');
+            const feeFire = document.getElementById('feeFire');
+            const feeEnv = document.getElementById('feeEnv');
+            const feeTotal = document.getElementById('feeTotal');
+            
+            if (feeMayors) feeMayors.textContent = '₱' + mayorsFee.toLocaleString();
+            if (feeTax) feeTax.textContent = '₱' + businessTax.toLocaleString();
+            if (feeSanitary) feeSanitary.textContent = '₱' + sanitaryFee.toLocaleString();
+            if (feeFire) feeFire.textContent = '₱' + fireFee.toLocaleString();
+            if (feeEnv) feeEnv.textContent = '₱' + envFee.toLocaleString();
+            if (feeTotal) feeTotal.textContent = '₱' + total.toLocaleString();
+        }
+        
+        // File Upload Manager
+        const uploadedFiles = {};
+        
+        function initFileUploads() {
+            // Add event listeners to all file inputs (only once)
+            document.querySelectorAll('.file-input').forEach(input => {
+                // Skip if already initialized
+                if (input.dataset.initialized === 'true') return;
+                input.dataset.initialized = 'true';
+                
+                const zone = input.closest('.upload-zone');
+                const docType = input.dataset.doc;
+                
+                // Click to upload
+                input.addEventListener('change', (e) => handleFileSelect(e, docType, zone));
+                
+                // Drag and drop
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('dragover');
+                });
+                
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('dragover');
+                });
+                
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('dragover');
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        handleFile(files[0], docType, zone);
+                    }
+                });
+            });
+        }
+        
+        function handleFileSelect(e, docType, zone) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file, docType, zone);
+            }
+        }
+        
+        function handleFile(file, docType, zone) {
+            // Validate file size
+            const maxSize = docType === 'signature' ? 2 * 1024 * 1024 : 5 * 1024 * 1024;
+            if (file.size > maxSize) {
+                ui.toast.error(`File too large. Max size: ${docType === 'signature' ? '2MB' : '5MB'}`);
+                return;
+            }
+            
+            // Validate file type
+            const allowedTypes = docType === 'signature' 
+                ? ['image/jpeg', 'image/png']
+                : ['application/pdf', 'image/jpeg', 'image/png'];
+            if (!allowedTypes.includes(file.type)) {
+                ui.toast.error(`Invalid file type. Allowed: ${docType === 'signature' ? 'JPG, PNG' : 'PDF, JPG, PNG'}`);
+                return;
+            }
+            
+            // Store file
+            uploadedFiles[docType] = file;
+            
+            // Update UI
+            const placeholder = zone.querySelector('.upload-placeholder');
+            const preview = zone.querySelector('.upload-preview');
+            
+            if (placeholder) placeholder.style.display = 'none';
+            if (preview) {
+                preview.classList.add('show');
+                preview.innerHTML = `
+                    ${file.type.startsWith('image/') ? `<img src="${URL.createObjectURL(file)}" class="upload-preview-img" alt="Preview">` : ''}
+                    <div class="upload-preview-info">
+                        <div class="upload-preview-name">${file.name}</div>
+                        <div class="upload-preview-size">${formatFileSize(file.size)}</div>
+                    </div>
+                    <button type="button" class="upload-remove" data-doc="${docType}" aria-label="Remove file">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                `;
+            }
+            
+            zone.classList.add('uploaded');
+            updateDocumentProgress();
+            
+            ui.toast.success(`${getDocName(docType)} uploaded successfully!`);
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function getDocName(docType) {
+            const names = {
+                'dti': 'DTI/SEC Registration',
+                'id': 'Valid Government ID',
+                'signature': 'E-Signature',
+                'lease': 'Lease Contract/Land Title',
+                'barangay': 'Barangay Clearance',
+                'cedula': 'Cedula (CTC)'
+            };
+            return names[docType] || docType;
+        }
+        
+        function updateDocumentProgress() {
+            const requiredDocs = ['dti', 'id', 'signature', 'lease', 'barangay'];
+            const uploadedCount = requiredDocs.filter(doc => uploadedFiles[doc]).length;
+            const totalRequired = requiredDocs.length;
+            
+            const progressText = document.getElementById('docsProgress');
+            const progressBar = document.getElementById('docsProgressBar');
+            
+            if (progressText) {
+                progressText.textContent = `${uploadedCount}/${totalRequired} uploaded`;
+            }
+            if (progressBar) {
+                progressBar.style.width = `${(uploadedCount / totalRequired) * 100}%`;
+            }
+            
+            // Change color when complete
+            if (uploadedCount === totalRequired && progressBar) {
+                progressBar.style.background = 'var(--success)';
+            }
+        }
+        
+        // Handle remove file clicks
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.upload-remove')) {
+                const btn = e.target.closest('.upload-remove');
+                const docType = btn.dataset.doc;
+                const zone = document.querySelector(`.upload-zone[data-doc="${docType}"]`);
+                
+                delete uploadedFiles[docType];
+                
+                if (zone) {
+                    zone.classList.remove('uploaded');
+                    const placeholder = zone.querySelector('.upload-placeholder');
+                    const preview = zone.querySelector('.upload-preview');
+                    const input = zone.querySelector('.file-input');
+                    
+                    if (placeholder) placeholder.style.display = 'flex';
+                    if (preview) {
+                        preview.classList.remove('show');
+                        preview.innerHTML = '';
+                    }
+                    if (input) input.value = '';
+                }
+                
+                updateDocumentProgress();
+                ui.toast.info(`${getDocName(docType)} removed`);
+            }
+        });
+        
+        // Initialize file uploads after wizard renders
+        if (typeof wizard !== 'undefined') {
+            const originalShowStep = wizard.showStep;
+            wizard.showStep = function(index) {
+                originalShowStep.call(this, index);
+                
+                // Populate review step when showing step 4 (Review)
+                if (index === 4) {
+                    setTimeout(populateReviewStep, 50);
+                }
+                
+                // Initialize file uploads when showing Documents step (step 3)
+                if (index === 3) {
+                    setTimeout(initFileUploads, 50);
+                }
+            };
+        }
+    </script>
+</body>
+</html>

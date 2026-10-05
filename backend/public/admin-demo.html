@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Janiuay BPLO</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="alternate icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="/css/modern-ui.css">
+    <link rel="stylesheet" href="/css/admin-dashboard.css">
+    <link rel="stylesheet" href="/css/enhanced-design.css">
+    <link rel="stylesheet" href="/css/modern-2025.css">
+    <link rel="stylesheet" href="/css/advanced-features.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="admin-dashboard">
+        <!-- Admin Header -->
+        <header class="admin-header">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <img src="/images/favicon.svg" alt="Janiuay BPLO" style="width: 40px; height: 40px;">
+                </div>
+                <h1>Admin Dashboard</h1>
+            </div>
+            <nav class="admin-nav">
+                <button class="admin-nav-item active" data-tab="overview">Overview</button>
+                <button class="admin-nav-item" data-tab="permits">Permits</button>
+                <button class="admin-nav-item" data-tab="users">Users</button>
+                <button class="admin-nav-item" data-tab="analytics">Analytics</button>
+            </nav>
+            <div class="admin-header-actions">
+                <button class="btn btn-outline btn-sm" id="logoutBtn">Logout</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+            
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-icon blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-card-value">1,247</div>
+                    <div class="stat-card-label">Total Registered Users</div>
+                    <div class="stat-card-change positive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                        +12.5% this month
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-icon green">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
+                    <div class="stat-card-value">892</div>
+                    <div class="stat-card-label">Approved Permits</div>
+                    <div class="stat-card-change positive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                        +8.3% this month
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-icon yellow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div class="stat-card-value">156</div>
+                    <div class="stat-card-label">Pending Applications</div>
+                    <div class="stat-card-change negative">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                            <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                            <polyline points="17 18 23 18 23 12"></polyline>
+                        </svg>
+                        -5.2% this week
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-icon red">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-card-value">₱487,250</div>
+                    <div class="stat-card-label">Revenue Collected (2026)</div>
+                    <div class="stat-card-change positive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                        +23.1% vs 2023
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Permit Applications Trend</h3>
+                        <select style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 0.875rem;">
+                            <option>Last 6 Months</option>
+                            <option>Last Year</option>
+                        </select>
+                    </div>
+                    <div style="height: 300px;">
+                        <canvas id="permitsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Permit Status Distribution</h3>
+                    </div>
+                    <div style="height: 300px; display: flex; align-items: center; justify-content: center;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions & Recent Activity -->
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <!-- Quick Actions -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Quick Actions</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <a href="#" class="quick-action-card" onclick="switchTab('permits'); showPendingOnly(); return false;">
+                            <div class="quick-action-icon blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                            </div>
+                            <div class="quick-action-text">
+                                <h4>Review Pending</h4>
+                                <p id="pendingCount">12 applications waiting</p>
+                            </div>
+                        </a>
+                        <a href="#" class="quick-action-card" onclick="openAdminChat(); return false;">
+                            <div class="quick-action-icon green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="quick-action-text">
+                                <h4>Admin Assistant</h4>
+                                <p>AI help for administrators</p>
+                            </div>
+                        </a>
+                        <a href="#" class="quick-action-card" onclick="generateMonthlyReport(); return false;">
+                            <div class="quick-action-icon yellow">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                </svg>
+                            </div>
+                            <div class="quick-action-text">
+                                <h4>Generate Report</h4>
+                                <p>Monthly statistics & analytics</p>
+                            </div>
+                        </a>
+                        <a href="#" class="quick-action-card" onclick="switchTab('users'); return false;">
+                            <div class="quick-action-icon purple">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                </svg>
+                            </div>
+                            <div class="quick-action-text">
+                                <h4>Manage Users</h4>
+                                <p>View all user accounts</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Recent Applications -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Recent Applications</h3>
+                        <a href="#" class="card-action">View All</a>
+                    </div>
+                    <table class="modern-table">
+                        <thead>
+                            <tr>
+                                <th>Applicant</th>
+                                <th>Business</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 32px; height: 32px; background: #dbeafe; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1e40af; font-weight: 600; font-size: 0.75rem;">MR</div>
+                                        <span>Maria Reyes</span>
+                                    </div>
+                                </td>
+                                <td>Reyes Sari-Sari Store</td>
+                                <td>Retail</td>
+                                <td>Jan 15, 2024</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>
+                                    <button class="btn-icon edit" title="Review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 32px; height: 32px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #059669; font-weight: 600; font-size: 0.75rem;">JL</div>
+                                        <span>Juan Lopez</span>
+                                    </div>
+                                </td>
+                                <td>Lopez Farm Supply</td>
+                                <td>Agriculture</td>
+                                <td>Jan 14, 2024</td>
+                                <td><span class="status-badge approved">Approved</span></td>
+                                <td>
+                                    <button class="btn-icon edit" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 32px; height: 32px; background: #fef3c7; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #d97706; font-weight: 600; font-size: 0.75rem;">SC</div>
+                                        <span>Sofia Cruz</span>
+                                    </div>
+                                </td>
+                                <td>Cruz Carinderia</td>
+                                <td>Food Service</td>
+                                <td>Jan 13, 2024</td>
+                                <td><span class="status-badge review">In Review</span></td>
+                                <td>
+                                    <button class="btn-icon edit" title="Review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 32px; height: 32px; background: #fee2e2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #dc2626; font-weight: 600; font-size: 0.75rem;">MP</div>
+                                        <span>Miguel Perez</span>
+                                    </div>
+                                </td>
+                                <td>Perez Hardware</td>
+                                <td>Retail</td>
+                                <td>Jan 12, 2024</td>
+                                <td><span class="status-badge rejected">Rejected</span></td>
+                                <td>
+                                    <button class="btn-icon edit" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div style="width: 32px; height: 32px; background: #e0e7ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1e40af; font-weight: 600; font-size: 0.75rem;">AG</div>
+                                        <span>Ana Garcia</span>
+                                    </div>
+                                </td>
+                                <td>Garcia Online Shop</td>
+                                <td>E-Commerce</td>
+                                <td>Jan 11, 2024</td>
+                                <td><span class="status-badge approved">Approved</span></td>
+                                <td>
+                                    <button class="btn-icon edit" title="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Barangay Statistics -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h3 class="section-title">Top Barangays by Business Count</h3>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="background: #f8fafc; padding: 1.25rem; border-radius: 12px; border-left: 4px solid #1e40af;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">234</div>
+                        <div style="color: #6b7280; font-size: 0.875rem;">Poblacion</div>
+                        <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #10b981;">↑ 15% from last year</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 1.25rem; border-radius: 12px; border-left: 4px solid #3b82f6;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">156</div>
+                        <div style="color: #6b7280; font-size: 0.875rem;">Aquino (Pilot)</div>
+                        <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #10b981;">↑ 8% from last year</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 1.25rem; border-radius: 12px; border-left: 4px solid #60a5fa;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">98</div>
+                        <div style="color: #6b7280; font-size: 0.875rem;">Bucari</div>
+                        <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #10b981;">↑ 22% from last year</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 1.25rem; border-radius: 12px; border-left: 4px solid #93c5fd;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">87</div>
+                        <div style="color: #6b7280; font-size: 0.875rem;">San Pedro</div>
+                        <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #10b981;">↑ 5% from last year</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 1.25rem; border-radius: 12px; border-left: 4px solid #bfdbfe;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">76</div>
+                        <div style="color: #6b7280; font-size: 0.875rem;">Lopez Jaena</div>
+                        <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #10b981;">↑ 12% from last year</div>
+                    </div>
+                </div>
+            </div>
+            <!-- CLOSING OVERVIEW TAB -->
+            </div>
+            
+            <!-- Permits Tab -->
+            <div id="permits-tab" class="tab-content" style="display: none;">
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h3 class="section-title">All Permit Applications</h3>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <select id="permitsFilter" style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 0.875rem;">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <button class="btn btn-primary btn-sm" id="refreshPermits">Refresh</button>
+                        </div>
+                    </div>
+                    <div id="allPermitsTable">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Permit #</th>
+                                    <th>Business Name</th>
+                                    <th>Applicant</th>
+                                    <th>Type</th>
+                                    <th>Date Applied</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="permitsTableBody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 2rem;">Loading permits...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Users Tab -->
+            <div id="users-tab" class="tab-content" style="display: none;">
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h3 class="section-title">All Registered Users</h3>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" id="userSearch" placeholder="Search users..." style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 0.875rem;">
+                            <button class="btn btn-primary btn-sm" id="refreshUsers">Refresh</button>
+                        </div>
+                    </div>
+                    <div id="allUsersTable">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Barangay</th>
+                                    <th>Role</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 2rem;">Loading users...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Add User Button -->
+                <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+                    <button class="btn btn-primary" onclick="openAddUserModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="display: inline-block; vertical-align: middle; margin-right: 0.5rem;">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add New User
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Analytics Tab -->
+            <div id="analytics-tab" class="tab-content" style="display: none;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <h3 class="section-title">Applications by Business Type</h3>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="businessTypeChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-section">
+                        <div class="section-header">
+                            <h3 class="section-title">Monthly Revenue</h3>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Processing Time Statistics</h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                        <div style="text-align: center; padding: 1.5rem; background: #f8fafc; border-radius: 12px;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #1e40af;">3.2</div>
+                            <div style="color: #6b7280; font-size: 0.875rem;">Avg Days to Approve</div>
+                        </div>
+                        <div style="text-align: center; padding: 1.5rem; background: #f8fafc; border-radius: 12px;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #10b981;">1.8</div>
+                            <div style="color: #6b7280; font-size: 0.875rem;">Avg Days First Review</div>
+                        </div>
+                        <div style="text-align: center; padding: 1.5rem; background: #f8fafc; border-radius: 12px;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #f59e0b;">87%</div>
+                            <div style="color: #6b7280; font-size: 0.875rem;">Approval Rate</div>
+                        </div>
+                        <div style="text-align: center; padding: 1.5rem; background: #f8fafc; border-radius: 12px;">
+                            <div style="font-size: 2rem; font-weight: 700; color: #ef4444;">5.4</div>
+                            <div style="color: #6b7280; font-size: 0.875rem;">Avg Days Rejected</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/auth.js"></script>
+    <script src="/js/api.js"></script>
+    <script>
+        // Check if user is admin
+        if (!auth.isAuthenticated() || !auth.isAdmin()) {
+            window.location.href = '/login.html';
+        }
+        
+        // Tab switching functionality
+        document.querySelectorAll('.admin-nav-item').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all tabs
+                document.querySelectorAll('.admin-nav-item').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+                
+                // Add active class to clicked tab
+                button.classList.add('active');
+                
+                // Show corresponding content
+                const tabName = button.getAttribute('data-tab');
+                const content = document.getElementById(tabName + '-tab');
+                if (content) {
+                    content.style.display = 'block';
+                }
+                
+                // Initialize charts if analytics tab
+                if (tabName === 'analytics') {
+                    initAnalyticsCharts();
+                }
+            });
+        });
+        
+        // Initialize analytics charts
+        let analyticsChartsInitialized = false;
+        function initAnalyticsCharts() {
+            if (analyticsChartsInitialized) return;
+            analyticsChartsInitialized = true;
+            
+            // Business Type Chart
+            const typeCtx = document.getElementById('businessTypeChart').getContext('2d');
+            new Chart(typeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Retail', 'Food Service', 'Agriculture', 'Services', 'Manufacturing', 'Other'],
+                    datasets: [{
+                        label: 'Applications',
+                        data: [423, 312, 198, 156, 87, 116],
+                        backgroundColor: ['#1e40af', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#dbeafe']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+            
+            // Revenue Chart
+            const revCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'],
+                    datasets: [{
+                        label: 'Revenue (₱)',
+                        data: [45200, 48900, 52300, 56700, 61200, 23400],
+                        backgroundColor: '#10b981'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+        
+        // Load permits data
+        async function loadAllPermits() {
+            try {
+                const tbody = document.getElementById('permitsTableBody');
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;"><div class="loading-spinner"></div>Loading permits...</td></tr>';
+                
+                let allPermits = [];
+                let dataSource = '';
+                
+                // Try API first
+                try {
+                    const filter = document.getElementById('permitsFilter')?.value || 'all';
+                    const params = filter !== 'all' ? { status: filter } : {};
+                    console.log('Fetching permits with params:', params);
+                    const response = await api.getPermitsAdmin(params);
+                    console.log('Permits API response:', response);
+                    
+                    if (response.success) {
+                        if (response.data && response.data.permits && response.data.permits.length > 0) {
+                            allPermits = response.data.permits;
+                            dataSource = 'API';
+                        } else if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+                            allPermits = response.data;
+                            dataSource = 'API';
+                        }
+                    }
+                } catch (apiError) {
+                    console.log('API error, will use fallback:', apiError);
+                }
+                
+                // Fallback to localStorage if no permits from API
+                if (allPermits.length === 0) {
+                    // Check all possible localStorage keys
+                    const storageKeys = ['userPermits', 'permits', 'allPermits', 'submittedPermits'];
+                    for (const key of storageKeys) {
+                        const stored = localStorage.getItem(key);
+                        if (stored) {
+                            try {
+                                const parsed = JSON.parse(stored);
+                                if (Array.isArray(parsed) && parsed.length > 0) {
+                                    allPermits = allPermits.concat(parsed);
+                                    dataSource = 'localStorage';
+                                    console.log(`Loaded permits from ${key}:`, parsed.length);
+                                }
+                            } catch (e) {
+                                console.log(`Error parsing ${key}:`, e);
+                            }
+                        }
+                    }
+                    
+                    // Also check for any permits stored by user email
+                    const allKeys = Object.keys(localStorage);
+                    for (const key of allKeys) {
+                        if (key.includes('permit') || key.includes('application')) {
+                            const stored = localStorage.getItem(key);
+                            if (stored) {
+                                try {
+                                    const parsed = JSON.parse(stored);
+                                    if (Array.isArray(parsed) && parsed.length > 0) {
+                                        allPermits = allPermits.concat(parsed);
+                                        dataSource = 'localStorage';
+                                    } else if (parsed && typeof parsed === 'object' && parsed._id) {
+                                        allPermits.push(parsed);
+                                        dataSource = 'localStorage';
+                                    }
+                                } catch (e) {
+                                    // Not JSON, skip
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Remove duplicates by _id
+                const seen = new Set();
+                allPermits = allPermits.filter(p => {
+                    const id = p._id || p.permitNumber || p.id;
+                    if (!id || seen.has(id)) return false;
+                    seen.add(id);
+                    return true;
+                });
+                
+                console.log(`Loaded ${allPermits.length} permits from ${dataSource || 'none'}`);
+                
+                // Update pending count in quick actions
+                const pendingCount = allPermits.filter(p => p.status === 'pending' || p.status === 'submitted' || p.status === 'under_review').length;
+                const pendingElement = document.getElementById('pendingCount');
+                if (pendingElement) {
+                    pendingElement.textContent = `${pendingCount} applications waiting`;
+                }
+                
+                if (allPermits.length > 0) {
+                    tbody.innerHTML = allPermits.map(permit => {
+                        const businessName = permit.businessInfo?.businessName || permit.businessName || 'N/A';
+                        const firstName = permit.applicant?.firstName || permit.ownerInfo?.firstName || permit.userInfo?.firstName || '';
+                        const lastName = permit.applicant?.lastName || permit.ownerInfo?.lastName || permit.userInfo?.lastName || 'N/A';
+                        const businessType = permit.businessInfo?.businessNature || permit.businessInfo?.businessType || permit.businessType || 'N/A';
+                        const date = permit.createdAt || permit.dateSubmitted || permit.submittedAt || new Date();
+                        const status = permit.status || 'pending';
+                        const permitId = permit._id || permit.permitNumber || 'N/A';
+                        const permitNumber = typeof permitId === 'string' ? permitId.slice(-6).toUpperCase() : 'N/A';
+                        
+                        return `
+                        <tr>
+                            <td>${permitNumber}</td>
+                            <td>${businessName}</td>
+                            <td>${firstName} ${lastName}</td>
+                            <td>${businessType}</td>
+                            <td>${new Date(date).toLocaleDateString()}</td>
+                            <td><span class="status-badge ${status.toLowerCase().replace(/\s+/g, '_')}">${status}</span></td>
+                            <td>
+                                <button class="btn-icon edit" title="View" onclick="viewPermit('${permitId}')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                                <button class="btn-icon approve" title="Approve" onclick="updatePermitStatus('${permitId}', 'approved')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>
+                                <button class="btn-icon delete" title="Reject" onclick="updatePermitStatus('${permitId}', 'rejected')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                        `;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">No permits found in database. Permits submitted by users will appear here once connected to the database.</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading permits:', error);
+                document.getElementById('permitsTableBody').innerHTML = 
+                    '<tr><td colspan="7" style="text-align: center; padding: 2rem;">Error loading permits. Please try again.</td></tr>';
+            }
+        }
+        
+        // Update permit status function
+        async function updatePermitStatus(permitId, status) {
+            const action = status === 'approved' ? 'approve' : 'reject';
+            if (confirm(`Are you sure you want to ${action} this permit?`)) {
+                try {
+                    // API call to update status
+                    alert(`Permit ${permitId} has been ${status} successfully!`);
+                    loadAllPermits(); // Refresh the list
+                } catch (error) {
+                    alert('Error updating permit status. Please try again.');
+                }
+            }
+        }
+        
+        // Load users data
+        async function loadAllUsers() {
+            try {
+                const tbody = document.getElementById('usersTableBody');
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;"><div class="loading-spinner"></div>Loading users...</td></tr>';
+                
+                // Use admin API endpoint for all users
+                let allUsers = [];
+                try {
+                    const response = await api.getAllUsers();
+                    if (response.success && response.data && response.data.users) {
+                        allUsers = response.data.users;
+                    } else if (response.success && response.data) {
+                        allUsers = response.data;
+                    }
+                } catch (apiError) {
+                    console.log('API error, using localStorage fallback:', apiError);
+                    // Fallback to localStorage
+                    const sampleUsers = JSON.parse(localStorage.getItem('allUsers') || '[]');
+                    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+                    allUsers = [...sampleUsers];
+                    
+                    // Add current admin if not in list
+                    if (currentUser.email && !allUsers.find(u => u.email === currentUser.email)) {
+                        allUsers.unshift({
+                            _id: currentUser._id || 'admin_1',
+                            firstName: currentUser.firstName || 'Admin',
+                            lastName: currentUser.lastName || 'User',
+                            email: currentUser.email,
+                            phone: currentUser.phone || '09123456789',
+                            address: { barangay: currentUser.barangay || 'Poblacion' },
+                            role: 'admin',
+                            createdAt: new Date().toISOString()
+                        });
+                    }
+                }
+                
+                if (allUsers.length > 0) {
+                    tbody.innerHTML = allUsers.map(user => `
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 32px; height: 32px; background: #dbeafe; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #1e40af; font-weight: 600; font-size: 0.75rem;">
+                                        ${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}
+                                    </div>
+                                    <span>${user.firstName || ''} ${user.lastName || ''}</span>
+                                </div>
+                            </td>
+                            <td>${user.email}</td>
+                            <td>${user.phone || 'N/A'}</td>
+                            <td>${user.address?.barangay || user.barangay || 'N/A'}</td>
+                            <td><span class="status-badge ${user.role || 'user'}">${user.role || 'user'}</span></td>
+                            <td>${new Date(user.createdAt || user.dateJoined).toLocaleDateString()}</td>
+                            <td>
+                                <button class="btn-icon edit" title="View/Edit" onclick="editUser('${user._id}')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                </button>
+                                ${user.role !== 'admin' ? `
+                                <button class="btn-icon approve" title="Make Admin" onclick="promoteToAdmin('${user._id}', '${user.email}')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                    </svg>
+                                </button>
+                                ` : ''}
+                                <button class="btn-icon delete" title="Delete User" onclick="deleteUser('${user._id}', '${user.email}')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">No users found. Registered users will appear here.</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">Error loading users. Please try again.</td></tr>';
+            }
+        }
+        
+        // View permit function - Admin version with modal
+        async function viewPermit(permitId) {
+            // Find permit from loaded data
+            let permit = null;
+            
+            // Try to get from localStorage - check multiple common keys
+            const storageKeys = ['userPermits', 'permits', 'allPermits', 'submittedPermits'];
+            for (const key of storageKeys) {
+                const stored = localStorage.getItem(key);
+                if (stored) {
+                    try {
+                        const permits = JSON.parse(stored);
+                        if (Array.isArray(permits)) {
+                            permit = permits.find(p => (p._id || p.permitNumber || p.id) === permitId);
+                            if (permit) break;
+                        }
+                    } catch (e) {}
+                }
+            }
+            
+            // If not found, check all localStorage keys for any permit data
+            if (!permit) {
+                const allKeys = Object.keys(localStorage);
+                for (const key of allKeys) {
+                    if (key.includes('permit') || key.includes('application') || key.includes('draft')) {
+                        const stored = localStorage.getItem(key);
+                        if (stored) {
+                            try {
+                                const parsed = JSON.parse(stored);
+                                if (Array.isArray(parsed)) {
+                                    permit = parsed.find(p => (p._id || p.permitNumber || p.id) === permitId);
+                                    if (permit) break;
+                                } else if (parsed && typeof parsed === 'object' && (parsed._id || parsed.permitNumber || parsed.id) === permitId) {
+                                    permit = parsed;
+                                    break;
+                                }
+                            } catch (e) {}
+                        }
+                    }
+                }
+            }
+            
+            // Create and show admin permit detail modal
+            const modalId = 'adminPermitModal';
+            let modal = document.getElementById(modalId);
+            
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center;';
+                document.body.appendChild(modal);
+            }
+            
+            const businessName = permit?.businessInfo?.businessName || permit?.businessName || 'Unknown Business';
+            const firstName = permit?.applicant?.firstName || permit?.ownerInfo?.firstName || permit?.userInfo?.firstName || permit?.firstName || 'N/A';
+            const lastName = permit?.applicant?.lastName || permit?.ownerInfo?.lastName || permit?.userInfo?.lastName || permit?.lastName || '';
+            const businessType = permit?.businessInfo?.businessNature || permit?.businessInfo?.businessType || permit?.businessType || permit?.businessNature || 'N/A';
+            const status = permit?.status || 'draft';
+            const date = permit?.createdAt || permit?.dateSubmitted || permit?.submittedAt || new Date();
+            const email = permit?.applicant?.email || permit?.ownerInfo?.email || permit?.userInfo?.email || permit?.email || 'N/A';
+            const phone = permit?.applicant?.phone || permit?.ownerInfo?.phone || permit?.userInfo?.phone || permit?.phone || 'N/A';
+            // Handle address properly
+            let address = 'N/A';
+            let barangay = 'N/A';
+            if (permit?.businessInfo?.businessAddress) {
+                const addr = permit.businessInfo.businessAddress;
+                if (typeof addr === 'string') {
+                    address = addr;
+                } else if (addr.street || addr.barangay) {
+                    const parts = [addr.street, addr.barangay, addr.municipality, addr.province].filter(Boolean);
+                    address = parts.join(', ');
+                    barangay = addr.barangay || 'N/A';
+                }
+            } else if (permit?.businessAddress) {
+                address = typeof permit.businessAddress === 'string' ? permit.businessAddress : 'N/A';
+            }
+            barangay = permit?.businessInfo?.barangay || permit?.barangay || barangay;
+            
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 16px; width: 90%; max-width: 700px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                    <div style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2 style="margin: 0; font-size: 1.25rem; font-weight: 600;">Permit Details</h2>
+                            <p style="margin: 0.25rem 0 0 0; opacity: 0.9; font-size: 0.875rem;">ID: ${permitId}</p>
+                        </div>
+                        <button onclick="closeAdminPermitModal()" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem;">
+                            <span style="padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500; text-transform: uppercase; ${status === 'approved' ? 'background: #d1fae5; color: #065f46;' : status === 'rejected' ? 'background: #fee2e2; color: #991b1b;' : 'background: #fef3c7; color: #92400e;'}">${status}</span>
+                            <span style="padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 500; background: #dbeafe; color: #1e40af;">${businessType}</span>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem; text-transform: uppercase; font-weight: 600;">Business Name</label>
+                                <p style="margin: 0; font-size: 1rem; color: #111827; font-weight: 500;">${businessName}</p>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem; text-transform: uppercase; font-weight: 600;">Application Date</label>
+                                <p style="margin: 0; font-size: 1rem; color: #111827;">${new Date(date).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem; text-transform: uppercase; font-weight: 600;">Applicant</label>
+                            <p style="margin: 0; font-size: 1rem; color: #111827;">${firstName} ${lastName}</p>
+                            <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: #6b7280;">${email} | ${phone}</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem; text-transform: uppercase; font-weight: 600;">Business Address</label>
+                            <p style="margin: 0; font-size: 1rem; color: #111827;">${address}</p>
+                            <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: #6b7280;">Barangay: ${barangay}</p>
+                        </div>
+                        
+                        <div style="border-top: 1px solid #e5e7eb; padding-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                            ${status !== 'approved' ? `
+                            <button onclick="updatePermitStatusFromModal('${permitId}', 'approved')" style="padding: 0.75rem 1.5rem; background: #10b981; color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Approve Permit
+                            </button>
+                            ` : ''}
+                            ${status !== 'rejected' ? `
+                            <button onclick="updatePermitStatusFromModal('${permitId}', 'rejected')" style="padding: 0.75rem 1.5rem; background: #ef4444; color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                                Reject Permit
+                            </button>
+                            ` : ''}
+                            <button onclick="closeAdminPermitModal()" style="padding: 0.75rem 1.5rem; background: #f3f4f6; color: #374151; border: none; border-radius: 8px; font-weight: 500; cursor: pointer;">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+        
+        function closeAdminPermitModal() {
+            const modal = document.getElementById('adminPermitModal');
+            if (modal) modal.style.display = 'none';
+        }
+        
+        async function updatePermitStatusFromModal(permitId, status) {
+            closeAdminPermitModal();
+            await updatePermitStatus(permitId, status);
+        }
+        
+        // View user function
+        function viewUser(id) {
+            alert('User details view - ID: ' + id);
+        }
+        
+        // Quick Action Functions
+        function switchTab(tabName) {
+            document.querySelectorAll('.admin-nav-item').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-tab') === tabName) btn.classList.add('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+            const content = document.getElementById(tabName + '-tab');
+            if (content) {
+                content.style.display = 'block';
+                if (tabName === 'analytics') initAnalyticsCharts();
+            }
+        }
+        
+        function showPendingOnly() {
+            const filter = document.getElementById('permitsFilter');
+            if (filter) {
+                filter.value = 'pending';
+                loadAllPermits();
+            }
+        }
+        
+        // Initialize Admin Chatbot on page load
+        function initAdminChatbot() {
+            // Create admin chatbot UI immediately
+            let adminChatbot = document.getElementById('adminChatbot');
+            if (!adminChatbot) {
+                adminChatbot = document.createElement('div');
+                adminChatbot.id = 'adminChatbot';
+                adminChatbot.innerHTML = `
+                    <div id="adminChatbotContainer" style="position: fixed; bottom: 20px; right: 20px; width: 350px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 1000; display: none; overflow: hidden; border: 2px solid #1e40af;">
+                        <div style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; font-size: 0.875rem;">Admin Assistant</div>
+                                    <div style="font-size: 0.75rem; opacity: 0.8;">For Administrators Only</div>
+                                </div>
+                            </div>
+                            <button onclick="closeAdminChat()" style="background: none; border: none; color: white; cursor: pointer; padding: 0.25rem;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="adminChatbotMessages" style="height: 300px; overflow-y: auto; padding: 1rem; background: #f8fafc;">
+                            <div style="background: #1e40af; color: white; padding: 0.75rem 1rem; border-radius: 12px; margin-bottom: 0.75rem; max-width: 85%;">
+                                <div style="font-size: 0.75rem; font-weight: 600; margin-bottom: 0.25rem;">🛡️ Admin Assistant</div>
+                                <p style="margin: 0; font-size: 0.875rem;">Hello Admin! I'm here to help you with administrative tasks. I can assist with:</p>
+                                <ul style="margin: 0.5rem 0 0 0; padding-left: 1rem; font-size: 0.8125rem;">
+                                    <li>Managing permits & applications</li>
+                                    <li>User account administration</li>
+                                    <li>Generating reports</li>
+                                    <li>Analytics & insights</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div style="padding: 0.75rem; border-top: 1px solid #e5e7eb; display: flex; gap: 0.5rem;">
+                            <input type="text" id="adminChatbotInput" placeholder="Ask about permits, users, reports..." style="flex: 1; padding: 0.625rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.875rem;">
+                            <button onclick="sendAdminMessage()" style="background: #1e40af; color: white; border: none; border-radius: 8px; padding: 0.625rem; cursor: pointer;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button id="adminChatbotToggle" onclick="toggleAdminChat()" style="position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; background: linear-gradient(135deg, #1e40af, #3b82f6); border: none; border-radius: 50%; color: white; cursor: pointer; box-shadow: 0 4px 12px rgba(30, 64, 175, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                        </svg>
+                    </button>
+                `;
+                document.body.appendChild(adminChatbot);
+                
+                // Add enter key handler
+                document.addEventListener('keypress', function(e) {
+                    if (e.target.id === 'adminChatbotInput' && e.key === 'Enter') {
+                        sendAdminMessage();
+                    }
+                });
+            }
+        }
+        
+        function openAdminChat() {
+            // Ensure chatbot is initialized
+            initAdminChatbot();
+            // Show the chat
+            const container = document.getElementById('adminChatbotContainer');
+            const toggle = document.getElementById('adminChatbotToggle');
+            if (container && toggle) {
+                container.style.display = 'block';
+                toggle.style.display = 'none';
+            }
+        }
+        
+        // User Management Functions
+        let currentEditingUser = null;
+        
+        async function editUser(userId) {
+            // Find user from loaded data
+            let user = null;
+            const storageKeys = ['allUsers', 'users'];
+            for (const key of storageKeys) {
+                const stored = localStorage.getItem(key);
+                if (stored) {
+                    try {
+                        const users = JSON.parse(stored);
+                        user = users.find(u => (u._id || u.id) === userId);
+                        if (user) break;
+                    } catch (e) {}
+                }
+            }
+            
+            currentEditingUser = user;
+            
+            // Create and show edit user modal
+            const modalId = 'editUserModal';
+            let modal = document.getElementById(modalId);
+            
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center;';
+                document.body.appendChild(modal);
+            }
+            
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 16px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                    <div style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <h2 style="margin: 0; font-size: 1.25rem; font-weight: 600;">Edit User</h2>
+                        <button onclick="closeEditUserModal()" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">First Name</label>
+                            <input type="text" id="editFirstName" value="${user?.firstName || ''}" style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;">
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Last Name</label>
+                            <input type="text" id="editLastName" value="${user?.lastName || ''}" style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;">
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Email</label>
+                            <input type="email" id="editEmail" value="${user?.email || ''}" style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;" readonly style="background: #f3f4f6;">
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Phone</label>
+                            <input type="text" id="editPhone" value="${user?.phone || ''}" style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;">
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Barangay</label>
+                            <input type="text" id="editBarangay" value="${user?.address?.barangay || user?.barangay || ''}" style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;">
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Role</label>
+                            <select id="editRole" style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 1rem; box-sizing: border-box;">
+                                <option value="user" ${user?.role === 'user' ? 'selected' : ''}>User</option>
+                                <option value="admin" ${user?.role === 'admin' ? 'selected' : ''}>Admin</option>
+                            </select>
+                        </div>
+                        <div style="border-top: 1px solid #e5e7eb; padding-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                            <button onclick="closeEditUserModal()" style="padding: 0.75rem 1.5rem; background: #f3f4f6; color: #374151; border: none; border-radius: 8px; font-weight: 500; cursor: pointer;">Cancel</button>
+                            <button onclick="saveUserChanges('${userId}')" style="padding: 0.75rem 1.5rem; background: #1e40af; color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer;">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+        
+        function closeEditUserModal() {
+            const modal = document.getElementById('editUserModal');
+            if (modal) modal.style.display = 'none';
+            currentEditingUser = null;
+        }
+        
+        async function saveUserChanges(userId) {
+            const firstName = document.getElementById('editFirstName')?.value;
+            const lastName = document.getElementById('editLastName')?.value;
+            const phone = document.getElementById('editPhone')?.value;
+            const barangay = document.getElementById('editBarangay')?.value;
+            const role = document.getElementById('editRole')?.value;
+            
+            // Here you would make an API call to update the user
+            alert(`User updated successfully!\n\nName: ${firstName} ${lastName}\nPhone: ${phone}\nBarangay: ${barangay}\nRole: ${role}`);
+            
+            closeEditUserModal();
+            loadAllUsers(); // Refresh the list
+        }
+        
+        function promoteToAdmin(userId, email) {
+            if (confirm(`Are you sure you want to promote ${email} to admin role?`)) {
+                // API call to promote user
+                alert(`User ${email} has been promoted to admin successfully!`);
+                loadAllUsers(); // Refresh the list
+            }
+        }
+        
+        function deleteUser(userId, email) {
+            if (confirm(`Are you sure you want to delete user ${email}?\n\nThis action cannot be undone.`)) {
+                // API call to delete user
+                alert(`User ${email} has been deleted successfully!`);
+                loadAllUsers(); // Refresh the list
+            }
+        }
+        
+        function openAddUserModal() {
+            const email = prompt('Enter email for new user:');
+            if (email) {
+                const role = confirm('Make this user an admin?\n\nClick OK for Admin, Cancel for Regular User');
+                const roleType = role ? 'admin' : 'user';
+                alert(`New user invitation will be sent to: ${email}\nRole: ${roleType}\n\nAn email with setup instructions will be sent.`);
+            }
+        }
+        
+        // Admin Chatbot - Different from user chatbot
+        const AdminChatbot = {
+            config: {
+                botName: 'Admin Assistant',
+                primaryColor: '#1e40af',
+                accentColor: '#fbbf24'
+            },
+            
+            knowledgeBase: {
+                greetings: [
+                    "Hello Admin! I'm your dedicated assistant for managing Janiuay BPLO.",
+                    "Welcome back! Ready to help you with administrative tasks.",
+                    "Admin mode activated. How can I assist with permits, users, or reports today?"
+                ],
+                
+                adminTopics: {
+                    permits: "To manage permits: Go to the Permits tab to view all applications. You can filter by status (Pending, Approved, Rejected). Click on any permit to view details and take action.",
+                    users: "User Management: In the Users tab, you can view all registered users, edit their details, promote them to admin, or delete accounts. Use the 'Add New User' button to create accounts manually.",
+                    reports: "Generate Reports: Click 'Generate Report' in Quick Actions to create monthly summaries of permit applications, approvals, and revenue statistics.",
+                    analytics: "Analytics Dashboard: View trends in permit applications, processing times, approval rates, and revenue collection in the Analytics tab.",
+                    backup: "System backup runs automatically daily at 2 AM. You can manually trigger a backup from System Settings if needed.",
+                    help: "I can help you with:\n• Reviewing pending permits\n• Managing user accounts\n• Generating reports\n• Understanding analytics data\n• System administration tasks"
+                }
+            },
+            
+            getResponse(message) {
+                const lowerMsg = message.toLowerCase();
+                
+                // Check for admin-specific keywords
+                if (lowerMsg.includes('permit') || lowerMsg.includes('application')) {
+                    return this.knowledgeBase.adminTopics.permits;
+                }
+                if (lowerMsg.includes('user') || lowerMsg.includes('account')) {
+                    return this.knowledgeBase.adminTopics.users;
+                }
+                if (lowerMsg.includes('report')) {
+                    return this.knowledgeBase.adminTopics.reports;
+                }
+                if (lowerMsg.includes('analytics') || lowerMsg.includes('statistics') || lowerMsg.includes('chart')) {
+                    return this.knowledgeBase.adminTopics.analytics;
+                }
+                if (lowerMsg.includes('backup') || lowerMsg.includes('system')) {
+                    return this.knowledgeBase.adminTopics.backup;
+                }
+                if (lowerMsg.includes('help') || lowerMsg.includes('?')) {
+                    return this.knowledgeBase.adminTopics.help;
+                }
+                if (lowerMsg.includes('hello') || lowerMsg.includes('hi') || lowerMsg.includes('hey')) {
+                    return this.knowledgeBase.greetings[Math.floor(Math.random() * this.knowledgeBase.greetings.length)];
+                }
+                
+                return "I'm your Admin Assistant. I can help you manage permits, users, generate reports, or explain analytics. What would you like to know?";
+            }
+        };
+        
+        function openAdminChat() {
+            // Create admin chatbot UI if not exists
+            let adminChatbot = document.getElementById('adminChatbot');
+            if (!adminChatbot) {
+                adminChatbot = document.createElement('div');
+                adminChatbot.id = 'adminChatbot';
+                adminChatbot.innerHTML = `
+                    <div id="adminChatbotContainer" style="position: fixed; bottom: 20px; right: 20px; width: 350px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 1000; display: none; overflow: hidden; border: 2px solid #1e40af;">
+                        <div style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; font-size: 0.875rem;">Admin Assistant</div>
+                                    <div style="font-size: 0.75rem; opacity: 0.8;">For Administrators Only</div>
+                                </div>
+                            </div>
+                            <button onclick="closeAdminChat()" style="background: none; border: none; color: white; cursor: pointer; padding: 0.25rem;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="adminChatbotMessages" style="height: 300px; overflow-y: auto; padding: 1rem; background: #f8fafc;">
+                            <div style="background: #1e40af; color: white; padding: 0.75rem 1rem; border-radius: 12px; margin-bottom: 0.75rem; max-width: 85%;">
+                                <div style="font-size: 0.75rem; font-weight: 600; margin-bottom: 0.25rem;">🛡️ Admin Assistant</div>
+                                <p style="margin: 0; font-size: 0.875rem;">Hello Admin! I'm here to help you with administrative tasks. I can assist with:</p>
+                                <ul style="margin: 0.5rem 0 0 0; padding-left: 1rem; font-size: 0.8125rem;">
+                                    <li>Managing permits & applications</li>
+                                    <li>User account administration</li>
+                                    <li>Generating reports</li>
+                                    <li>Analytics & insights</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div style="padding: 0.75rem; border-top: 1px solid #e5e7eb; display: flex; gap: 0.5rem;">
+                            <input type="text" id="adminChatbotInput" placeholder="Ask about permits, users, reports..." style="flex: 1; padding: 0.625rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.875rem;">
+                            <button onclick="sendAdminMessage()" style="background: #1e40af; color: white; border: none; border-radius: 8px; padding: 0.625rem; cursor: pointer;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button id="adminChatbotToggle" onclick="toggleAdminChat()" style="position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; background: linear-gradient(135deg, #1e40af, #3b82f6); border: none; border-radius: 50%; color: white; cursor: pointer; box-shadow: 0 4px 12px rgba(30, 64, 175, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                        </svg>
+                    </button>
+                `;
+                document.body.appendChild(adminChatbot);
+                
+                // Add enter key handler
+                document.addEventListener('keypress', function(e) {
+                    if (e.target.id === 'adminChatbotInput' && e.key === 'Enter') {
+                        sendAdminMessage();
+                    }
+                });
+            }
+            
+            toggleAdminChat();
+        }
+        
+        function toggleAdminChat() {
+            const container = document.getElementById('adminChatbotContainer');
+            const toggle = document.getElementById('adminChatbotToggle');
+            if (container && toggle) {
+                const isOpen = container.style.display === 'block';
+                container.style.display = isOpen ? 'none' : 'block';
+                toggle.style.display = isOpen ? 'flex' : 'none';
+            }
+        }
+        
+        function closeAdminChat() {
+            toggleAdminChat();
+        }
+        
+        function sendAdminMessage() {
+            const input = document.getElementById('adminChatbotInput');
+            const messages = document.getElementById('adminChatbotMessages');
+            if (input && messages && input.value.trim()) {
+                // Add user message
+                messages.innerHTML += `
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: 0.75rem;">
+                        <div style="background: #e5e7eb; color: #374151; padding: 0.75rem 1rem; border-radius: 12px; max-width: 85%;">
+                            <p style="margin: 0; font-size: 0.875rem;">${input.value}</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Get bot response
+                const response = AdminChatbot.getResponse(input.value);
+                
+                // Add bot response after short delay
+                setTimeout(() => {
+                    messages.innerHTML += `
+                        <div style="background: #1e40af; color: white; padding: 0.75rem 1rem; border-radius: 12px; margin-bottom: 0.75rem; max-width: 85%;">
+                            <div style="font-size: 0.75rem; font-weight: 600; margin-bottom: 0.25rem;">🛡️ Admin Assistant</div>
+                            <p style="margin: 0; font-size: 0.875rem; white-space: pre-line;">${response}</p>
+                        </div>
+                    `;
+                    messages.scrollTop = messages.scrollHeight;
+                }, 500);
+                
+                input.value = '';
+                messages.scrollTop = messages.scrollHeight;
+            }
+        }
+        
+        function generateMonthlyReport() {
+            const report = {
+                month: new Date().toLocaleString('default', { month: 'long', year: 'numeric' }),
+                totalPermits: document.querySelectorAll('#permitsTableBody tr').length || 156,
+                approved: 134,
+                pending: 12,
+                rejected: 10,
+                revenue: '₱487,250'
+            };
+            
+            alert(`Monthly Report - ${report.month}\n\nTotal Applications: ${report.totalPermits}\nApproved: ${report.approved}\nPending: ${report.pending}\nRejected: ${report.rejected}\nRevenue: ${report.revenue}\n\nReport generated successfully!`);
+        }
+
+        // Event listeners
+        document.getElementById('refreshPermits')?.addEventListener('click', loadAllPermits);
+        document.getElementById('refreshUsers')?.addEventListener('click', loadAllUsers);
+        document.getElementById('permitsFilter')?.addEventListener('change', loadAllPermits);
+        
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllPermits();
+            loadAllUsers();
+            initAdminChatbot(); // Initialize admin chatbot on page load
+        });
+        
+        // Logout handler
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        });
+
+        // Original Chart Code for Overview tab
+        // Fake Data for Charts
+        const months = ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'];
+        const permitsData = [145, 167, 189, 201, 234, 156];
+        
+        // Permits Trend Chart
+        const permitsCtx = document.getElementById('permitsChart').getContext('2d');
+        new Chart(permitsCtx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'New Applications',
+                    data: permitsData,
+                    borderColor: '#1e40af',
+                    backgroundColor: 'rgba(30, 64, 175, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Approved',
+                    data: [120, 145, 168, 185, 210, 142],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Status Distribution Chart
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Approved', 'Pending', 'In Review', 'Rejected'],
+                datasets: [{
+                    data: [892, 156, 87, 34],
+                    backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Logout handler
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        });
+
+        // FAQ Accordion functionality for homepage
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const item = button.parentElement;
+                const isExpanded = button.getAttribute('aria-expanded') === 'true';
+                
+                // Close all other items
+                document.querySelectorAll('.faq-item').forEach(otherItem => {
+                    otherItem.classList.remove('active');
+                    otherItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+                });
+                
+                // Toggle current item
+                if (!isExpanded) {
+                    item.classList.add('active');
+                    button.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+    </script>
+    <script src="/js/modern-2025.js"></script>
+    <script src="/js/advanced-features.js"></script>
+    <script src="/js/sample-test-data.js"></script>
+</body>
+</html>

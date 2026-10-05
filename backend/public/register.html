@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Janiuay Business Permit System</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="alternate icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="/css/modern-ui.css">
+    <link rel="stylesheet" href="/css/enhanced-design.css">
+    <link rel="stylesheet" href="/css/modern-2025.css">
+    <link rel="stylesheet" href="/css/advanced-features.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e3a8f 0%, #312e81 50%, #1e1b4b 100%);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .auth-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(251, 191, 36, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.3) 0%, transparent 50%);
+        }
+        
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 520px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            z-index: 1;
+            animation: authSlideUp 0.6s ease-out;
+        }
+        
+        @keyframes authSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 10px 30px rgba(30, 64, 175, 0.3);
+            overflow: hidden;
+        }
+        
+        .auth-logo-icon img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+        
+        .auth-logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e40af;
+            margin: 0;
+        }
+        
+        .auth-logo p {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin: 0.25rem 0 0;
+        }
+        
+        .form-floating {
+            position: relative;
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-floating input,
+        .form-floating select {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        .form-floating label {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            padding: 0 0.5rem;
+            color: #6b7280;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .form-floating input:focus,
+        .form-floating input:not(:placeholder-shown),
+        .form-floating select:focus {
+            border-color: #1e40af;
+            box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
+        }
+        
+        .form-floating input:focus ~ label,
+        .form-floating input:not(:placeholder-shown) ~ label,
+        .form-floating select:focus ~ label,
+        .form-floating select:not([value=""]) ~ label {
+            top: 0;
+            font-size: 0.75rem;
+            color: #1e40af;
+            font-weight: 600;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        @media (max-width: 480px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .btn-auth {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(30, 64, 175, 0.4);
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .form-footer a {
+            color: #1e40af;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .form-hint {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        
+        /* Phone and password field specific styling for proper text alignment */
+        .form-floating input[type="tel"],
+        .form-floating input[type="password"] {
+            padding-top: 1.25rem;
+            padding-bottom: 0.75rem;
+        }
+        
+        .form-floating input[type="tel"]:not(:placeholder-shown) ~ label,
+        .form-floating input[type="tel"]:focus ~ label,
+        .form-floating input[type="password"]:not(:placeholder-shown) ~ label,
+        .form-floating input[type="password"]:focus ~ label {
+            top: 0;
+            font-size: 0.75rem;
+            color: #1e40af;
+            font-weight: 600;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon">
+                    <img src="/images/favicon.svg" alt="Janiuay BPLO">
+                </div>
+                <h1>Janiuay BPLO</h1>
+                <p>Create your account</p>
+            </div>
+            
+            <form id="registerForm">
+                <div class="form-row">
+                    <div class="form-floating">
+                        <input type="text" id="firstName" placeholder=" " required>
+                        <label for="firstName">First Name</label>
+                    </div>
+                    <div class="form-floating">
+                        <input type="text" id="lastName" placeholder=" " required>
+                        <label for="lastName">Last Name</label>
+                    </div>
+                </div>
+                
+                <div class="form-floating">
+                    <input type="email" id="email" placeholder=" " required>
+                    <label for="email">Email Address</label>
+                </div>
+                
+                <div class="form-floating phone-field">
+                    <input type="tel" id="phone" placeholder=" " maxlength="11" required pattern="^09\d{9}$">
+                    <label for="phone">Phone Number</label>
+                    <p class="form-hint">11-digit Philippine mobile (e.g., 09123456789)</p>
+                </div>
+                
+                <div class="form-floating">
+                    <select id="barangay" required>
+                        <option value="">Select Barangay</option>
+                        <option value="Abangay">Abangay</option>
+                        <option value="Agcarope">Agcarope</option>
+                        <option value="Aglobong">Aglobong</option>
+                        <option value="Aguingay">Aguingay</option>
+                        <option value="Anhawan">Anhawan</option>
+                        <option value="Aquino Nobleza East">Aquino Nobleza East</option>
+                        <option value="Aquino Nobleza West">Aquino Nobleza West</option>
+                        <option value="Atimonan">Atimonan</option>
+                        <option value="Balanac">Balanac</option>
+                        <option value="Barasalon">Barasalon</option>
+                        <option value="Bongol">Bongol</option>
+                        <option value="Cabantog">Cabantog</option>
+                        <option value="Calmay">Calmay</option>
+                        <option value="Canawili">Canawili</option>
+                        <option value="Canawillian">Canawillian</option>
+                        <option value="Capt. A. Tirador">Capt. A. Tirador</option>
+                        <option value="Caranas">Caranas</option>
+                        <option value="Caraudan">Caraudan</option>
+                        <option value="Carigangan">Carigangan</option>
+                        <option value="Concepcion Poblacion">Concepcion Poblacion</option>
+                        <option value="Crispin Salazar North">Crispin Salazar North</option>
+                        <option value="Crispin Salazar South">Crispin Salazar South</option>
+                        <option value="Cunsad">Cunsad</option>
+                        <option value="Dabong">Dabong</option>
+                        <option value="Damires">Damires</option>
+                        <option value="Damo-ong">Damo-ong</option>
+                        <option value="Danao">Danao</option>
+                        <option value="Don T. Lutero Center">Don T. Lutero Center</option>
+                        <option value="Don T. Lutero East">Don T. Lutero East</option>
+                        <option value="Don T. Lutero West Poblacion">Don T. Lutero West Poblacion</option>
+                        <option value="Gines">Gines</option>
+                        <option value="Golgota">Golgota</option>
+                        <option value="Guadalupe">Guadalupe</option>
+                        <option value="Jibolo">Jibolo</option>
+                        <option value="Kuyot">Kuyot</option>
+                        <option value="Locsin">Locsin</option>
+                        <option value="Madong">Madong</option>
+                        <option value="Manacabac">Manacabac</option>
+                        <option value="Mangil">Mangil</option>
+                        <option value="Matag-ub">Matag-ub</option>
+                        <option value="Monte-Magapa">Monte-Magapa</option>
+                        <option value="Pangilihan">Pangilihan</option>
+                        <option value="Panuran">Panuran</option>
+                        <option value="Pararinga">Pararinga</option>
+                        <option value="Patong-patong">Patong-patong</option>
+                        <option value="Quipot">Quipot</option>
+                        <option value="R. Armada">R. Armada</option>
+                        <option value="S. M. Villa">S. M. Villa</option>
+                        <option value="San Julian">San Julian</option>
+                        <option value="San Pedro">San Pedro</option>
+                        <option value="Santa Rita">Santa Rita</option>
+                        <option value="Santo Tomas">Santo Tomas</option>
+                        <option value="Sarawag">Sarawag</option>
+                        <option value="Tambal">Tambal</option>
+                        <option value="Tamu-an">Tamu-an</option>
+                        <option value="Tiringanan">Tiringanan</option>
+                        <option value="Tolarucan">Tolarucan</option>
+                        <option value="Tuburan">Tuburan</option>
+                        <option value="Ubian">Ubian</option>
+                        <option value="Yabon">Yabon</option>
+                    </select>
+                    <label for="barangay">Barangay</label>
+                </div>
+                
+                <div class="form-floating">
+                    <input type="password" id="password" placeholder=" " required minlength="8">
+                    <label for="password">Password</label>
+                    <p class="form-hint">Min 8 chars, with uppercase, lowercase, number, and special character (!@#$%^&*)</p>
+                </div>
+                
+                <button type="submit" class="btn-auth">
+                    Create Account
+                </button>
+            </form>
+            
+            <div class="form-footer">
+                <p>Already have an account? <a href="/login.html">Sign In</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/utils.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    
+    <script>
+        // Register form handler
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+            
+            try {
+                const userData = {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    password: document.getElementById('password').value,
+                    address: {
+                        barangay: document.getElementById('barangay').value,
+                        municipality: 'Janiuay',
+                        province: 'Iloilo'
+                    }
+                };
+                
+                const response = await auth.register(userData);
+                
+                if (response.success) {
+                    ui.toast.success('Registration successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 1500);
+                } else {
+                    // Show specific validation errors
+                    let errorMsg = response.message || 'Registration failed';
+                    console.log('Full response:', response);
+                    if (response.errors && Array.isArray(response.errors) && response.errors.length > 0) {
+                        errorMsg = response.errors.map(e => e.msg || e.message || JSON.stringify(e)).join(', ');
+                    } else if (response.error) {
+                        errorMsg = response.error;
+                    }
+                    ui.toast.error(errorMsg);
+                    console.error('Registration errors:', response.errors);
+                }
+            } catch (error) {
+                console.error('Full error:', error);
+                console.error('Error data:', error.data);
+                
+                let errorMsg = error.message || 'An error occurred';
+                
+                // Check if we have validation errors from the backend
+                if (error.data && error.data.errors && error.data.errors.length > 0) {
+                    errorMsg = error.data.errors.map(e => e.msg || e.message).join(', ');
+                } else if (error.data && error.data.message) {
+                    errorMsg = error.data.message;
+                }
+                
+                ui.toast.error(errorMsg);
+            } finally {
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+    <script src="/js/modern-2025.js"></script>
+    <script src="/js/advanced-features.js"></script>
+    <script src="/js/chatbot-2025.js"></script>
+</body>
+</html>

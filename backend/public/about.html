@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Janiuay Business Permit System</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container nav-container">
+                <a href="/" class="logo">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #1e40af, #3b82f6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">J</div>
+                    <div class="logo-text">
+                        <span class="logo-title">Municipality of Janiuay</span>
+                        <span class="logo-subtitle">Business Permit & Licensing Office</span>
+                    </div>
+                </a>
+                <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="/" class="nav-link">Home</a></li>
+                    <li><a href="/about.html" class="nav-link active">About</a></li>
+                    <li><a href="/contact.html" class="nav-link">Contact</a></li>
+                    <li><a href="/login.html" class="nav-link" id="loginLink">Login</a></li>
+                    <li><a href="/register.html" class="btn btn-primary" id="registerLink">Register</a></li>
+                    <li class="user-menu hidden" id="userMenu">
+                        <a href="/dashboard.html" class="nav-link">My Permits</a>
+                        <button class="btn btn-outline" id="logoutBtn">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- About Content -->
+    <main class="dashboard" style="padding-top: 6rem;">
+        <div class="container">
+            <div class="main-content" style="margin-bottom: 2rem;">
+                <h1 style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 1rem;">About Janiuay BPLO</h1>
+                <p style="color: var(--gray-600); font-size: 1.125rem; line-height: 1.7;">
+                    The Business Permit and Licensing Office (BPLO) of the Municipality of Janiuay is dedicated to providing efficient, transparent, and business-friendly services to entrepreneurs and business owners in our community.
+                </p>
+            </div>
+            
+            <!-- Mission & Vision -->
+            <div class="stories-grid" style="margin-bottom: 2rem;">
+                <div class="story-card">
+                    <div class="story-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 6v6l4 2"></path>
+                        </svg>
+                    </div>
+                    <h3 class="story-title">Our Mission</h3>
+                    <p class="story-text">To streamline business permit processing through digital innovation, ensuring fast, transparent, and hassle-free services that promote economic growth and support local entrepreneurship in Janiuay.</p>
+                </div>
+                <div class="story-card">
+                    <div class="story-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </div>
+                    <h3 class="story-title">Our Vision</h3>
+                    <p class="story-text">To become a model LGU business licensing office in the Philippines, recognized for excellence in public service, innovation, and support for MSMEs and large enterprises alike.</p>
+                </div>
+                <div class="story-card">
+                    <div class="story-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="story-title">Our Commitment</h3>
+                    <p class="story-text">We are committed to maintaining the highest standards of integrity, efficiency, and customer service while continuously improving our processes to better serve the business community of Janiuay.</p>
+                </div>
+            </div>
+            
+            <!-- Services -->
+            <div class="main-content" style="margin-bottom: 2rem;">
+                <h2 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 1.5rem;">Our Services</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3>New Business Permit</h3>
+                        <p>Application and issuance of Mayor's Permit for new businesses operating in Janiuay.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Renewal</h3>
+                        <p>Annual renewal of business permits with streamlined document requirements.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Amendments</h3>
+                        <p>Updates to business information such as address, ownership, or business activity changes.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Consultation</h3>
+                        <p>Free consultation on business requirements, zoning, and compliance matters.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Barangays -->
+            <div class="main-content">
+                <h2 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 1rem;">Serving All 60 Barangays</h2>
+                <p style="color: var(--gray-600); margin-bottom: 1.5rem;">Janiuay has 60 barangays under its jurisdiction. Visit your local Barangay Hall for business permit assistance:</p>
+                
+                <style>
+                    .barangays-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+                    .barangay-card { background: white; border: 1px solid var(--gray-200); border-radius: 12px; padding: 1rem; transition: all 0.2s; }
+                    .barangay-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: var(--primary); }
+                    .barangay-card h4 { font-weight: 600; color: var(--primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+                    .barangay-card p { font-size: 0.875rem; color: var(--gray-600); margin: 0; }
+                    .barangay-card .contact { font-size: 0.75rem; color: var(--gray-500); margin-top: 0.5rem; }
+                </style>
+                
+                <div class="barangays-grid">
+                    <div class="barangay-card"><h4>📍 Abangay</h4><p>Barangay Hall, Abangay<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Agcarope</h4><p>Barangay Hall, Agcarope<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Aglobong</h4><p>Barangay Hall, Aglobong<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Aguingay</h4><p>Barangay Hall, Aguingay<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Anhawan</h4><p>Barangay Hall, Anhawan<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Atimonan</h4><p>Barangay Hall, Atimonan<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Balanac</h4><p>Barangay Hall, Balanac<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Barasalon</h4><p>Barangay Hall, Barasalon<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Bongol</h4><p>Barangay Hall, Bongol<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Cabantog</h4><p>Barangay Hall, Cabantog<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Calmay</h4><p>Barangay Hall, Calmay<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Canawili</h4><p>Barangay Hall, Canawili<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Canawillian</h4><p>Barangay Hall, Canawillian<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Caranas</h4><p>Barangay Hall, Caranas<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Caraudan</h4><p>Barangay Hall, Caraudan<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Carigangan</h4><p>Barangay Hall, Carigangan<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Cunsad</h4><p>Barangay Hall, Cunsad<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Dabong</h4><p>Barangay Hall, Dabong<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Damires</h4><p>Barangay Hall, Damires<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Damo-ong</h4><p>Barangay Hall, Damo-ong<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Danao</h4><p>Barangay Hall, Danao<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Gines</h4><p>Barangay Hall, Gines<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Guadalupe</h4><p>Barangay Hall, Guadalupe<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Jibolo</h4><p>Barangay Hall, Jibolo<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Kuyot</h4><p>Barangay Hall, Kuyot<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Madong</h4><p>Barangay Hall, Madong<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Manacabac</h4><p>Barangay Hall, Manacabac<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Mangil</h4><p>Barangay Hall, Mangil<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Matag-ub</h4><p>Barangay Hall, Matag-ub<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Monte-Magapa</h4><p>Barangay Hall, Monte-Magapa<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Pangilihan</h4><p>Barangay Hall, Pangilihan<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Panuran</h4><p>Barangay Hall, Panuran<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Pararinga</h4><p>Barangay Hall, Pararinga<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Patong-patong</h4><p>Barangay Hall, Patong-patong<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Quipot</h4><p>Barangay Hall, Quipot<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Santo Tomas</h4><p>Barangay Hall, Santo Tomas<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Sarawag</h4><p>Barangay Hall, Sarawag<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Tambal</h4><p>Barangay Hall, Tambal<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Tamu-an</h4><p>Barangay Hall, Tamu-an<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Tiringanan</h4><p>Barangay Hall, Tiringanan<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Tolarucan</h4><p>Barangay Hall, Tolarucan<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Tuburan</h4><p>Barangay Hall, Tuburan<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Ubian</h4><p>Barangay Hall, Ubian<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Yabon</h4><p>Barangay Hall, Yabon<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Aquino Nobleza East</h4><p>Barangay Hall, Aquino Nobleza East (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Aquino Nobleza West</h4><p>Barangay Hall, Aquino Nobleza West (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 R. Armada</h4><p>Barangay Hall, R. Armada (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Concepcion Pob.</h4><p>Barangay Hall, Concepcion Pob. (D.G. Abordo)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Golgota</h4><p>Barangay Hall, Golgota (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Locsin</h4><p>Barangay Hall, Locsin (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Don T. Lutero Center</h4><p>Barangay Hall, Don T. Lutero Center (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Don T. Lutero East</h4><p>Barangay Hall, Don T. Lutero East (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Don T. Lutero West</h4><p>Barangay Hall, Don T. Lutero West (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Crispin Salazar North</h4><p>Barangay Hall, Crispin Salazar North (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Crispin Salazar South</h4><p>Barangay Hall, Crispin Salazar South (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 San Julian</h4><p>Barangay Hall, San Julian (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 San Pedro</h4><p>Barangay Hall, San Pedro (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Santa Rita</h4><p>Barangay Hall, Santa Rita (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 Capt. A. Tirador</h4><p>Barangay Hall, Capt. A. Tirador (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                    <div class="barangay-card"><h4>📍 S. M. Villa</h4><p>Barangay Hall, S. M. Villa (Pob.)<br>Janiuay, Iloilo 5034</p></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>Municipality of Janiuay</h3>
+                    <p>Business Permit & Licensing Office</p>
+                    <p>Municipal Hall, Janiuay, Iloilo 5034</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                        <li><a href="/login.html">Login</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact</h4>
+                    <p>Phone: <a href="tel:09811568676">0981-156-8676</a></p>
+                    <p>Email: <a href="mailto:bplo.janiuay@gmail.com">bplo.janiuay@gmail.com</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Municipality of Janiuay. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot Widget -->
+    <div class="chatbot-widget" id="chatbotWidget">
+        <button class="chatbot-toggle" id="chatbotToggle" aria-label="Open chat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+        </button>
+        <div class="chatbot-container hidden" id="chatbotContainer">
+            <div class="chatbot-header">
+                <h4>Janiuay BPLO Assistant</h4>
+                <button class="chatbot-close" id="chatbotClose" aria-label="Close chat">&times;</button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot-message">
+                    <p>Hello! I'm your Janiuay BPLO Assistant. How can I help you with your business permit today?</p>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Type your question..." autocomplete="off">
+                <button id="chatbotSend" aria-label="Send message">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/utils.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/chatbot.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <!-- Robot Blue Gradient -->
+    <linearGradient id="robotBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+    <!-- Metallic Silver -->
+    <linearGradient id="metal" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e5e7eb;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#9ca3af;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6b7280;stop-opacity:1" />
+    </linearGradient>
+    <!-- LED Glow -->
+    <radialGradient id="ledGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </radialGradient>
+    <!-- Soft Shadow -->
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="3" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge> 
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="50" cy="50" r="45" fill="url(#robotBlue)" filter="url(#softShadow)"/>
+  
+  <!-- Robot Head Shape -->
+  <rect x="25" y="30" width="50" height="40" rx="12" ry="12" fill="url(#metal)"/>
+  
+  <!-- Robot Ears/Antenna -->
+  <rect x="18" y="42" width="7" height="16" rx="3" fill="#6b7280"/>
+  <rect x="75" y="42" width="7" height="16" rx="3" fill="#6b7280"/>
+  
+  <!-- Antenna -->
+  <rect x="47" y="20" width="6" height="12" rx="1" fill="#6b7280"/>
+  <circle cx="50" cy="17" r="5" fill="#10b981"/>
+  
+  <!-- Face Screen -->
+  <rect x="30" y="38" width="40" height="26" rx="8" fill="#1f2937"/>
+  
+  <!-- LED Eyes -->
+  <circle cx="38" cy="48" r="5" fill="url(#ledGlow)"/>
+  <circle cx="62" cy="48" r="5" fill="url(#ledGlow)"/>
+  
+  <!-- Eye Highlights -->
+  <circle cx="39.5" cy="46.5" r="1.5" fill="#ffffff" opacity="0.8"/>
+  <circle cx="63.5" cy="46.5" r="1.5" fill="#ffffff" opacity="0.8"/>
+  
+  <!-- Smile/Mouth -->
+  <path d="M40 58 Q50 62 60 58" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/>
+  
+  <!-- Neck -->
+  <rect x="42" y="70" width="16" height="6" rx="2" fill="#6b7280"/>
+  
+  <!-- Shoulders -->
+  <path d="M25 76 Q25 72 30 72 L70 72 Q75 72 75 76 L75 80 Q75 84 70 84 L30 84 Q25 84 25 80 Z" fill="#4b5563"/>
+</svg>

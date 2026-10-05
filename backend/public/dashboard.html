@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Janiuay Business Permit System</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="alternate icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="/css/modern-ui.css">
+    <link rel="stylesheet" href="/css/user-dashboard.css">
+    <link rel="stylesheet" href="/css/enhanced-design.css">
+    <link rel="stylesheet" href="/css/modern-2025.css">
+    <link rel="stylesheet" href="/css/advanced-features.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container nav-container">
+                <a href="/" class="logo">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <img src="/images/favicon.svg" alt="Janiuay BPLO" style="width: 40px; height: 40px;">
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-title">Janiuay BPLO</span>
+                        <span class="logo-subtitle">Online Permit System</span>
+                    </div>
+                </a>
+                <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="/dashboard.html" class="nav-link active">My Permits</a></li>
+                    <li><a href="/profile.html" class="nav-link">Profile</a></li>
+                    <li><a href="/contact.html" class="nav-link">Contact</a></li>
+                    <li id="adminNavLink" style="display: none;"><a href="/admin-demo.html" class="nav-link">Admin</a></li>
+                    <li class="user-menu" id="userMenu">
+                        <span id="userName" style="font-size: 0.875rem; color: var(--gray-600);"></span>
+                        <button class="btn btn-outline" id="logoutBtn">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <div class="welcome-content">
+                <div class="welcome-badge">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                    BPLO Portal
+                </div>
+                <h1 class="welcome-title">Welcome back, <span id="welcomeName">User</span>!</h1>
+                <p class="welcome-subtitle">Track your permits and manage your applications</p>
+            </div>
+        </div>
+        
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="quick-stat-card">
+                <div class="quick-stat-icon blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                </div>
+                <div class="quick-stat-content">
+                    <h3 id="totalPermits">0</h3>
+                    <p>Total Applications</p>
+                </div>
+            </div>
+            <div class="quick-stat-card">
+                <div class="quick-stat-icon yellow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="quick-stat-content">
+                    <h3 id="pendingPermits">0</h3>
+                    <p>Pending Review</p>
+                </div>
+            </div>
+            <div class="quick-stat-card">
+                <div class="quick-stat-icon green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <div class="quick-stat-content">
+                    <h3 id="approvedPermits">0</h3>
+                    <p>Approved</p>
+                </div>
+            </div>
+            <div class="quick-stat-card">
+                <div class="quick-stat-icon red">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                </div>
+                <div class="quick-stat-content">
+                    <h3 id="rejectedPermits">0</h3>
+                    <p>Rejected</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Main Content -->
+            <div class="main-content-area">
+                <!-- CTA Card -->
+                <div class="dashboard-card">
+                    <a href="/permit-application.html" class="btn-cta">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Apply for New Business Permit
+                    </a>
+                </div>
+                
+                <!-- Recent Applications -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Applications</h3>
+                        <a href="/permits.html" class="card-action">View All</a>
+                    </div>
+                    <div id="recentPermits">
+                        <!-- Permit cards will be inserted here -->
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+                                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/>
+                                </svg>
+                            </div>
+                            <h3>No applications yet</h3>
+                            <p>Start by applying for your first business permit</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Document Checklist -->
+                <div class="sidebar-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Document Checklist</h3>
+                    </div>
+                    <div id="documentChecklist">
+                        <div class="checklist-item">
+                            <div class="checklist-checkbox" onclick="this.classList.toggle('checked')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="display:none">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                            <div class="checklist-text">
+                                <p>Zoning Clearance</p>
+                            </div>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-checkbox" onclick="this.classList.toggle('checked')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="display:none">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                            <div class="checklist-text">
+                                <p>DTI Registration</p>
+                            </div>
+                        </div>
+                        <div class="checklist-item">
+                            <div class="checklist-checkbox" onclick="this.classList.toggle('checked')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="display:none">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                            <div class="checklist-text">
+                                <p>Barangay Clearance</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <div class="sidebar-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Activity</h3>
+                    </div>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                </svg>
+                            </div>
+                            <div class="activity-content">
+                                <p>Application submitted</p>
+                                <span class="activity-time">2 hours ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                </svg>
+                            </div>
+                            <div class="activity-content">
+                                <p>Account created</p>
+                                <span class="activity-time">1 day ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Business Permit Guide -->
+                <div class="sidebar-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Business Permit Guide</h3>
+                    </div>
+                    <div class="guide-content" style="padding: 0 1rem 1rem;">
+                        <div class="guide-section" style="margin-bottom: 1rem;">
+                            <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Required Documents</h4>
+                            <ul style="font-size: 0.8rem; color: var(--gray-600); padding-left: 1.25rem; margin: 0;">
+                                <li>DTI/SEC/CDA Registration</li>
+                                <li>Barangay Business Clearance</li>
+                                <li>Community Tax Certificate (Cedula)</li>
+                                <li>Contract of Lease or Land Title</li>
+                                <li>Fire Safety Inspection Permit</li>
+                                <li>Sanitary Permit</li>
+                                <li>Zoning Clearance</li>
+                            </ul>
+                        </div>
+                        <div class="guide-section">
+                            <h4 style="font-size: 0.875rem; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Processing Steps</h4>
+                            <ol style="font-size: 0.8rem; color: var(--gray-600); padding-left: 1.25rem; margin: 0;">
+                                <li>Submit application online</li>
+                                <li>Upload required documents</li>
+                                <li>Pay assessment fees</li>
+                                <li>Undergo inspections (if required)</li>
+                                <li>Receive Mayor's Permit</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Info -->
+                <div class="sidebar-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Need Help?</h3>
+                    </div>
+                    <div class="contact-info" style="padding: 0 1rem 1rem; font-size: 0.85rem; color: var(--gray-600);">
+                        <p style="margin-bottom: 0.75rem;">Contact Janiuay BPLO for assistance:</p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Email:</strong> bplo@janiuay.gov.ph</p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Phone:</strong> (033) 123-4567</p>
+                        <p><strong>Office Hours:</strong> Mon-Fri, 8:00 AM - 5:00 PM</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Municipality of Janiuay. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/utils.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    
+    <script>
+        // Check authentication
+        if (!auth.isAuthenticated()) {
+            window.location.href = '/login.html';
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Setup logout
+            document.getElementById('logoutBtn').addEventListener('click', () => auth.logout());
+            
+            // Load user data
+            const user = auth.getUser();
+            if (user) {
+                document.getElementById('welcomeName').textContent = user.firstName || 'User';
+                document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
+                
+                // Show admin link if user is admin
+                if (auth.isAdmin()) {
+                    document.getElementById('adminNavLink').style.display = 'block';
+                }
+            }
+            
+            // Initialize UI
+            ui.init();
+            
+            // Load permits
+            await loadPermits();
+        });
+        
+        async function loadPermits() {
+            try {
+                const response = await api.getPermits();
+                
+                if (response.success) {
+                    // Handle both response structures: direct array or nested in data.permits
+                    let permits = [];
+                    if (response.data && Array.isArray(response.data.permits)) {
+                        permits = response.data.permits;
+                    } else if (Array.isArray(response.data)) {
+                        permits = response.data;
+                    }
+                    renderRecentPermits(permits);
+                    updateStats(permits);
+                } else {
+                    document.getElementById('recentPermits').innerHTML = 
+                        '<p style="text-align: center; color: var(--gray-500); padding: 2rem;">Failed to load applications</p>';
+                }
+            } catch (error) {
+                console.error('Error loading permits:', error);
+                document.getElementById('recentPermits').innerHTML = 
+                    '<p style="text-align: center; color: var(--gray-500); padding: 2rem;">Failed to load applications</p>';
+            }
+        }
+        
+        function renderRecentPermits(permits) {
+            const container = document.getElementById('recentPermits');
+            
+            if (permits.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32">
+                                <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/>
+                            </svg>
+                        </div>
+                        <h3>No applications yet</h3>
+                        <p>Start by applying for your first business permit</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Show only first 3 permits
+            const recent = permits.slice(0, 3);
+            
+            container.innerHTML = recent.map(permit => `
+                <div class="permit-card">
+                    <div class="permit-header">
+                        <span class="permit-number">${permit.permitNumber || 'Pending'}</span>
+                        <span class="badge badge-${(permit.status || 'pending').toLowerCase()}">${permit.status || 'Pending'}</span>
+                    </div>
+                    <h4 class="permit-business">${permit.businessName || 'Unknown Business'}</h4>
+                    <p class="permit-type">${permit.businessType || 'N/A'}</p>
+                    <p class="permit-date">Applied: ${permit.createdAt ? new Date(permit.createdAt).toLocaleDateString() : 'N/A'}</p>
+                    <a href="/permit-status.html?id=${permit._id}" class="btn btn-sm btn-outline">View Details</a>
+                </div>
+            `).join('');
+        }
+        
+        function updateStats(permits) {
+            const total = permits.length;
+            const pending = permits.filter(p => p.status === 'Pending' || p.status === 'Submitted').length;
+            const approved = permits.filter(p => p.status === 'Approved').length;
+            const rejected = permits.filter(p => p.status === 'Rejected').length;
+            
+            const totalEl = document.getElementById('totalPermits');
+            const pendingEl = document.getElementById('pendingPermits');
+            const approvedEl = document.getElementById('approvedPermits');
+            const rejectedEl = document.getElementById('rejectedPermits');
+            
+            if (totalEl) totalEl.textContent = total;
+            if (pendingEl) pendingEl.textContent = pending;
+            if (approvedEl) approvedEl.textContent = approved;
+            if (rejectedEl) rejectedEl.textContent = rejected;
+        }
+    </script>
+    <script src="/js/modern-2025.js"></script>
+    <script src="/js/advanced-features.js"></script>
+    <script src="/js/chatbot-2025.js"></script>
+</body>
+</html>
