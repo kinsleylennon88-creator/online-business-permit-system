@@ -8,25 +8,34 @@ const AuditLog = require('../models/AuditLog');
 let memoryServer = null;
 
 /**
- * Connect to MongoDB with automatic fallback to embedded MongoMemoryServer (version 6.0.14)
+ * Connect to MongoDB with automatic fallback to embedded MongoMemoryServer (dev only)
  */
 const connectDB = async () => {
-  const defaultUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/janiuay';
+  const defaultUri = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/janiuay';
+  const isProduction = process.env.NODE_ENV === 'production';
+  const sanitizedUri = defaultUri.replace(/\/\/.*@/, '//<credentials>@');
 
-  // 1. First attempt to connect to external MongoDB
+  // 1. First attempt to connect to external MongoDB (Atlas or local instance)
   try {
     await mongoose.connect(defaultUri, {
-      serverSelectionTimeoutMS: 2000,
-      connectTimeoutMS: 2000
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000
     });
-    console.log(`✅ Connected to external MongoDB (${defaultUri})`);
+    console.log(`✅ Connected to external MongoDB (${sanitizedUri})`);
     await seedInitialData();
     return;
   } catch (err) {
-    console.warn(`⚠️ External MongoDB (${defaultUri}) unavailable (${err.message}). Initializing embedded database engine...`);
+    console.warn(`⚠️ External MongoDB (${sanitizedUri}) connection error: ${err.message}`);
   }
 
-  // 2. Fallback to embedded MongoMemoryServer
+  // In production, never fallback to MongoMemoryServer (which downloads binaries and loses data on restart)
+  if (isProduction) {
+    console.error('❌ Production Error: Could not connect to MongoDB Atlas.');
+    console.error('👉 Please check your MONGO_URI in Render Environment Variables and ensure IP 0.0.0.0/0 is whitelisted in MongoDB Atlas Network Access.');
+    return;
+  }
+
+  // 2. Fallback to embedded MongoMemoryServer only in local development
   try {
     const { MongoMemoryServer } = require('mongodb-memory-server');
     memoryServer = await MongoMemoryServer.create({
@@ -43,10 +52,10 @@ const connectDB = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
-    console.log(`🚀 Embedded MongoDB engine active and connected (${memoryUri})`);
+    console.log(`🚀 Development: Embedded MongoDB engine active (${memoryUri})`);
     await seedInitialData();
   } catch (embeddedErr) {
-    console.error('❌ Failed to initialize database engine:', embeddedErr);
+    console.error('❌ Failed to initialize embedded database engine:', embeddedErr);
   }
 };
 
