@@ -1,0 +1,27 @@
+{
+  "name": "online-business-permit-system",
+  "version": "1.0.0",
+  "description": "Municipality of Janiuay Online Business Permit System - Fullstack Application",
+  "main": "backend/server.js",
+  "scripts": {
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
+    "build:frontend": "npm --prefix frontend install && npm --prefix frontend run build",
+    "build:backend": "npm --prefix backend install",
+    "build": "npm --prefix backend install && npm --prefix frontend install && npm --prefix frontend run build",
+    "start": "node backend/server.js",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev"
+  },
+  "keywords": [
+    "business-permit",
+    "janiuay",
+    "mern",
+    "react",
+    "render"
+  ],
+  "author": "Municipality of Janiuay",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

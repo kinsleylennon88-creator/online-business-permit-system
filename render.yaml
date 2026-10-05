@@ -1,17 +1,17 @@
 services:
   - type: web
-    name: janiuay-bplo-backend
+    name: online-business-permit-system
     env: node
-    buildCommand: npm install
-    startCommand: npm start
     plan: free
+    buildCommand: npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: MONGO_URI
         sync: false
       - key: JWT_SECRET
-        sync: false
+        generateValue: true
       - key: OPENAI_API_KEY
         sync: false
       - key: EMAIL_USER

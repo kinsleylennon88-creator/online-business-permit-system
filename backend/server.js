@@ -22,15 +22,16 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
       imgSrc: ["'self'", "data:", "blob:", "https:", "http:", "https://res.cloudinary.com", "https://images.unsplash.com", "https://*.unsplash.com", "https://i.ytimg.com", "https://img.youtube.com"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net"],
       scriptSrcAttr: ["'unsafe-inline'"],
-      connectSrc: ["'self'", "https://api.openai.com", "http://localhost:5000", "http://localhost:3000", "https://cdn.jsdelivr.net"],
+      connectSrc: ["'self'", "https:", "http:", "wss:", "ws:", "https://api.openai.com", "https://cdn.jsdelivr.net"],
       frameSrc: ["'self'", "https://www.youtube.com", "https://youtube.com", "https://player.vimeo.com", "https://*.youtube.com"],
     },
   },
+  crossOriginEmbedderPolicy: false,
   hsts: {
     maxAge: 31536000,
     includeSubDomains: true,
@@ -49,7 +50,7 @@ app.use(mongoSanitize({
 // Different rate limits for different routes
 const strictLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 20,
   message: {
     success: false,
     message: 'Too many attempts. Please try again later.'
@@ -60,7 +61,7 @@ const strictLimiter = rateLimit({
 
 const standardLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 200,
   message: {
     success: false,
     message: 'Too many requests from this IP. Please try again later.'
@@ -71,7 +72,7 @@ const standardLimiter = rateLimit({
 
 const uploadLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 20,
+  max: 30,
   message: {
     success: false,
     message: 'Upload limit exceeded. Please try again later.'
@@ -92,7 +93,7 @@ app.use('/api/chat', standardLimiter);
 // HTTPS enforcement in production
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
-    if (req.header('x-forwarded-proto') !== 'https') {
+    if (req.header('x-forwarded-proto') && req.header('x-forwarded-proto') !== 'https') {
       res.redirect(`https://${req.header('host')}${req.url}`);
     } else {
       next();
@@ -104,10 +105,28 @@ if (process.env.NODE_ENV === 'production') {
 app.use(compression());
 
 // CORS configuration
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:5000',
+  process.env.FRONTEND_URL,
+  process.env.RENDER_EXTERNAL_URL
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend.vercel.app', 'https://janiuay-business-permit.vercel.app']
-    : ['http://localhost:5173', 'http://localhost:3000'],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (process.env.NODE_ENV !== 'production') return callback(null, true);
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.onrender.com') ||
+      origin.endsWith('.vercel.app') ||
+      origin.endsWith('.github.io')
+    ) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
   credentials: true
 }));
 
@@ -213,9 +232,7 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' 
-      ? ['https://your-frontend.vercel.app'] 
-      : ['http://localhost:5000'],
+    origin: '*',
     credentials: true
   }
 });
