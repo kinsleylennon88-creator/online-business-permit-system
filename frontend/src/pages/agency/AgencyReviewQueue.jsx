@@ -30,6 +30,7 @@ import Button from '../../components/shared/Button'
 import Badge from '../../components/shared/Badge'
 import Input from '../../components/shared/Input'
 import toast from 'react-hot-toast'
+import { getFileViewUrl, handleViewFile } from '../../utils/fileUrl'
 
 const AgencyReviewQueue = () => {
   const { user } = useAuth()
@@ -336,10 +337,11 @@ const AgencyReviewQueue = () => {
                               <span className="text-[10px] text-slate-400 font-mono">({doc.originalName})</span>
                             </div>
                             <a
-                              href={doc.fileUrl}
+                              href={getFileViewUrl(doc.fileUrl)}
+                              onClick={(e) => handleViewFile(e, doc.fileUrl)}
                               target="_blank"
                               rel="noreferrer"
-                              className="px-2.5 py-1 text-[11px] font-bold bg-primary-50 text-primary-700 rounded-lg hover:bg-primary-100 flex items-center"
+                              className="px-2.5 py-1 text-[11px] font-bold bg-primary-50 text-primary-700 rounded-lg hover:bg-primary-100 flex items-center cursor-pointer transition-colors"
                             >
                               <Eye className="w-3.5 h-3.5 mr-1" /> View File
                             </a>

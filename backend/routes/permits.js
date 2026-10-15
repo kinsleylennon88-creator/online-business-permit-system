@@ -414,10 +414,37 @@ router.get('/:id/documents/file/:filename', protect, async (req, res) => {
     }
 
     const safeFilename = path.basename(req.params.filename);
-    const filePath = path.join(uploadsDir, safeFilename);
+    let filePath = path.join(uploadsDir, safeFilename);
 
     if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ success: false, message: 'Document file not found on storage server' });
+      // 1. Check if permit has a document with matching path, url or originalName
+      const matchingDoc = permit.documents?.find(d => 
+        (d.filePath && path.basename(d.filePath) === safeFilename) ||
+        (d.fileUrl && path.basename(d.fileUrl.split('?')[0]) === safeFilename) ||
+        (d.originalName === safeFilename)
+      );
+
+      if (matchingDoc) {
+        if (matchingDoc.filePath && fs.existsSync(matchingDoc.filePath)) {
+          filePath = matchingDoc.filePath;
+        } else if (matchingDoc.fileUrl && (matchingDoc.fileUrl.startsWith('http://') || matchingDoc.fileUrl.startsWith('https://'))) {
+          return res.redirect(matchingDoc.fileUrl);
+        }
+      }
+    }
+
+    if (!fs.existsSync(filePath)) {
+      const altPaths = [
+        path.join(__dirname, '../uploads', safeFilename),
+        path.join(__dirname, '../public/uploads', safeFilename),
+        path.join(__dirname, '../public/uploads/documents', safeFilename)
+      ];
+      const foundAlt = altPaths.find(p => fs.existsSync(p));
+      if (foundAlt) {
+        filePath = foundAlt;
+      } else {
+        return res.status(404).json({ success: false, message: 'Document file not found on storage server' });
+      }
     }
 
     await logAuditEvent(req, {
@@ -429,7 +456,7 @@ router.get('/:id/documents/file/:filename', protect, async (req, res) => {
       details: { filename: safeFilename }
     });
 
-    res.sendFile(filePath);
+    res.sendFile(path.resolve(filePath));
   } catch (error) {
     console.error('Document download error:', error);
     res.status(500).json({ success: false, message: 'Server error downloading document' });

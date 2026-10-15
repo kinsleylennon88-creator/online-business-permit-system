@@ -19,6 +19,9 @@ const AdminRoute = ({ children }) => {
   }
 
   if (!user || (user.role !== 'admin' && user.role !== 'superadmin')) {
+    if (user?.role === 'fire_reviewer' || user?.role === 'sanitation_reviewer') {
+      return <Navigate to="/agency/queue" replace />
+    }
     return <Navigate to="/dashboard" replace />
   }
 

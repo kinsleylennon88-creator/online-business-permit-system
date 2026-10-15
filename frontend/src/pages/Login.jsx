@@ -24,8 +24,15 @@ const Login = () => {
   const onSubmit = async (data) => {
     setIsLoading(true)
     try {
-      await login(data)
-      navigate('/dashboard')
+      const res = await login(data)
+      const user = res?.data?.user || res?.user
+      if (user?.role === 'admin' || user?.role === 'superadmin') {
+        navigate('/admin')
+      } else if (user?.role === 'fire_reviewer' || user?.role === 'sanitation_reviewer') {
+        navigate('/agency/queue')
+      } else {
+        navigate('/dashboard')
+      }
     } catch (error) {
       // Error is handled in AuthContext
     } finally {

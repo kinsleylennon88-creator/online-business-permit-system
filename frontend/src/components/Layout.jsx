@@ -12,7 +12,9 @@ import {
   Shield, 
   ChevronDown, 
   Building2,
-  BookOpen
+  BookOpen,
+  Layers,
+  Users
 } from 'lucide-react'
 import ChatbotWidget from './ChatbotWidget'
 import AdminChatAssistant from './chat/AdminChatAssistant'
@@ -25,6 +27,9 @@ export default function Layout() {
 
   const isAdmin = user?.role === 'admin' || user?.role === 'superadmin'
   const isAgencyReviewer = user?.role === 'fire_reviewer' || user?.role === 'sanitation_reviewer'
+  const isStaff = isAdmin || isAgencyReviewer
+  const isInAdminSection = location.pathname.startsWith('/admin') || location.pathname.startsWith('/agency')
+  const showPublicLinks = !isStaff && !isInAdminSection
 
   const isActive = (href) => {
     if (href === '/') return location.pathname === '/'
@@ -45,7 +50,10 @@ export default function Layout() {
           <div className="flex justify-between items-center h-16">
             
             {/* Logo & Municipality Title */}
-            <Link to="/" className="flex items-center space-x-3 group">
+            <Link 
+              to={isAdmin ? '/admin' : isAgencyReviewer ? '/agency/queue' : (user ? '/dashboard' : '/')} 
+              className="flex items-center space-x-3 group"
+            >
               <div className="w-10 h-10 bg-sky-600 rounded-xl flex items-center justify-center text-white shadow-sm">
                 <Building2 className="w-6 h-6" />
               </div>
@@ -54,48 +62,53 @@ export default function Layout() {
                   Municipality of Janiuay
                 </h1>
                 <p className="text-[11px] text-slate-500 font-medium">
-                  Business Permit System
+                  {isAdmin ? 'BPLO Admin Management' : isAgencyReviewer ? 'Clearance Verification Portal' : 'Business Permit System'}
                 </p>
               </div>
             </Link>
 
             {/* Desktop Navigation Links (Pill Style) */}
             <nav className="hidden md:flex items-center space-x-1.5">
-              <Link
-                to="/"
-                className={`inline-flex items-center px-4 py-1.5 rounded-xl text-xs font-bold transition ${
-                  isActive('/') && location.pathname === '/'
-                    ? 'bg-sky-50 text-sky-600 border border-sky-100 shadow-2xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                }`}
-              >
-                <Home className="w-3.5 h-3.5 mr-1.5" />
-                Home
-              </Link>
+              {/* Only show public links (Home, About, Contact) when NOT in admin/agency panels and not staff */}
+              {showPublicLinks && (
+                <>
+                  <Link
+                    to="/"
+                    className={`inline-flex items-center px-4 py-1.5 rounded-xl text-xs font-bold transition ${
+                      isActive('/') && location.pathname === '/'
+                        ? 'bg-sky-50 text-sky-600 border border-sky-100 shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Home className="w-3.5 h-3.5 mr-1.5" />
+                    Home
+                  </Link>
 
-              <Link
-                to="/about"
-                className={`inline-flex items-center px-4 py-1.5 rounded-xl text-xs font-bold transition ${
-                  isActive('/about')
-                    ? 'bg-sky-50 text-sky-600 border border-sky-100 shadow-2xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                }`}
-              >
-                <BookOpen className="w-3.5 h-3.5 mr-1.5" />
-                About
-              </Link>
+                  <Link
+                    to="/about"
+                    className={`inline-flex items-center px-4 py-1.5 rounded-xl text-xs font-bold transition ${
+                      isActive('/about')
+                        ? 'bg-sky-50 text-sky-600 border border-sky-100 shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <BookOpen className="w-3.5 h-3.5 mr-1.5" />
+                    About
+                  </Link>
 
-              <Link
-                to="/contact"
-                className={`inline-flex items-center px-4 py-1.5 rounded-xl text-xs font-bold transition ${
-                  isActive('/contact')
-                    ? 'bg-sky-50 text-sky-600 border border-sky-100 shadow-2xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                }`}
-              >
-                <Phone className="w-3.5 h-3.5 mr-1.5" />
-                Contact
-              </Link>
+                  <Link
+                    to="/contact"
+                    className={`inline-flex items-center px-4 py-1.5 rounded-xl text-xs font-bold transition ${
+                      isActive('/contact')
+                        ? 'bg-sky-50 text-sky-600 border border-sky-100 shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Phone className="w-3.5 h-3.5 mr-1.5" />
+                    Contact
+                  </Link>
+                </>
+              )}
 
               {user && !isAgencyReviewer && !isAdmin && (
                 <Link
@@ -128,6 +141,28 @@ export default function Layout() {
               {isAdmin && (
                 <>
                   <Link
+                    to="/admin"
+                    className={`inline-flex items-center px-4 py-1.5 rounded-xl text-xs font-bold transition ${
+                      isActive('/admin') && location.pathname === '/admin'
+                        ? 'bg-slate-900 text-white shadow-sm'
+                        : 'text-slate-700 bg-slate-100 hover:bg-slate-200'
+                    }`}
+                  >
+                    <Shield className="w-3.5 h-3.5 mr-1.5 text-sky-400" />
+                    Admin Panel
+                  </Link>
+                  <Link
+                    to="/admin/permits"
+                    className={`inline-flex items-center px-4 py-1.5 rounded-xl text-xs font-bold transition ${
+                      isActive('/admin/permits')
+                        ? 'bg-sky-50 text-sky-600 border border-sky-100 shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <FileText className="w-3.5 h-3.5 mr-1.5" />
+                    Permits
+                  </Link>
+                  <Link
                     to="/agency/queue"
                     className={`inline-flex items-center px-4 py-1.5 rounded-xl text-xs font-bold transition ${
                       isActive('/agency/queue')
@@ -138,15 +173,37 @@ export default function Layout() {
                     Agency Queues
                   </Link>
                   <Link
-                    to="/admin"
+                    to="/admin/document-requirements"
                     className={`inline-flex items-center px-4 py-1.5 rounded-xl text-xs font-bold transition ${
-                      isActive('/admin')
-                        ? 'bg-slate-900 text-white'
-                        : 'text-slate-700 bg-slate-100 hover:bg-slate-200'
+                      isActive('/admin/document-requirements')
+                        ? 'bg-sky-50 text-sky-600 border border-sky-100 shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                     }`}
                   >
-                    <Shield className="w-3.5 h-3.5 mr-1.5 text-sky-400" />
-                    Admin Panel
+                    <Layers className="w-3.5 h-3.5 mr-1.5" />
+                    Requirements
+                  </Link>
+                  <Link
+                    to="/admin/audit-logs"
+                    className={`inline-flex items-center px-4 py-1.5 rounded-xl text-xs font-bold transition ${
+                      isActive('/admin/audit-logs')
+                        ? 'bg-sky-50 text-sky-600 border border-sky-100 shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Shield className="w-3.5 h-3.5 mr-1.5" />
+                    Audit Logs
+                  </Link>
+                  <Link
+                    to="/admin/users"
+                    className={`inline-flex items-center px-4 py-1.5 rounded-xl text-xs font-bold transition ${
+                      isActive('/admin/users')
+                        ? 'bg-sky-50 text-sky-600 border border-sky-100 shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Users className="w-3.5 h-3.5 mr-1.5" />
+                    Users
                   </Link>
                 </>
               )}
@@ -181,7 +238,7 @@ export default function Layout() {
                         </span>
                       </div>
 
-                      {!isAgencyReviewer && (
+                      {!isAgencyReviewer && !isAdmin && (
                         <Link
                           to="/dashboard"
                           onClick={() => setProfileMenuOpen(false)}
@@ -192,7 +249,7 @@ export default function Layout() {
                         </Link>
                       )}
 
-                      {(isAgencyReviewer || isAdmin) && (
+                      {isAgencyReviewer && (
                         <Link
                           to="/agency/queue"
                           onClick={() => setProfileMenuOpen(false)}
@@ -206,6 +263,38 @@ export default function Layout() {
                       {isAdmin && (
                         <>
                           <Link
+                            to="/admin"
+                            onClick={() => setProfileMenuOpen(false)}
+                            className="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                          >
+                            <Shield className="w-3.5 h-3.5 mr-2 text-sky-500" />
+                            Admin Dashboard
+                          </Link>
+                          <Link
+                            to="/admin/permits"
+                            onClick={() => setProfileMenuOpen(false)}
+                            className="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                          >
+                            <FileText className="w-3.5 h-3.5 mr-2 text-slate-400" />
+                            Manage Permits
+                          </Link>
+                          <Link
+                            to="/agency/queue"
+                            onClick={() => setProfileMenuOpen(false)}
+                            className="flex items-center px-4 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-50"
+                          >
+                            <Shield className="w-3.5 h-3.5 mr-2 text-amber-500" />
+                            Agency Queues
+                          </Link>
+                          <Link
+                            to="/admin/document-requirements"
+                            onClick={() => setProfileMenuOpen(false)}
+                            className="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                          >
+                            <Layers className="w-3.5 h-3.5 mr-2 text-slate-400" />
+                            Doc Requirements
+                          </Link>
+                          <Link
                             to="/admin/audit-logs"
                             onClick={() => setProfileMenuOpen(false)}
                             className="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
@@ -214,12 +303,12 @@ export default function Layout() {
                             Audit Logs
                           </Link>
                           <Link
-                            to="/admin/document-requirements"
+                            to="/admin/users"
                             onClick={() => setProfileMenuOpen(false)}
                             className="flex items-center px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
                           >
-                            <FileText className="w-3.5 h-3.5 mr-2 text-slate-400" />
-                            Doc Requirements
+                            <Users className="w-3.5 h-3.5 mr-2 text-slate-400" />
+                            User Management
                           </Link>
                         </>
                       )}
@@ -278,30 +367,35 @@ export default function Layout() {
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
           <div className="md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-1">
-            <Link
-              to="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50"
-            >
-              <Home className="w-4 h-4 text-slate-400" />
-              <span>Home</span>
-            </Link>
-            <Link
-              to="/about"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50"
-            >
-              <BookOpen className="w-4 h-4 text-slate-400" />
-              <span>About</span>
-            </Link>
-            <Link
-              to="/contact"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50"
-            >
-              <Phone className="w-4 h-4 text-slate-400" />
-              <span>Contact</span>
-            </Link>
+            {showPublicLinks && (
+              <>
+                <Link
+                  to="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50"
+                >
+                  <Home className="w-4 h-4 text-slate-400" />
+                  <span>Home</span>
+                </Link>
+                <Link
+                  to="/about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50"
+                >
+                  <BookOpen className="w-4 h-4 text-slate-400" />
+                  <span>About</span>
+                </Link>
+                <Link
+                  to="/contact"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50"
+                >
+                  <Phone className="w-4 h-4 text-slate-400" />
+                  <span>Contact</span>
+                </Link>
+              </>
+            )}
+
             {user && !isAgencyReviewer && !isAdmin && (
               <Link
                 to="/dashboard"
@@ -312,6 +406,7 @@ export default function Layout() {
                 <span>My Dashboard</span>
               </Link>
             )}
+
             {isAgencyReviewer && (
               <Link
                 to="/agency/queue"
@@ -322,6 +417,7 @@ export default function Layout() {
                 <span>{getAgencyTitle()}</span>
               </Link>
             )}
+
             {isAdmin && (
               <>
                 <Link
@@ -333,12 +429,44 @@ export default function Layout() {
                   <span>Admin Panel</span>
                 </Link>
                 <Link
-                  to="/admin/audit-logs"
+                  to="/admin/permits"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50"
                 >
                   <FileText className="w-4 h-4 text-slate-400" />
+                  <span>Permits</span>
+                </Link>
+                <Link
+                  to="/agency/queue"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold text-amber-700 hover:bg-amber-50"
+                >
+                  <Shield className="w-4 h-4 text-amber-500" />
+                  <span>Agency Queues</span>
+                </Link>
+                <Link
+                  to="/admin/document-requirements"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50"
+                >
+                  <Layers className="w-4 h-4 text-slate-400" />
+                  <span>Document Requirements</span>
+                </Link>
+                <Link
+                  to="/admin/audit-logs"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50"
+                >
+                  <Shield className="w-4 h-4 text-slate-400" />
                   <span>Audit Logs</span>
+                </Link>
+                <Link
+                  to="/admin/users"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50"
+                >
+                  <Users className="w-4 h-4 text-slate-400" />
+                  <span>User Management</span>
                 </Link>
               </>
             )}

@@ -27,6 +27,7 @@ import Button from '../../components/shared/Button'
 import Badge from '../../components/shared/Badge'
 import Input from '../../components/shared/Input'
 import toast from 'react-hot-toast'
+import { getFileViewUrl, handleViewFile } from '../../utils/fileUrl'
 
 // Standard clearances in Alphabetical Order (A to Z)
 const standardChecklist = [
@@ -344,8 +345,39 @@ const AdminPermits = () => {
                   </div>
                 </div>
 
-                {/* Modal Body (Scrollable Checklist) */}
+                {/* Modal Body (Scrollable Checklist & Documents) */}
                 <div className="p-6 overflow-y-auto space-y-6">
+                  {/* Applicant Uploaded Documents */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                      Applicant Uploaded Documents ({selectedPermit.documents?.length || 0} Files Attached)
+                    </label>
+                    <div className="space-y-1.5 max-h-40 overflow-y-auto">
+                      {selectedPermit.documents && selectedPermit.documents.length > 0 ? (
+                        selectedPermit.documents.map((doc, dIdx) => (
+                          <div key={dIdx} className="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                            <div className="flex items-center space-x-2">
+                              <FileText className="w-4 h-4 text-sky-600" />
+                              <span className="font-semibold text-slate-900 text-xs">{doc.name}</span>
+                              <span className="text-[10px] text-slate-400 font-mono">({doc.originalName})</span>
+                            </div>
+                            <a
+                              href={getFileViewUrl(doc.fileUrl)}
+                              onClick={(e) => handleViewFile(e, doc.fileUrl)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-2.5 py-1 text-[11px] font-bold bg-sky-50 text-sky-700 rounded-lg hover:bg-sky-100 flex items-center cursor-pointer transition-colors"
+                            >
+                              <Eye className="w-3.5 h-3.5 mr-1" /> View File
+                            </a>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-slate-400 italic text-xs">No applicant files uploaded yet.</p>
+                      )}
+                    </div>
+                  </div>
+
                   {/* Checklist of 9 standard requirements (A to Z) */}
                   <div>
                     <div className="flex items-center justify-between mb-2">

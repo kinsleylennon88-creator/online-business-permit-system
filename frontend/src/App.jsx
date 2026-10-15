@@ -68,7 +68,7 @@ function App() {
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="login" element={getDashboardRedirect()} />
-          <Route path="register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
+          <Route path="register" element={user ? getDashboardRedirect() : <Register />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           
           {/* Protected user routes */}

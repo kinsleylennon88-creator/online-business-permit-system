@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { permitService } from '../services/api'
 import toast from 'react-hot-toast'
+import { getFileViewUrl, handleViewFile } from '../utils/fileUrl'
 import { 
   ArrowLeft, 
   FileText, 
@@ -402,10 +403,11 @@ const PermitStatus = () => {
 
                         <div className="flex items-center space-x-2">
                           <a
-                            href={doc.fileUrl}
+                            href={getFileViewUrl(doc.fileUrl)}
+                            onClick={(e) => handleViewFile(e, doc.fileUrl)}
                             target="_blank"
                             rel="noreferrer"
-                            className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-primary-50 text-slate-700 hover:text-primary-700 font-bold text-xs transition-colors flex items-center"
+                            className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-primary-50 text-slate-700 hover:text-primary-700 font-bold text-xs transition-colors flex items-center cursor-pointer"
                           >
                             <ExternalLink className="w-3.5 h-3.5 mr-1" /> View File
                           </a>

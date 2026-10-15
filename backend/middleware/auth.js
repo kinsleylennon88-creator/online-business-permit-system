@@ -7,9 +7,11 @@ const protect = async (req, res, next) => {
   let token;
 
   try {
-    // Get token from header
+    // Get token from header or query parameter (for direct file views / downloads in browser)
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
+    } else if (req.query && req.query.token) {
+      token = req.query.token;
     }
 
     // Check if token exists

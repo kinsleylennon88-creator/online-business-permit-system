@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { 
   FileText, 
   Plus, 
@@ -41,9 +41,19 @@ const Dashboard = () => {
     rejected: 0
   })
 
+  const navigate = useNavigate()
+
   useEffect(() => {
+    if (user?.role === 'admin' || user?.role === 'superadmin') {
+      navigate('/admin', { replace: true })
+      return
+    }
+    if (user?.role === 'fire_reviewer' || user?.role === 'sanitation_reviewer') {
+      navigate('/agency/queue', { replace: true })
+      return
+    }
     fetchPermits()
-  }, [])
+  }, [user])
 
   const fetchPermits = async () => {
     try {
