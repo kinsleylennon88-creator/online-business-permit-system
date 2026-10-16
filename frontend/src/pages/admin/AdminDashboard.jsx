@@ -21,6 +21,7 @@ import {
   XCircle, 
   TrendingUp,
   Shield,
+  CreditCard,
   AlertCircle,
   ArrowUpRight,
   Activity,
