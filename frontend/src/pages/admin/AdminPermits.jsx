@@ -107,7 +107,8 @@ const AdminPermits = () => {
       setPermits(response.data.data.permits || [])
       setPagination(response.data.data.pagination || { current: 1, pages: 1, total: 0 })
     } catch (error) {
-      toast.error('Registry sync failed')
+      console.error('Fetch permits error:', error)
+      toast.error(error.response?.data?.message || 'Registry sync failed')
     } finally {
       setLoading(false)
     }

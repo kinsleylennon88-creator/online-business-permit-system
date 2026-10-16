@@ -489,6 +489,8 @@ router.get('/permits', async (req, res) => {
     const { status, permitType, barangay, search } = req.query;
     const skip = (page - 1) * limit;
 
+    const query = {};
+
     if (status) {
       if (status === 'under_review' || status === 'submitted') {
         query.status = { $in: ['submitted', 'under_review'] };
