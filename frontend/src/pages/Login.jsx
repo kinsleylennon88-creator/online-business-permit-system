@@ -8,7 +8,6 @@ import Button from '../components/shared/Button'
 import Input from '../components/shared/Input'
 import { Card, CardBody } from '../components/shared/Card'
 import Badge from '../components/shared/Badge'
-import TreasurerSeal from '../components/shared/TreasurerSeal'
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -60,7 +59,7 @@ const Login = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-tr from-brand-950 via-brand-900/80 to-transparent" />
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-[0.08]">
-            <TreasurerSeal className="w-[520px] h-[520px] text-amber-400 transform -rotate-12" />
+            <img src="/janiuay-logo.png" alt="Official Seal" className="w-[520px] h-[520px] object-contain transform -rotate-12 pointer-events-none" />
           </div>
         </div>
 
@@ -114,8 +113,8 @@ const Login = () => {
             transition={{ delay: 0.5 }}
             className="flex flex-col items-center text-center"
           >
-            <div className="mb-4 p-2 bg-gradient-to-br from-amber-50 to-amber-100/90 border border-amber-300 shadow-md rounded-2xl flex items-center justify-center">
-              <TreasurerSeal size={64} className="text-amber-900 drop-shadow-xs" />
+            <div className="mb-4 w-20 h-20 bg-white border border-slate-200 shadow-md rounded-2xl flex items-center justify-center p-2 overflow-hidden">
+              <img src="/janiuay-logo.png" alt="Municipality of Janiuay Official Seal" className="w-full h-full object-contain" />
             </div>
             <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-brand-900 tracking-tight">
               Municipality of Janiuay

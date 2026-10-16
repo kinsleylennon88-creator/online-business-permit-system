@@ -39,7 +39,6 @@ import toast from 'react-hot-toast'
 import { getFileViewUrl, handleViewFile } from '../../utils/fileUrl'
 import OrderOfPaymentModal from '../../components/permit/OrderOfPaymentModal'
 import BusinessPermitCertificate from '../../components/permit/BusinessPermitCertificate'
-import TreasurerSeal from '../../components/shared/TreasurerSeal'
 
 // Standard clearances in Alphabetical Order (A to Z)
 const standardChecklist = [
@@ -346,12 +345,12 @@ const AdminPermits = () => {
           </Link>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="flex items-start sm:items-center space-x-3.5">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-300 p-1 flex items-center justify-center shrink-0 shadow-sm">
-                <TreasurerSeal size={46} className="w-full h-full text-amber-900" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white border border-amber-300 p-1 flex items-center justify-center shrink-0 shadow-sm overflow-hidden">
+                <img src="/janiuay-logo.png" alt="Official Seal" className="w-full h-full object-contain" />
               </div>
               <div>
                 <span className="text-[10px] font-extrabold text-amber-800 uppercase tracking-widest bg-amber-100 border border-amber-200 px-2.5 py-0.5 rounded-full">
-                  Office of the Municipal Treasurer • Janiuay, Iloilo
+                  Official Municipal Seal • Janiuay, Iloilo
                 </span>
                 <h1 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1.5">
                   Business Permit Review &amp; Assessment Registry

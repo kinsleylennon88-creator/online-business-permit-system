@@ -143,23 +143,37 @@ const AgencyReviewQueue = () => {
       <div className="bg-white border-b border-slate-200 pt-8 pb-10">
         <div className="container">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <div className="flex items-center space-x-2 mb-2">
-                <span className={`text-xs font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-md border flex items-center ${
-                  isFire 
-                    ? 'bg-amber-50 text-amber-800 border-amber-200' 
-                    : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                }`}>
-                  {isFire ? <Flame className="w-3.5 h-3.5 mr-1 text-amber-600" /> : <Sparkles className="w-3.5 h-3.5 mr-1 text-emerald-600" />}
-                  {agencyTitle}
-                </span>
+            <div className="flex items-start sm:items-center space-x-4">
+              <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-2 p-1.5 flex items-center justify-center shrink-0 shadow-md overflow-hidden ${
+                isFire ? 'border-red-300' : 'border-emerald-300'
+              }`}>
+                <img 
+                  src={isFire ? '/bfp-logo.png' : '/sanitation-logo.png'} 
+                  alt={agencyTitle} 
+                  className="w-full h-full object-contain" 
+                />
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                Mandatory Clearance Review Queue
-              </h1>
-              <p className="text-slate-500 text-sm mt-1">
-                Evaluate business establishments, conduct compliance inspections, and issue official {isFire ? 'FSIC clearances' : 'Sanitary clearances'}.
-              </p>
+              <div>
+                <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                  <span className={`text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full border flex items-center ${
+                    isFire 
+                      ? 'bg-red-50 text-red-800 border-red-200' 
+                      : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                  }`}>
+                    {isFire ? <Flame className="w-3.5 h-3.5 mr-1 text-red-600" /> : <Sparkles className="w-3.5 h-3.5 mr-1 text-emerald-600" />}
+                    {agencyTitle}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
+                    Official Regulatory Unit
+                  </span>
+                </div>
+                <h1 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                  Mandatory Clearance Review Queue
+                </h1>
+                <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
+                  Evaluate business establishments, conduct compliance inspections, and issue official {isFire ? 'Fire Safety Inspection Certificates (FSIC)' : 'Sanitary Permits & Health Clearances'}.
+                </p>
+              </div>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -279,8 +293,12 @@ const AgencyReviewQueue = () => {
               <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} className="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden z-10 max-h-[90vh] flex flex-col">
                 <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className={`p-3 rounded-2xl ${isFire ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
-                      {isFire ? <Flame className="w-6 h-6" /> : <Sparkles className="w-6 h-6" />}
+                    <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 p-1 flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
+                      <img 
+                        src={isFire ? '/bfp-logo.png' : '/sanitation-logo.png'} 
+                        alt={isFire ? 'BFP Logo' : 'Sanitation Logo'} 
+                        className="w-full h-full object-contain" 
+                      />
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-slate-900">

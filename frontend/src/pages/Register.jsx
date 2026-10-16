@@ -9,7 +9,6 @@ import Input from '../components/shared/Input'
 import Badge from '../components/shared/Badge'
 import toast from 'react-hot-toast'
 import { JANIUAY_BARANGAYS } from '../constants/barangays'
-import TreasurerSeal from '../components/shared/TreasurerSeal'
 
 const barangays = JANIUAY_BARANGAYS
 
@@ -95,7 +94,7 @@ const Register = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-950 via-brand-900/90 to-brand-950" />
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none opacity-[0.08]">
-            <TreasurerSeal className="w-[480px] h-[480px] text-amber-400 transform -rotate-12" />
+            <img src="/janiuay-logo.png" alt="Official Seal" className="w-[480px] h-[480px] object-contain transform -rotate-12 pointer-events-none" />
           </div>
         </div>
 

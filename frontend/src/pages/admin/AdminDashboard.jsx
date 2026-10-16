@@ -39,7 +39,6 @@ import { Card, CardHeader, CardBody } from '../../components/shared/Card'
 import Button from '../../components/shared/Button'
 import Badge from '../../components/shared/Badge'
 import toast from 'react-hot-toast'
-import TreasurerSeal from '../../components/shared/TreasurerSeal'
 
 ChartJS.register(
   CategoryScale,
@@ -146,22 +145,30 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-brand-50/30 pb-20 relative">
       {/* Admin Header with Official Seal & Background Watermark */}
       <div className="bg-white border-b border-brand-100 pt-8 sm:pt-10 pb-16 sm:pb-20 relative overflow-hidden">
-        {/* Subtle Background Watermark of Treasurer Seal */}
-        <div className="absolute right-0 sm:right-12 top-1/2 -translate-y-1/2 pointer-events-none select-none opacity-[0.06] flex items-center justify-center">
-          <TreasurerSeal className="w-72 h-72 sm:w-96 sm:h-96 text-amber-900 transform rotate-12" />
+        {/* Subtle Background Watermark of Official Seal */}
+        <div className="absolute right-0 sm:right-12 top-1/2 -translate-y-1/2 pointer-events-none select-none opacity-[0.07] flex items-center justify-center">
+          <img 
+            src="/janiuay-logo.png" 
+            alt="Official Seal" 
+            className="w-72 h-72 sm:w-96 sm:h-96 object-contain transform rotate-6 pointer-events-none" 
+          />
         </div>
         <div className="absolute top-0 right-0 w-1/4 h-full bg-primary-500/5 skew-x-12 translate-x-1/2 pointer-events-none" />
 
         <div className="container relative z-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-start sm:items-center space-x-4">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-300 shadow-md flex items-center justify-center p-1 shrink-0">
-                <TreasurerSeal size={68} className="w-full h-full text-amber-900 drop-shadow-xs" />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-2 border-amber-300 shadow-md flex items-center justify-center p-1.5 shrink-0 overflow-hidden">
+                <img 
+                  src="/janiuay-logo.png" 
+                  alt="Official Municipal Seal" 
+                  className="w-full h-full object-contain" 
+                />
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-2">
                   <span className="text-[10px] font-extrabold text-amber-800 uppercase tracking-widest bg-amber-100 border border-amber-200 px-2.5 py-0.5 rounded-full">
-                    Official Treasury Seal
+                    Official Municipal Seal
                   </span>
                   <span className="text-[10px] font-bold text-sky-700 uppercase tracking-widest bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-full">
                     60 Barangays Centralized

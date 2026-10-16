@@ -28,7 +28,6 @@ import Button from '../components/shared/Button'
 import Input from '../components/shared/Input'
 import Badge from '../components/shared/Badge'
 import PermitStepper from '../components/permit/PermitStepper'
-import TreasurerSeal from '../components/shared/TreasurerSeal'
 import toast from 'react-hot-toast'
 
 // 1. Business Ownership Types in ALPHABETICAL ORDER (A to Z) including One Person Corporation
@@ -294,9 +293,9 @@ const PermitApplication = () => {
   const renderStep1 = () => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
       <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-        {/* Fill up Form Background: transparent logo of treasurer */}
+        {/* Fill up Form Background: transparent official municipal seal */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
-          <TreasurerSeal className="w-[480px] h-[480px] text-amber-900 opacity-[0.06] transform -rotate-12" />
+          <img src="/janiuay-logo.png" alt="Official Seal" className="w-[450px] h-[450px] object-contain opacity-[0.05] transform -rotate-12 pointer-events-none" />
         </div>
 
         <div className="relative z-10 space-y-6">
@@ -482,9 +481,9 @@ const PermitApplication = () => {
   const renderStep2 = () => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
       <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-        {/* Fill up Form Background: transparent logo of treasurer */}
+        {/* Fill up Form Background: transparent official municipal seal */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
-          <TreasurerSeal className="w-[480px] h-[480px] text-amber-900 opacity-[0.06] transform -rotate-12" />
+          <img src="/janiuay-logo.png" alt="Official Seal" className="w-[450px] h-[450px] object-contain opacity-[0.05] transform -rotate-12 pointer-events-none" />
         </div>
 
         <div className="relative z-10 space-y-6">
@@ -723,9 +722,9 @@ const PermitApplication = () => {
   const renderStep4 = () => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
       <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-        {/* Fill up Form Background: transparent logo of treasurer */}
+        {/* Fill up Form Background: transparent official municipal seal */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
-          <TreasurerSeal className="w-[480px] h-[480px] text-amber-900 opacity-[0.06] transform -rotate-12" />
+          <img src="/janiuay-logo.png" alt="Official Seal" className="w-[450px] h-[450px] object-contain opacity-[0.05] transform -rotate-12 pointer-events-none" />
         </div>
 
         <div className="relative z-10 space-y-6">
@@ -848,9 +847,9 @@ const PermitApplication = () => {
       </div>
 
       <div className="container max-w-4xl mt-8 relative">
-        {/* Fill up Form Background: transparent logo of treasurer */}
+        {/* Fill up Form Background: transparent official municipal seal */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0">
-          <TreasurerSeal className="w-[500px] h-[500px] text-primary-950 opacity-[0.06] transform -rotate-12" />
+          <img src="/janiuay-logo.png" alt="Official Seal" className="w-[480px] h-[480px] object-contain opacity-[0.05] transform -rotate-12 pointer-events-none" />
         </div>
 
         <div className="relative z-10">

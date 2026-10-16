@@ -18,7 +18,6 @@ import {
 } from 'lucide-react'
 import ChatbotWidget from './ChatbotWidget'
 import AdminChatAssistant from './chat/AdminChatAssistant'
-import TreasurerSeal from './shared/TreasurerSeal'
 
 export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -50,27 +49,57 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             
-            {/* Logo & Municipality Title */}
+            {/* Logo & Municipality / Agency Title */}
             <Link 
               to={isAdmin ? '/admin' : isAgencyReviewer ? '/agency/queue' : (user ? '/dashboard' : '/')} 
               className="flex items-center space-x-3 group"
             >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center p-0.5 bg-gradient-to-br from-amber-50 to-amber-100/90 border border-amber-300/70 shadow-sm shrink-0 overflow-hidden group-hover:scale-105 transition-transform">
-                <TreasurerSeal size={36} className="w-full h-full text-amber-900 drop-shadow-xs" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center p-0.5 bg-white border border-slate-200 shadow-sm shrink-0 overflow-hidden group-hover:scale-105 transition-transform">
+                <img 
+                  src={
+                    user?.role === 'fire_reviewer' 
+                      ? '/bfp-logo.png' 
+                      : user?.role === 'sanitation_reviewer' 
+                      ? '/sanitation-logo.png' 
+                      : '/janiuay-logo.png'
+                  } 
+                  alt="Official Seal" 
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div className="min-w-0">
                 <div className="flex items-center space-x-1.5">
                   <h1 className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight leading-tight truncate">
-                    Municipality of Janiuay
+                    {user?.role === 'fire_reviewer' 
+                      ? 'Bureau of Fire Protection' 
+                      : user?.role === 'sanitation_reviewer' 
+                      ? 'Bureau of Sanitation' 
+                      : 'Municipality of Janiuay'}
                   </h1>
                   {isAdmin && (
                     <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[9px] font-black uppercase rounded bg-amber-100 text-amber-800 border border-amber-200">
                       {user?.role === 'superadmin' ? 'Super Admin' : 'Admin'}
                     </span>
                   )}
+                  {user?.role === 'fire_reviewer' && (
+                    <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[9px] font-black uppercase rounded bg-red-100 text-red-800 border border-red-200">
+                      BFP Inspector
+                    </span>
+                  )}
+                  {user?.role === 'sanitation_reviewer' && (
+                    <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[9px] font-black uppercase rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
+                      Health Office
+                    </span>
+                  )}
                 </div>
                 <p className="text-[10.5px] text-slate-500 font-medium truncate">
-                  {isAdmin ? 'Office of the Municipal Treasurer • BPLO' : isAgencyReviewer ? 'Clearance Verification Portal' : 'Business Permit System'}
+                  {isAdmin 
+                    ? 'Super Admin & BPLO Command Center' 
+                    : user?.role === 'fire_reviewer'
+                    ? 'BFP Fire Safety Clearance Verification'
+                    : user?.role === 'sanitation_reviewer'
+                    ? 'Sanitary Clearance & Health Inspection'
+                    : 'Business Permit & Licensing Portal'}
                 </p>
               </div>
             </Link>
@@ -484,9 +513,32 @@ export default function Layout() {
 
       {/* Main Content Viewport */}
       <main className="flex-1 relative">
+        {/* Background Watermark based on role */}
         {isAdmin && (
           <div className="fixed inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0 select-none">
-            <TreasurerSeal className="w-[620px] h-[620px] text-amber-900 opacity-[0.035] transform -rotate-12" />
+            <img 
+              src="/janiuay-logo.png" 
+              alt="Official Seal Background" 
+              className="w-[560px] h-[560px] max-w-[85vw] max-h-[85vh] object-contain opacity-[0.045] pointer-events-none transform -rotate-6" 
+            />
+          </div>
+        )}
+        {user?.role === 'fire_reviewer' && (
+          <div className="fixed inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0 select-none">
+            <img 
+              src="/bfp-logo.png" 
+              alt="Bureau of Fire Protection Logo Background" 
+              className="w-[560px] h-[560px] max-w-[85vw] max-h-[85vh] object-contain opacity-[0.055] pointer-events-none transform -rotate-6" 
+            />
+          </div>
+        )}
+        {user?.role === 'sanitation_reviewer' && (
+          <div className="fixed inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0 select-none">
+            <img 
+              src="/sanitation-logo.png" 
+              alt="Bureau of Sanitation Logo Background" 
+              className="w-[560px] h-[560px] max-w-[85vw] max-h-[85vh] object-contain opacity-[0.055] pointer-events-none transform -rotate-6" 
+            />
           </div>
         )}
         <div className="relative z-10">

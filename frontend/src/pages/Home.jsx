@@ -15,7 +15,6 @@ import {
   ExternalLink
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
-import TreasurerSeal from '../components/shared/TreasurerSeal'
 
 const CLEARANCES = [
   {
@@ -79,8 +78,8 @@ export default function Home() {
       {/* 1. HERO SECTION (Dark Navy Background) */}
       <section className="bg-[#07192b] text-white pt-14 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Subtle Background Watermark of Official Seal */}
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-[0.05] pointer-events-none select-none hidden lg:block">
-          <TreasurerSeal size={520} className="text-amber-400 transform rotate-12" />
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-[0.08] pointer-events-none select-none hidden lg:block">
+          <img src="/janiuay-logo.png" alt="Official Seal" className="w-[520px] h-[520px] object-contain transform rotate-6 pointer-events-none" />
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">

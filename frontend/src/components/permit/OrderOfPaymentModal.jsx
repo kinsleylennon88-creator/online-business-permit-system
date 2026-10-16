@@ -1,6 +1,5 @@
 import React, { useRef } from 'react'
 import { Printer, Download, X, Building2, CheckCircle2, CreditCard, ShieldCheck } from 'lucide-react'
-import TreasurerSeal from '../shared/TreasurerSeal'
 import Button from '../shared/Button'
 
 export const OrderOfPaymentModal = ({ isOpen, onClose, permit }) => {
@@ -94,7 +93,11 @@ export const OrderOfPaymentModal = ({ isOpen, onClose, permit }) => {
           
           {/* Subtle Watermark Seal */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
-            <TreasurerSeal className="w-96 h-96 text-amber-900 opacity-[0.05] transform -rotate-6" />
+            <img 
+              src="/janiuay-logo.png" 
+              alt="Official Seal" 
+              className="w-80 h-80 sm:w-96 sm:h-96 object-contain opacity-[0.06] transform -rotate-6 pointer-events-none" 
+            />
           </div>
 
           <div className="relative z-10 space-y-6">

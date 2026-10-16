@@ -1,6 +1,5 @@
 import React, { useRef } from 'react'
 import { Printer, Download, X, ShieldCheck, CheckCircle2, Award, QrCode } from 'lucide-react'
-import TreasurerSeal from '../shared/TreasurerSeal'
 import Button from '../shared/Button'
 
 export const BusinessPermitCertificate = ({ isOpen, onClose, permit }) => {
@@ -114,9 +113,13 @@ export const BusinessPermitCertificate = ({ isOpen, onClose, permit }) => {
           <div className="border-[6px] border-amber-800/80 p-3 rounded-2xl relative shadow-inner">
             <div className="border-2 border-dashed border-amber-600/70 p-6 sm:p-10 rounded-xl relative overflow-hidden bg-[#fffdf7]">
 
-              {/* Watermark of Treasurer & Municipal Seal */}
+              {/* Watermark of Official Municipal Seal */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
-                <TreasurerSeal className="w-[460px] h-[460px] text-amber-900 opacity-[0.06] transform -rotate-12" />
+                <img 
+                  src="/janiuay-logo.png" 
+                  alt="Official Seal Watermark" 
+                  className="w-[440px] h-[440px] object-contain opacity-[0.07] transform -rotate-6 pointer-events-none" 
+                />
               </div>
 
               <div className="relative z-10 space-y-6">
@@ -124,7 +127,11 @@ export const BusinessPermitCertificate = ({ isOpen, onClose, permit }) => {
                 {/* Header with Municipal & National Emblems */}
                 <div className="flex items-center justify-between pb-4 border-b-2 border-amber-800/60">
                   <div className="w-20 h-20 flex-shrink-0 flex items-center justify-center">
-                    <TreasurerSeal size={74} className="text-amber-800" />
+                    <img 
+                      src="/janiuay-logo.png" 
+                      alt="Official Seal" 
+                      className="w-full h-full object-contain" 
+                    />
                   </div>
 
                   <div className="text-center flex-1 px-4">
