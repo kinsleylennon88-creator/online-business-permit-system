@@ -91,12 +91,10 @@ router.post('/register', [
       details: { email: user.email, role: user.role }
     });
 
-    // Send welcome email
-    try {
-      await sendEmail(emailTemplates.welcome(user));
-    } catch (emailError) {
-      console.error('Error sending welcome email:', emailError);
-    }
+    // Send welcome email in background (non-blocking)
+    sendEmail(emailTemplates.welcome(user)).catch(err => {
+      console.warn('Background welcome email warning:', err.message);
+    });
 
     res.status(201).json({
       success: true,

@@ -327,6 +327,21 @@ router.post('/permits/:id/documents', uploadMultiple('documents', 5), async (req
 
     await permit.save();
 
+    // Create In-App Notification for applicant
+    try {
+      await Notification.create({
+        recipient: permit.applicant,
+        role: 'user',
+        title: `${agencyDomain === 'fire' ? 'Bureau of Fire' : 'Bureau of Sanitation'} Issued Clearance 🛡️`,
+        message: `${docTitle} has been attached to your application for ${permit.businessInfo?.businessName} (${permit.trackingNumber}).`,
+        relatedPermit: permit._id,
+        link: `/permit-status/${permit._id}`,
+        type: 'success'
+      });
+    } catch (notifErr) {
+      console.warn('Warning: Failed to create agency document notification:', notifErr.message);
+    }
+
     await logAuditEvent(req, {
       action: `${agencyDomain}_document_attached`,
       entityType: 'document',

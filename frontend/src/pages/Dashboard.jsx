@@ -19,11 +19,15 @@ import {
   Upload,
   Sparkles,
   HelpCircle,
-  AlertCircle
+  AlertCircle,
+  Bell,
+  Flame,
+  CheckCheck,
+  Check
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../contexts/AuthContext'
-import { permitService } from '../services/api'
+import { permitService, notificationService } from '../services/api'
 import { Card, CardHeader, CardBody } from '../components/shared/Card'
 import Button from '../components/shared/Button'
 import Badge from '../components/shared/Badge'
@@ -32,6 +36,8 @@ import toast from 'react-hot-toast'
 const Dashboard = () => {
   const { user } = useAuth()
   const [permits, setPermits] = useState([])
+  const [notifications, setNotifications] = useState([])
+  const [unreadNotifCount, setUnreadNotifCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState('All')
   const [stats, setStats] = useState({
@@ -53,11 +59,52 @@ const Dashboard = () => {
       return
     }
     fetchPermits()
+    fetchNotifications()
+
+    // Poll updates every 20 seconds so changes from BFP/Sanitation/Admins show in real-time
+    const interval = setInterval(() => {
+      fetchPermits(false)
+      fetchNotifications()
+    }, 20000)
+    return () => clearInterval(interval)
   }, [user])
 
-  const fetchPermits = async () => {
+  const fetchNotifications = async () => {
     try {
-      setLoading(true)
+      const res = await notificationService.getNotifications()
+      if (res.data?.success) {
+        setNotifications(res.data.data.notifications || [])
+        setUnreadNotifCount(res.data.data.unreadCount || 0)
+      }
+    } catch (e) {
+      console.warn('Dashboard notifications sync warning:', e.message)
+    }
+  }
+
+  const markNotificationAsRead = async (id) => {
+    try {
+      await notificationService.markAsRead(id)
+      setNotifications(prev => prev.map(n => n._id === id ? { ...n, isRead: true } : n))
+      setUnreadNotifCount(prev => Math.max(0, prev - 1))
+    } catch (e) {
+      console.warn('Error marking notification read:', e.message)
+    }
+  }
+
+  const markAllNotificationsAsRead = async () => {
+    try {
+      await notificationService.markAllAsRead()
+      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })))
+      setUnreadNotifCount(0)
+      toast.success('All notifications marked as read')
+    } catch (e) {
+      toast.error('Unable to mark notifications read')
+    }
+  }
+
+  const fetchPermits = async (showLoading = true) => {
+    try {
+      if (showLoading) setLoading(true)
       const response = await permitService.getPermits({ limit: 50 })
       const permitsData = response.data.data.permits || []
       setPermits(permitsData)
@@ -226,6 +273,108 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* LATEST OFFICIAL AGENCY & BPLO REVIEW NOTIFICATIONS (Citizen Live Alert Feed) */}
+        {notifications.length > 0 && (
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-bold">
+                  <Bell className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <h3 className="text-base font-extrabold text-slate-900">
+                      Agency Review Decisions & Official Notifications
+                    </h3>
+                    {unreadNotifCount > 0 && (
+                      <span className="px-2 py-0.5 rounded-full text-xs font-black bg-red-100 text-red-700 border border-red-200">
+                        {unreadNotifCount} New
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Clearance updates from BPLO Licensing Board, Bureau of Fire Protection (BFP), and Bureau of Sanitation
+                  </p>
+                </div>
+              </div>
+              {unreadNotifCount > 0 && (
+                <button
+                  onClick={markAllNotificationsAsRead}
+                  className="self-start sm:self-auto inline-flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all"
+                >
+                  <CheckCheck className="w-3.5 h-3.5" />
+                  <span>Mark all read</span>
+                </button>
+              )}
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {notifications.slice(0, 6).map((notif) => {
+                const text = (notif.title + ' ' + notif.message).toLowerCase()
+                const isFire = text.includes('fire') || text.includes('bfp')
+                const isSanitary = text.includes('sanit') || text.includes('health')
+                const isApprove = notif.type === 'success' || text.includes('approved') || text.includes('issued')
+                const isWarning = notif.type === 'warning' || notif.type === 'error' || text.includes('correction')
+
+                return (
+                  <div
+                    key={notif._id}
+                    onClick={() => {
+                      if (!notif.isRead) markNotificationAsRead(notif._id)
+                      if (notif.link) navigate(notif.link)
+                      else if (notif.relatedPermit) navigate(`/permit-status/${notif.relatedPermit}`)
+                    }}
+                    className={`p-4 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
+                      !notif.isRead
+                        ? isApprove 
+                          ? 'bg-emerald-50/80 border-emerald-300 shadow-2xs' 
+                          : isWarning 
+                          ? 'bg-red-50/80 border-red-300 shadow-2xs' 
+                          : 'bg-sky-50/80 border-sky-300 shadow-2xs'
+                        : 'bg-slate-50 border-slate-200 hover:bg-white hover:border-slate-300'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className={`inline-flex items-center text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
+                          isFire 
+                            ? 'bg-orange-100 text-orange-800 border border-orange-200' 
+                            : isSanitary 
+                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' 
+                            : isApprove 
+                            ? 'bg-green-100 text-green-800 border border-green-200' 
+                            : isWarning 
+                            ? 'bg-red-100 text-red-800 border border-red-200' 
+                            : 'bg-blue-100 text-blue-800 border border-blue-200'
+                        }`}>
+                          {isFire ? '🔥 Bureau of Fire' : isSanitary ? '🩺 Sanitation' : isApprove ? '🎉 Official Approval' : isWarning ? '⚠️ Action Required' : '🏛️ BPLO Notice'}
+                        </span>
+                        <span className="text-[10.5px] text-slate-400 font-medium">
+                          {formatDate(notif.createdAt)}
+                        </span>
+                      </div>
+                      <h4 className={`text-xs font-bold leading-tight ${!notif.isRead ? 'text-slate-900 font-black' : 'text-slate-800'}`}>
+                        {notif.title}
+                      </h4>
+                      <p className="text-xs text-slate-600 mt-1 leading-relaxed line-clamp-3">
+                        {notif.message}
+                      </p>
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-sky-700 hover:underline inline-flex items-center">
+                        View Status <ChevronRight className="w-3 h-3 ml-0.5" />
+                      </span>
+                      {!notif.isRead && (
+                        <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
         {/* PROMINENT MISSING REQUIREMENTS ALERT BOX (Addresses Thesis Feedback #9) */}
         {deficientPermits.length > 0 && (
           <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-6 shadow-sm">
@@ -366,8 +515,10 @@ const Dashboard = () => {
                     const missingCount = permit.missingRequirements?.length || 0
                     const trackingNo = permit.trackingNumber || permit.applicationNumber || 'N/A'
                     const isRenewal = permit.permitType === 'renewal'
-                    const fireStatus = permit.agencyReviews?.bureau_of_fire?.status
-                    const sanitationStatus = permit.agencyReviews?.bureau_of_sanitation?.status
+                    const fireReview = permit.agencyReviews?.fire || permit.agencyReviews?.bureau_of_fire || {}
+                    const sanitationReview = permit.agencyReviews?.sanitation || permit.agencyReviews?.bureau_of_sanitation || {}
+                    const fireStatus = fireReview.status || 'pending'
+                    const sanitationStatus = sanitationReview.status || 'pending'
 
                     return (
                       <tr key={permit._id} className="hover:bg-slate-50/70 transition-colors">
@@ -419,22 +570,28 @@ const Dashboard = () => {
                         <td className="px-6 py-4">
                           <div>
                             {getStatusBadge(permit.status, missingCount)}
-                            <div className="flex items-center space-x-2 mt-2">
-                              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                                fireStatus === 'approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-                                fireStatus === 'rejected' ? 'bg-red-50 text-red-700 border border-red-200' :
-                                fireStatus === 'returned' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
-                                'bg-slate-100 text-slate-600 border border-slate-200'
+                            <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                              <span className={`inline-flex items-center text-[10px] font-black px-2 py-0.5 rounded-md border ${
+                                fireStatus === 'approved' 
+                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
+                                  : fireStatus === 'rejected' 
+                                  ? 'bg-red-50 text-red-800 border-red-300' 
+                                  : fireStatus === 'correction_requested' || fireStatus === 'returned'
+                                  ? 'bg-amber-50 text-amber-800 border-amber-300' 
+                                  : 'bg-slate-100 text-slate-700 border-slate-200'
                               }`}>
-                                Fire: {fireStatus || 'pending'}
+                                🔥 BFP Fire: {fireStatus === 'approved' ? 'APPROVED' : fireStatus === 'correction_requested' ? 'Action Needed' : fireStatus.toUpperCase()}
                               </span>
-                              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                                sanitationStatus === 'approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-                                sanitationStatus === 'rejected' ? 'bg-red-50 text-red-700 border border-red-200' :
-                                sanitationStatus === 'returned' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
-                                'bg-slate-100 text-slate-600 border border-slate-200'
+                              <span className={`inline-flex items-center text-[10px] font-black px-2 py-0.5 rounded-md border ${
+                                sanitationStatus === 'approved' 
+                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
+                                  : sanitationStatus === 'rejected' 
+                                  ? 'bg-red-50 text-red-800 border-red-300' 
+                                  : sanitationStatus === 'correction_requested' || sanitationStatus === 'returned'
+                                  ? 'bg-amber-50 text-amber-800 border-amber-300' 
+                                  : 'bg-slate-100 text-slate-700 border-slate-200'
                               }`}>
-                                Sanitation: {sanitationStatus || 'pending'}
+                                🩺 Sanitation: {sanitationStatus === 'approved' ? 'APPROVED' : sanitationStatus === 'correction_requested' ? 'Action Needed' : sanitationStatus.toUpperCase()}
                               </span>
                             </div>
                           </div>

@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import ChatbotWidget from './ChatbotWidget'
 import AdminChatAssistant from './chat/AdminChatAssistant'
+import NotificationBell from './NotificationBell'
 
 export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -247,13 +248,15 @@ export default function Layout() {
             </nav>
 
             {/* Auth Buttons / User Profile */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 sm:space-x-3">
               {user ? (
-                <div className="relative">
-                  <button
-                    onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                    className="flex items-center space-x-2 p-1.5 pr-3 rounded-full hover:bg-slate-100 border border-slate-200 transition focus:outline-none"
-                  >
+                <>
+                  <NotificationBell />
+                  <div className="relative">
+                    <button
+                      onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                      className="flex items-center space-x-2 p-1.5 pr-3 rounded-full hover:bg-slate-100 border border-slate-200 transition focus:outline-none"
+                    >
                     <div className="w-7 h-7 rounded-full bg-sky-600 text-white flex items-center justify-center font-bold text-xs">
                       {user.firstName?.[0] || user.email?.[0]?.toUpperCase()}
                     </div>
@@ -372,6 +375,7 @@ export default function Layout() {
                     </div>
                   )}
                 </div>
+                </>
               ) : (
                 <div className="flex items-center space-x-2">
                   <Link

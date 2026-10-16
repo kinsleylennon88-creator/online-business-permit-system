@@ -568,13 +568,14 @@ router.put('/:id/submit', protect, async (req, res) => {
       }
     });
 
-    // Send confirmation email to applicant
-    try {
-      const user = await User.findById(req.user.id);
-      await sendEmail(emailTemplates.applicationReceived(user, permit));
-    } catch (emailError) {
-      console.error('Email notification warning:', emailError.message);
-    }
+    // Dispatch confirmation email to applicant in background (non-blocking)
+    User.findById(req.user.id).then(user => {
+      if (user) {
+        sendEmail(emailTemplates.applicationReceived(user, permit)).catch(err => {
+          console.warn('Background email notification error:', err.message);
+        });
+      }
+    }).catch(err => console.warn('User lookup for email warning:', err.message));
 
     res.json({
       success: true,
@@ -642,12 +643,14 @@ router.put('/:id/approve', protect, authorize('admin', 'superadmin'), async (req
       details: { permitNumber: permit.permitNumber, remarks: req.body.remarks }
     });
 
-    try {
-      const user = await User.findById(permit.applicant);
-      await sendEmail(emailTemplates.permitApproved(user, permit));
-    } catch (emailError) {
-      console.error('Approval email error:', emailError.message);
-    }
+    // Send approval email in background (non-blocking)
+    User.findById(permit.applicant).then(user => {
+      if (user) {
+        sendEmail(emailTemplates.permitApproved(user, permit)).catch(err => {
+          console.warn('Background approval email warning:', err.message);
+        });
+      }
+    }).catch(err => console.warn('User lookup warning:', err.message));
 
     res.json({
       success: true,
@@ -715,12 +718,14 @@ router.put('/:id/reject', protect, authorize('admin', 'superadmin'), async (req,
       details: { deficiencyReason, missingRequirements }
     });
 
-    try {
-      const user = await User.findById(permit.applicant);
-      await sendEmail(emailTemplates.permitRejected(user, permit, deficiencyReason));
-    } catch (emailError) {
-      console.error('Rejection email error:', emailError.message);
-    }
+    // Send rejection/correction email in background (non-blocking)
+    User.findById(permit.applicant).then(user => {
+      if (user) {
+        sendEmail(emailTemplates.permitRejected(user, permit, deficiencyReason)).catch(err => {
+          console.warn('Background rejection email warning:', err.message);
+        });
+      }
+    }).catch(err => console.warn('User lookup warning:', err.message));
 
     res.json({
       success: true,
@@ -1158,12 +1163,14 @@ router.put('/:id/issue', protect, authorize('admin', 'superadmin'), async (req, 
       details: { permitNumber: permit.permitNumber, issuedAt: permit.issuedAt, expiresAt: permit.expiresAt }
     });
 
-    try {
-      const user = await User.findById(permit.applicant);
-      await sendEmail(emailTemplates.permitApproved(user, permit));
-    } catch (emailError) {
-      console.error('Email error on permit issuance:', emailError.message);
-    }
+    // Send issuance email in background (non-blocking)
+    User.findById(permit.applicant).then(user => {
+      if (user) {
+        sendEmail(emailTemplates.permitApproved(user, permit)).catch(err => {
+          console.warn('Background issuance email warning:', err.message);
+        });
+      }
+    }).catch(err => console.warn('User lookup warning:', err.message));
 
     res.json({
       success: true,

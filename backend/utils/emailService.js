@@ -1,18 +1,39 @@
 const nodemailer = require('nodemailer');
 
-// Create email transporter
+// Check if email credentials are configured
+const isEmailConfigured = () => {
+  const user = process.env.EMAIL_USER;
+  const pass = process.env.EMAIL_PASS;
+  return Boolean(
+    user && 
+    pass && 
+    !user.includes('example.com') && 
+    !user.includes('your-email') &&
+    user.trim().length > 3
+  );
+};
+
+// Create email transporter with tight timeouts so it never hangs
 const createTransporter = () => {
   return nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS
-    }
+    },
+    connectionTimeout: 4000, // 4 seconds max connection attempt
+    greetingTimeout: 4000,
+    socketTimeout: 6000
   });
 };
 
-// Send email function
+// Send email function (fail-safe and non-blocking)
 const sendEmail = async (options) => {
+  if (!isEmailConfigured()) {
+    console.log('ℹ️ Email dispatch skipped: EMAIL_USER / EMAIL_PASS not configured in environment.');
+    return { success: false, skipped: true, message: 'Email service not configured' };
+  }
+
   try {
     const transporter = createTransporter();
 
@@ -25,12 +46,11 @@ const sendEmail = async (options) => {
     };
 
     const info = await transporter.sendMail(mailOptions);
-    
-    console.log('Email sent successfully:', info.messageId);
+    console.log('✅ Email sent successfully:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Error sending email:', error);
-    throw new Error('Failed to send email: ' + error.message);
+    console.warn('⚠️ Warning: Failed to send email notification:', error.message);
+    return { success: false, error: error.message };
   }
 };
 

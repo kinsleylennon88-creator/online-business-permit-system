@@ -172,7 +172,10 @@ const PermitApplication = () => {
     if (!files?.length) return
     setIsUploading(true)
     try {
-      const targetId = permitId || await createDraft()
+      let targetId = permitId
+      if (!isValidObjectId(targetId)) {
+        targetId = await createDraft()
+      }
       const fd = new FormData()
       
       Array.from(files).forEach(f => fd.append('documents', f))
@@ -199,12 +202,14 @@ const PermitApplication = () => {
       
       toast.success(`${requirement.name} uploaded successfully!`)
     } catch (e) {
-      const errMsg = e.response?.data?.message || 'File upload failed. Please verify file type (PDF/Images) and size (<5MB).'
-      toast.error(errMsg)
+      const errMsg = e.response?.data?.message || e.message || 'File upload failed. Please verify file type (PDF/Images) and size (<5MB).'
+      toast.error(errMsg, { duration: 5000 })
     } finally {
       setIsUploading(false)
     }
   }
+
+  const isValidObjectId = (id) => typeof id === 'string' && /^[0-9a-fA-F]{24}$/.test(id)
 
   const createDraft = async () => {
     try {
@@ -222,7 +227,7 @@ const PermitApplication = () => {
           firstName: user?.firstName || 'Citizen', 
           lastName: user?.lastName || 'Applicant', 
           email: user?.email || 'citizen@example.com',
-          phone: user?.phone || '09123456789',
+          phone: user?.phone && /^09\d{9}$/.test(user.phone) ? user.phone : '09123456789',
           gender: gender || 'prefer_not_to_say'
         },
         paymentInfo: {
@@ -230,13 +235,16 @@ const PermitApplication = () => {
           receiptDate: receiptDate || null
         }
       })
-      const createdId = res.data.data.permit._id
-      setPermitId(createdId)
-      return createdId
+      const createdId = res.data?.data?.permit?._id
+      if (createdId) {
+        setPermitId(createdId)
+        return createdId
+      }
+      throw new Error('No permit ID returned by server')
     } catch (e) {
-      const fallbackId = permitId || 'DRAFT-' + Date.now()
-      setPermitId(fallbackId)
-      return fallbackId
+      const errMsg = e.response?.data?.message || e.message || 'Failed to save application draft'
+      console.error('Create draft error:', errMsg)
+      throw e
     }
   }
 
@@ -246,11 +254,13 @@ const PermitApplication = () => {
   const onStepSubmit = async () => {
     setIsLoading(true)
     try {
-      await createDraft()
-      toast.success('Application progress saved.')
+      if (!isValidObjectId(permitId)) {
+        await createDraft()
+        toast.success('Application progress saved.')
+      }
       nextStep()
     } catch (e) {
-      nextStep()
+      toast.error(e.response?.data?.message || 'Please review required fields before continuing.')
     } finally {
       setIsLoading(false)
     }
@@ -278,12 +288,16 @@ const PermitApplication = () => {
   const handleFinalSubmit = async () => {
     setIsLoading(true)
     try {
-      const targetId = permitId || await createDraft()
+      let targetId = permitId
+      if (!isValidObjectId(targetId)) {
+        targetId = await createDraft()
+      }
       await permitService.submitPermit(targetId)
       toast.success('Permit application submitted and routed to Bureau of Fire and Sanitation!')
       navigate('/dashboard')
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Submission error. Please ensure all mandatory documents are attached.')
+      const errMsg = error.response?.data?.message || error.message || 'Submission error. Please ensure all mandatory documents are attached.'
+      toast.error(errMsg, { duration: 6000 })
     } finally {
       setIsLoading(false)
     }

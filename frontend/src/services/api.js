@@ -2,10 +2,10 @@ import axios from 'axios'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api')
 
-// Create axios instance
+// Create axios instance with 60s default timeout
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -103,7 +103,8 @@ export const permitService = {
   getPermit: (id) => api.get(`/permits/${id}`),
   createPermit: (permitData) => api.post('/permits', permitData),
   uploadDocuments: (id, formData) => api.put(`/permits/${id}/documents`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 120000
   }),
   submitPermit: (id) => api.put(`/permits/${id}/submit`),
   approvePermit: (id, data) => api.put(`/permits/${id}/approve`, data),
@@ -111,7 +112,8 @@ export const permitService = {
   updateAssessment: (id, data) => api.put(`/permits/${id}/assessment`, data),
   sendAssessment: (id, data) => api.put(`/permits/${id}/send-assessment`, data),
   uploadPaymentReceipt: (id, formData) => api.post(`/permits/${id}/payment-receipt`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 120000
   }),
   verifyPayment: (id, data) => api.put(`/permits/${id}/verify-payment`, data),
   issuePermit: (id, data = {}) => api.put(`/permits/${id}/issue`, data),
@@ -141,7 +143,8 @@ export const agencyService = {
   getPermit: (id, params = {}) => api.get(`/agency/permits/${id}`, { params }),
   submitReview: (id, data) => api.put(`/agency/permits/${id}/review`, data),
   uploadDocument: (id, formData) => api.post(`/agency/permits/${id}/documents`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 120000
   }),
 }
 

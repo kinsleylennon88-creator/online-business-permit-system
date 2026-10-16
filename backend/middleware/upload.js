@@ -30,14 +30,16 @@ if (isCloudinaryConfigured) {
 
     cloudinaryStorage = new CloudinaryStorage({
       cloudinary: cloudinary,
-      params: {
-        folder: 'janiuay-business-permits',
-        allowed_formats: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
-        public_id: (req, file) => {
-          const timestamp = Date.now();
-          const cleanName = path.parse(file.originalname).name.replace(/[^a-zA-Z0-9_-]/g, '_');
-          return `${cleanName}_${timestamp}`;
-        }
+      params: async (req, file) => {
+        const timestamp = Date.now();
+        const cleanName = path.parse(file.originalname).name.replace(/[^a-zA-Z0-9_-]/g, '_');
+        const ext = path.extname(file.originalname).toLowerCase().replace('.', '');
+        return {
+          folder: 'janiuay-business-permits',
+          resource_type: 'auto',
+          format: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'webp'].includes(ext) ? ext : undefined,
+          public_id: `${cleanName}_${timestamp}`
+        };
       }
     });
   } catch (err) {
