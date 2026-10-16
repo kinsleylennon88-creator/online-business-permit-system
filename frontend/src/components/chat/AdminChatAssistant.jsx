@@ -4,16 +4,12 @@ import {
   X, 
   Send, 
   Search, 
-  LayoutDashboard, 
   ClipboardCheck, 
   Mail, 
-  History,
-  Activity,
-  Zap,
-  MoreVertical,
-  ChevronRight,
-  User,
-  ShieldAlert
+  Activity, 
+  Zap, 
+  ChevronRight, 
+  User 
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { chatbotService } from '../../services/api'
@@ -81,36 +77,41 @@ const AdminChatAssistant = () => {
   ]
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex items-end">
+    <>
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, x: 20, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 20, scale: 0.95 }}
-            className="w-96 h-[700px] max-h-[calc(100vh-6rem)] bg-brand-900 border border-brand-800 rounded-3xl shadow-2xl flex flex-col overflow-hidden mr-4"
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="fixed inset-x-2 bottom-2 sm:inset-auto sm:bottom-24 sm:right-6 z-50 w-auto sm:w-96 max-w-[calc(100vw-1rem)] sm:max-w-md h-[calc(100dvh-1rem)] sm:h-[620px] max-h-[720px] bg-brand-900 border border-brand-800 rounded-2xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Staff Nexus Header */}
-            <div className="p-5 border-b border-brand-800 flex items-center justify-between bg-black/20">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary-600/20 rounded-xl flex items-center justify-center border border-primary-600/30">
+            <div className="p-4 sm:p-5 border-b border-brand-800 flex items-center justify-between bg-black/30 shrink-0">
+              <div className="flex items-center space-x-3 min-w-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary-600/20 rounded-xl flex items-center justify-center border border-primary-600/30 shrink-0">
                   <Terminal className="w-5 h-5 text-primary-400" />
                 </div>
-                <div>
-                  <h3 className="text-white font-display font-bold text-sm tracking-tight">Command Nexus</h3>
-                  <div className="flex items-center space-x-1.5">
-                    <span className="w-1 h-1 bg-primary-400 rounded-full animate-pulse" />
-                    <span className="text-[10px] font-bold text-brand-400 uppercase tracking-widest">Administrative Access</span>
+                <div className="min-w-0">
+                  <h3 className="text-white font-display font-bold text-sm tracking-tight truncate">Command Nexus</h3>
+                  <div className="flex items-center space-x-1.5 mt-0.5">
+                    <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+                    <span className="text-[10px] font-bold text-brand-400 uppercase tracking-widest truncate">Administrative Access</span>
                   </div>
                 </div>
               </div>
-              <button onClick={() => setIsOpen(false)} className="text-brand-500 hover:text-white p-2">
+              <button 
+                onClick={() => setIsOpen(false)} 
+                className="text-brand-400 hover:text-white p-2 rounded-lg hover:bg-brand-800/60 transition-colors"
+                title="Close"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Workflow Area */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6 scrollbar-thin">
               {messages.map((msg, idx) => (
                 <motion.div 
                   key={idx}
@@ -118,23 +119,29 @@ const AdminChatAssistant = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`flex items-start space-x-3 max-w-[90%] ${msg.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
+                  <div className={`flex items-start space-x-2.5 sm:space-x-3 max-w-[92%] sm:max-w-[90%] ${msg.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                    <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shrink-0 border ${
                       msg.type === 'user' ? 'bg-primary-900 border-primary-700 text-primary-400' : 'bg-black/40 border-brand-700 text-brand-400'
                     }`}>
-                      {msg.type === 'user' ? <User className="w-4 h-4" /> : <Zap className="w-4 h-4" />}
+                      {msg.type === 'user' ? <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
                     </div>
-                    <div className={`p-4 rounded-2xl text-[13px] leading-relaxed ${
+                    <div className={`p-3.5 sm:p-4 rounded-2xl text-xs sm:text-[13px] leading-relaxed break-words overflow-hidden ${
                       msg.type === 'user' 
                         ? 'bg-primary-600 text-white font-medium' 
-                        : 'bg-brand-800/50 text-brand-100 border border-brand-700'
+                        : 'bg-brand-800/60 text-brand-100 border border-brand-700'
                     }`}>
                       <p className="whitespace-pre-line">{msg.content}</p>
                       {msg.intent && (
-                        <div className="mt-3 pt-3 border-t border-brand-700 flex items-center justify-between">
-                          <span className="text-[10px] font-bold text-brand-500 uppercase tracking-widest">Intent: {msg.intent}</span>
-                          <button className="text-[10px] font-bold text-primary-400 hover:text-primary-300 uppercase tracking-widest flex items-center">
-                            Copy Data <ChevronRight className="w-3 h-3 ml-1" />
+                        <div className="mt-2.5 pt-2.5 border-t border-brand-700 flex items-center justify-between">
+                          <span className="text-[9px] sm:text-[10px] font-bold text-brand-400 uppercase tracking-widest">Intent: {msg.intent}</span>
+                          <button 
+                            onClick={() => {
+                              navigator.clipboard.writeText(msg.content)
+                              toast.success('Copied to clipboard')
+                            }}
+                            className="text-[9px] sm:text-[10px] font-bold text-primary-400 hover:text-primary-300 uppercase tracking-widest flex items-center"
+                          >
+                            Copy <ChevronRight className="w-3 h-3 ml-0.5" />
                           </button>
                         </div>
                       )}
@@ -144,10 +151,10 @@ const AdminChatAssistant = () => {
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-brand-800/50 border border-brand-700 rounded-2xl px-4 py-3">
+                  <div className="bg-brand-800/60 border border-brand-700 rounded-2xl px-4 py-3">
                     <div className="flex space-x-1.5">
                       {[0, 1, 2].map(i => (
-                        <div key={i} className="w-1.5 h-1.5 bg-brand-600 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.1}s` }} />
+                        <div key={i} className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
                       ))}
                     </div>
                   </div>
@@ -157,38 +164,39 @@ const AdminChatAssistant = () => {
             </div>
 
             {/* Staff Toolbox */}
-            <div className="p-6 bg-black/20 border-t border-brand-800">
-              <p className="text-[10px] font-bold text-brand-500 uppercase tracking-widest mb-4">Staff Toolbox</p>
-              <div className="grid grid-cols-2 gap-3">
+            <div className="p-3 sm:p-4 bg-black/20 border-t border-brand-800 shrink-0">
+              <p className="text-[9px] sm:text-[10px] font-bold text-brand-400 uppercase tracking-widest mb-2 sm:mb-3">Staff Quick Directives</p>
+              <div className="grid grid-cols-2 gap-2">
                 {staffTools.map((tool, i) => (
                   <button
                     key={i}
                     onClick={() => handleSendMessage(null, tool.query)}
-                    className="flex flex-col items-center justify-center p-3 rounded-2xl border border-brand-700 bg-brand-800/30 hover:bg-brand-800 hover:border-brand-600 transition-all text-center group"
+                    className="flex items-center space-x-2 p-2 sm:p-2.5 rounded-xl border border-brand-700 bg-brand-800/40 hover:bg-brand-800 hover:border-brand-600 transition-all text-left group overflow-hidden"
                   >
-                    <tool.icon className="w-4 h-4 text-brand-400 group-hover:text-primary-400 mb-2" />
-                    <span className="text-[10px] font-bold text-brand-300 uppercase tracking-tight">{tool.label}</span>
+                    <tool.icon className="w-3.5 h-3.5 text-brand-400 group-hover:text-primary-400 shrink-0" />
+                    <span className="text-[10px] sm:text-[11px] font-bold text-brand-200 uppercase tracking-tight truncate">{tool.label}</span>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Input Terminal */}
-            <form onSubmit={handleSendMessage} className="p-6 bg-brand-900">
-              <div className="relative group">
+            <form onSubmit={handleSendMessage} className="p-3 sm:p-4 bg-brand-900 border-t border-brand-800 shrink-0">
+              <div className="relative group flex items-center">
                 <input
                   type="text"
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  placeholder="Enter directive..."
-                  className="w-full bg-black/40 border-2 border-brand-800 focus:border-primary-600 rounded-2xl px-5 py-4 text-sm font-mono text-primary-100 placeholder:text-brand-600 outline-none transition-all pr-14"
+                  placeholder="Enter directive or query..."
+                  className="w-full bg-black/50 border border-brand-700 focus:border-primary-500 rounded-xl px-3.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-mono text-primary-100 placeholder:text-brand-500 outline-none transition-all pr-12"
                 />
                 <button
                   type="submit"
                   disabled={isLoading || !inputMessage.trim()}
-                  className="absolute right-2 top-2 bottom-2 w-12 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white rounded-xl flex items-center justify-center transition-all"
+                  className="absolute right-1.5 top-1.5 bottom-1.5 px-3 bg-primary-600 hover:bg-primary-700 disabled:opacity-40 text-white rounded-lg flex items-center justify-center transition-all"
+                  title="Send Directive"
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4" />
                 </button>
               </div>
             </form>
@@ -196,17 +204,19 @@ const AdminChatAssistant = () => {
         )}
       </AnimatePresence>
 
+      {/* Floating Toggle Button */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-16 h-16 rounded-2xl shadow-premium flex items-center justify-center transition-all ${
-          isOpen ? 'bg-brand-800 text-white' : 'bg-primary-600 text-white'
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl shadow-premium flex items-center justify-center transition-all ${
+          isOpen ? 'hidden sm:flex bg-brand-800 text-white' : 'flex bg-primary-600 text-white hover:bg-primary-500'
         }`}
+        title="Open Command Nexus"
       >
-        {isOpen ? <X className="w-8 h-8" /> : <Terminal className="w-8 h-8" />}
+        {isOpen ? <X className="w-6 h-6" /> : <Terminal className="w-6 h-6" />}
       </motion.button>
-    </div>
+    </>
   )
 }
 

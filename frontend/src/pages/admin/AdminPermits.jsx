@@ -39,6 +39,7 @@ import toast from 'react-hot-toast'
 import { getFileViewUrl, handleViewFile } from '../../utils/fileUrl'
 import OrderOfPaymentModal from '../../components/permit/OrderOfPaymentModal'
 import BusinessPermitCertificate from '../../components/permit/BusinessPermitCertificate'
+import TreasurerSeal from '../../components/shared/TreasurerSeal'
 
 // Standard clearances in Alphabetical Order (A to Z)
 const standardChecklist = [
@@ -344,16 +345,21 @@ const AdminPermits = () => {
             <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Command Center
           </Link>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <span className="text-xs font-bold text-primary-700 uppercase tracking-widest bg-primary-50 px-2.5 py-1 rounded-md border border-primary-100">
-                BPLO Regulatory Oversight • Janiuay, Iloilo
-              </span>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-2">
-                Business Permit Review & Assessment Registry
-              </h1>
-              <p className="text-slate-500 text-sm mt-1">
-                Audit citizen permit submissions, decide payment assessments, verify Treasury receipts, and issue permits.
-              </p>
+            <div className="flex items-start sm:items-center space-x-3.5">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-300 p-1 flex items-center justify-center shrink-0 shadow-sm">
+                <TreasurerSeal size={46} className="w-full h-full text-amber-900" />
+              </div>
+              <div>
+                <span className="text-[10px] font-extrabold text-amber-800 uppercase tracking-widest bg-amber-100 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                  Office of the Municipal Treasurer • Janiuay, Iloilo
+                </span>
+                <h1 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1.5">
+                  Business Permit Review &amp; Assessment Registry
+                </h1>
+                <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
+                  Audit citizen permit submissions, decide payment assessments, verify Treasury receipts, and issue permits.
+                </p>
+              </div>
             </div>
             <div className="flex items-center space-x-2 flex-wrap gap-2">
               <span className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200">

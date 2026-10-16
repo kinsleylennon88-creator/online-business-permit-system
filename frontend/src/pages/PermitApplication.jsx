@@ -59,13 +59,10 @@ const businessNaturesAlphabetical = [
   'Other / Miscellaneous Services'
 ]
 
-// 3. Jurisdictions / Barangays in ALPHABETICAL ORDER (A to Z)
-const barangaysAlphabetical = [
-  'Aganan', 'Balabago', 'Barasalon', 'Bongol', 'Bucari', 'Calinog', 'Carpenter',
-  'Crispin', 'Daja', 'Dongon', 'Guinobatan', 'Janiuay Central', 'Latawan', 'Lubot', 'Moroboro',
-  'Pitogo', 'Poblacion', 'Quipot', 'San Julian', 'San Pedro', 'Santo Tomas', 'Sara', 'Tambal',
-  'Tibiao', 'Yabon', 'Zarragoza'
-]
+import { JANIUAY_BARANGAYS } from '../constants/barangays'
+
+// 3. Official 60 Barangays of Janiuay, Iloilo in ALPHABETICAL ORDER (A to Z)
+const barangaysAlphabetical = JANIUAY_BARANGAYS
 
 const PermitApplication = () => {
   const { id } = useParams()
@@ -87,7 +84,7 @@ const PermitApplication = () => {
         businessType: 'sole_proprietorship',
         businessNature: 'Retail Trade / Sari-Sari Store',
         businessAddress: {
-          barangay: 'Poblacion'
+          barangay: 'Don T. Lutero Center (Poblacion)'
         }
       },
       ownerInfo: {
@@ -220,7 +217,7 @@ const PermitApplication = () => {
           businessType: businessType || 'sole_proprietorship',
           businessNature: businessNature || 'Retail Trade / Sari-Sari Store',
           capitalization: Number(capitalization) || 10000,
-          businessAddress: { barangay: barangay || 'Poblacion' }
+          businessAddress: { barangay: barangay || 'Don T. Lutero Center (Poblacion)' }
         },
         ownerInfo: { 
           firstName: user?.firstName || 'Citizen', 

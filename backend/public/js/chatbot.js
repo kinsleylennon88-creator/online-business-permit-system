@@ -315,20 +315,13 @@ For online support, you can also use this chat anytime or email us. We typically
         
         // Barangay info
         if (lowerQuery.includes('barangay') || lowerQuery.includes('location')) {
-            return `Janiuay has 40+ barangays under its jurisdiction, including:
+            return `The municipality of Janiuay, Iloilo is politically subdivided into 60 official barangays, including:
 
-- Poblacion (town center)
-- Aganan, Balabago, Barasalon
-- Bongol, Bucari, Calinog
-- Carpenter, Crispin, Daja
-- Dongon, Guinobatan, Latawan
-- Lubot, Moroboro, Pitogo
-- Quipot, San Julian, San Pedro
-- Santo Tomas, Sara, Tambal
-- Tibiao, Yabon, Zarragoza
-- And many more...
+- Poblacion districts (Don T. Lutero Center, Aquino Nobleza East/West, San Julian, San Pedro, etc.)
+- Jibolo, Guadalupe, Bongol, Damo-ong, Madong, Quipot, Santo Tomas, Tambal, Yabon, and 51 others.
+- Total municipal population recorded at 66,786 (2020 Census) and 67,509 (2024 Census).
 
-No matter which barangay you're in, you can use our online system to apply for your business permit!`;
+Every entrepreneur across all 60 barangays can apply for and renew business permits directly through this online portal!`;
         }
         
         // Default response

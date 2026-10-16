@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import ChatbotWidget from './ChatbotWidget'
 import AdminChatAssistant from './chat/AdminChatAssistant'
+import TreasurerSeal from './shared/TreasurerSeal'
 
 export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -54,15 +55,22 @@ export default function Layout() {
               to={isAdmin ? '/admin' : isAgencyReviewer ? '/agency/queue' : (user ? '/dashboard' : '/')} 
               className="flex items-center space-x-3 group"
             >
-              <div className="w-10 h-10 bg-sky-600 rounded-xl flex items-center justify-center text-white shadow-sm">
-                <Building2 className="w-6 h-6" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center p-0.5 bg-gradient-to-br from-amber-50 to-amber-100/90 border border-amber-300/70 shadow-sm shrink-0 overflow-hidden group-hover:scale-105 transition-transform">
+                <TreasurerSeal size={36} className="w-full h-full text-amber-900 drop-shadow-xs" />
               </div>
-              <div>
-                <h1 className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight leading-tight">
-                  Municipality of Janiuay
-                </h1>
-                <p className="text-[11px] text-slate-500 font-medium">
-                  {isAdmin ? 'BPLO Admin Management' : isAgencyReviewer ? 'Clearance Verification Portal' : 'Business Permit System'}
+              <div className="min-w-0">
+                <div className="flex items-center space-x-1.5">
+                  <h1 className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight leading-tight truncate">
+                    Municipality of Janiuay
+                  </h1>
+                  {isAdmin && (
+                    <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[9px] font-black uppercase rounded bg-amber-100 text-amber-800 border border-amber-200">
+                      {user?.role === 'superadmin' ? 'Super Admin' : 'Admin'}
+                    </span>
+                  )}
+                </div>
+                <p className="text-[10.5px] text-slate-500 font-medium truncate">
+                  {isAdmin ? 'Office of the Municipal Treasurer • BPLO' : isAgencyReviewer ? 'Clearance Verification Portal' : 'Business Permit System'}
                 </p>
               </div>
             </Link>
@@ -475,8 +483,15 @@ export default function Layout() {
       </header>
 
       {/* Main Content Viewport */}
-      <main className="flex-1">
-        <Outlet />
+      <main className="flex-1 relative">
+        {isAdmin && (
+          <div className="fixed inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0 select-none">
+            <TreasurerSeal className="w-[620px] h-[620px] text-amber-900 opacity-[0.035] transform -rotate-12" />
+          </div>
+        )}
+        <div className="relative z-10">
+          <Outlet />
+        </div>
       </main>
 
       {/* AI Assistant Chatbot */}

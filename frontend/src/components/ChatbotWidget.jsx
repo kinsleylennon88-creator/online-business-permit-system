@@ -126,20 +126,21 @@ const ChatbotWidget = () => {
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl shadow-xl flex items-center justify-center transition-all group overflow-hidden border-2 border-white/20"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-12 h-12 sm:w-16 sm:h-16 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl shadow-xl flex items-center justify-center transition-all group overflow-hidden border-2 border-white/20"
+        title="Chat with Citizen Sentinel"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-        <MessageSquare className="w-7 h-7 relative z-10" />
+        <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7 relative z-10" />
       </motion.button>
     )
   }
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 50, scale: 0.95 }}
+      initial={{ opacity: 0, y: 30, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 50, scale: 0.95 }}
-      className={`fixed bottom-6 right-6 z-50 w-[420px] max-w-[calc(100vw-2rem)] bg-white rounded-3xl shadow-2xl border border-brand-100 flex flex-col overflow-hidden transition-all duration-300 ${isMinimized ? 'h-16' : 'h-[620px]'}`}
+      exit={{ opacity: 0, y: 30, scale: 0.95 }}
+      className={`fixed inset-x-2 bottom-2 sm:inset-auto sm:bottom-6 sm:right-6 z-50 w-auto sm:w-[420px] max-w-[calc(100vw-1rem)] sm:max-w-md bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-brand-100 flex flex-col overflow-hidden transition-all duration-300 ${isMinimized ? 'h-16' : 'h-[calc(100dvh-1rem)] sm:h-[620px] max-h-[700px]'}`}
     >
       {/* Premium Header */}
       <div className="bg-brand-900 text-white p-4 flex items-center justify-between relative overflow-hidden border-b border-brand-800">

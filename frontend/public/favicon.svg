@@ -1,0 +1,63 @@
+<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-label="Municipality of Janiuay Treasurer Seal">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="50%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="navyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <path id="textCircleOuter" d="M 200, 200 m -160, 0 a 160,160 0 1,1 320,0 a 160,160 0 1,1 -320,0" />
+    <path id="textCircleInner" d="M 200, 200 m -120, 0 a 120,120 0 1,1 240,0 a 120,120 0 1,1 -240,0" />
+  </defs>
+
+  <!-- Background Base Circle -->
+  <circle cx="200" cy="200" r="195" fill="#0f172a" />
+
+  <!-- Outer Decorative Ring -->
+  <circle cx="200" cy="200" r="188" fill="none" stroke="url(#goldGradient)" stroke-width="5" />
+  <circle cx="200" cy="200" r="180" fill="none" stroke="#fbbf24" stroke-width="2" stroke-dasharray="6 3" />
+  <circle cx="200" cy="200" r="174" fill="none" stroke="url(#goldGradient)" stroke-width="2.5" />
+
+  <!-- Outer Banner Text Ring -->
+  <circle cx="200" cy="200" r="145" fill="none" stroke="#fbbf24" stroke-width="1.5" />
+  <text fill="#fef08a" font-family="system-ui, sans-serif" font-size="13" font-weight="900" letter-spacing="3" text-anchor="middle">
+    <textPath href="#textCircleOuter" startOffset="50%">
+      ★ MUNICIPALITY OF JANIUAY • PROVINCE OF ILOILO ★
+    </textPath>
+  </text>
+
+  <!-- Inner Ring -->
+  <circle cx="200" cy="200" r="110" fill="#1e293b" stroke="url(#goldGradient)" stroke-width="3.5" />
+  <text fill="#ffffff" font-family="system-ui, sans-serif" font-size="11" font-weight="800" letter-spacing="2" text-anchor="middle">
+    <textPath href="#textCircleInner" startOffset="50%">
+      • OFFICE OF THE MUNICIPAL TREASURER • BPLO
+    </textPath>
+  </text>
+
+  <!-- Center Shield & Emblems -->
+  <g transform="translate(140, 140) scale(0.6)">
+    <!-- Treasury Shield -->
+    <path d="M 100 10 L 175 40 L 175 120 C 175 170 100 200 100 200 C 100 200 25 170 25 120 L 25 40 Z" fill="#0284c7" stroke="url(#goldGradient)" stroke-width="6" />
+    <!-- Scales of Justice -->
+    <line x1="100" y1="50" x2="100" y2="150" stroke="#fef08a" stroke-width="6" stroke-linecap="round" />
+    <line x1="60" y1="80" x2="140" y2="80" stroke="#fef08a" stroke-width="6" stroke-linecap="round" />
+    <!-- Left Pan -->
+    <path d="M 60 80 L 45 115 L 75 115 Z" fill="#fbbf24" stroke="#ffffff" stroke-width="2" />
+    <!-- Right Pan -->
+    <path d="M 140 80 L 125 115 L 155 115 Z" fill="#fbbf24" stroke="#ffffff" stroke-width="2" />
+    <!-- Base -->
+    <path d="M 70 150 L 130 150 L 140 165 L 60 165 Z" fill="url(#goldGradient)" />
+  </g>
+
+  <!-- Stars on flanks -->
+  <polygon points="50,200 54,208 63,208 56,214 59,222 50,217 41,222 44,214 37,208 46,208" fill="url(#goldGradient)" />
+  <polygon points="350,200 354,208 363,208 356,214 359,222 350,217 341,222 344,214 337,208 346,208" fill="url(#goldGradient)" />
+  
+  <!-- Established ribbon text -->
+  <text x="200" y="295" text-anchor="middle" fill="#fbbf24" font-family="system-ui, sans-serif" font-size="12" font-weight="900" letter-spacing="2">
+    OFFICIAL SEAL
+  </text>
+</svg>

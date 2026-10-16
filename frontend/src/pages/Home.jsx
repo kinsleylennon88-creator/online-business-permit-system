@@ -15,6 +15,7 @@ import {
   ExternalLink
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import TreasurerSeal from '../components/shared/TreasurerSeal'
 
 const CLEARANCES = [
   {
@@ -77,7 +78,12 @@ export default function Home() {
       
       {/* 1. HERO SECTION (Dark Navy Background) */}
       <section className="bg-[#07192b] text-white pt-14 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto">
+        {/* Subtle Background Watermark of Official Seal */}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-[0.05] pointer-events-none select-none hidden lg:block">
+          <TreasurerSeal size={520} className="text-amber-400 transform rotate-12" />
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             
@@ -86,7 +92,7 @@ export default function Home() {
               
               {/* Badge */}
               <div className="inline-flex items-center space-x-2 text-[11px] font-semibold text-sky-400 bg-sky-950/80 border border-sky-800/80 px-3.5 py-1 rounded-full">
-                <ShieldCheck className="w-3.5 h-3.5" />
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
                 <span>Official Municipal Licensing Portal — Province of Iloilo</span>
               </div>
 
@@ -102,7 +108,7 @@ export default function Home() {
 
               {/* Description */}
               <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl">
-                Apply for, track, and renew your Business Permit digitally. Streamlined, paperless, and transparent processing for entrepreneurs across all 40+ barangays of Janiuay.
+                Apply for, track, and renew your Business Permit digitally. Streamlined, paperless, and transparent processing for entrepreneurs across all 60 barangays of Janiuay.
               </p>
 
               {/* Action Buttons */}
@@ -135,8 +141,8 @@ export default function Home() {
                   <p className="text-[11px] text-slate-400 mt-0.5">Paperless Clearances</p>
                 </div>
                 <div>
-                  <p className="text-xl sm:text-2xl font-extrabold text-white">40+ Barangays</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Full Municipality Coverage</p>
+                  <p className="text-xl sm:text-2xl font-extrabold text-white">60 Barangays</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Full Janiuay Coverage</p>
                 </div>
               </div>
 

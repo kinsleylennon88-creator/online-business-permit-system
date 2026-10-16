@@ -3,8 +3,29 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --app-height: 100vh;
+    --app-height: 100dvh;
+    font-size: 15px;
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    :root {
+      font-size: 13.5px;
+    }
+  }
+
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100vw;
+    -webkit-text-size-adjust: 100%;
   }
   
   body {
@@ -12,11 +33,19 @@
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
+    font-family: 'Outfit', 'Poppins', sans-serif;
+    font-weight: 700;
+    overflow-wrap: break-word;
+    letter-spacing: -0.02em;
+  }
+
+  p, span, label {
+    overflow-wrap: break-word;
   }
 }
 

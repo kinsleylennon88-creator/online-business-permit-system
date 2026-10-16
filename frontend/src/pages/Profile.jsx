@@ -14,13 +14,9 @@ import {
 } from 'lucide-react'
 import LoadingSpinner from '../components/LoadingSpinner'
 import toast from 'react-hot-toast'
+import { JANIUAY_BARANGAYS } from '../constants/barangays'
 
-const barangays = [
-  'Poblacion', 'Aganan', 'Balabago', 'Barasalon', 'Bongol', 'Bucari', 'Calinog', 'Carpenter',
-  'Crispin', 'Daja', 'Dongon', 'Guinobatan', 'Janiuay', 'Latawan', 'Lubot', 'Moroboro',
-  'Pitogo', 'Quipot', 'San Julian', 'San Pedro', 'Santo Tomas', 'Sara', 'Tambal',
-  'Tibiao', 'Yabon', 'Zarragoza'
-]
+const barangays = JANIUAY_BARANGAYS
 
 const Profile = () => {
   const { user, updateProfile, changePassword } = useAuth()

@@ -5,13 +5,15 @@ import { Toaster } from 'react-hot-toast'
 import App from './App.jsx'
 import './index.css'
 import { AuthProvider } from './contexts/AuthContext'
+import { ScreenSizeProvider } from './contexts/ScreenSizeContext'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-        <Toaster
+      <ScreenSizeProvider>
+        <AuthProvider>
+          <App />
+          <Toaster
           position="top-right"
           toastOptions={{
             duration: 4000,
@@ -35,7 +37,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             },
           }}
         />
-      </AuthProvider>
+        </AuthProvider>
+      </ScreenSizeProvider>
     </BrowserRouter>
   </React.StrictMode>,
 )
