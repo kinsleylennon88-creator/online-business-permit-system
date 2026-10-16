@@ -64,9 +64,9 @@ const Dashboard = () => {
       
       setStats({
         total: permitsData.length,
-        pending: permitsData.filter(p => p.status === 'submitted' || p.status === 'under_review').length,
+        pending: permitsData.filter(p => ['submitted', 'under_review', 'pending_payment', 'payment_under_review'].includes(p.status)).length,
         approved: permitsData.filter(p => p.status === 'approved' || p.status === 'issued').length,
-        rejected: permitsData.filter(p => p.status === 'rejected' || (p.missingRequirements && p.missingRequirements.length > 0)).length
+        rejected: permitsData.filter(p => (p.status === 'rejected' || p.status === 'returned_for_correction') && ((p.missingRequirements && p.missingRequirements.length > 0) || p.status === 'returned_for_correction')).length
       })
     } catch (error) {
       toast.error('Unable to sync permit records')
@@ -76,7 +76,7 @@ const Dashboard = () => {
   }
 
   const getStatusBadge = (status, missingCount = 0) => {
-    if (missingCount > 0 || status === 'rejected') {
+    if ((status === 'rejected' || status === 'returned_for_correction') && (missingCount > 0 || status === 'returned_for_correction')) {
       return (
         <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-red-100 text-red-800 border border-red-200">
           <AlertCircle className="w-3 h-3 mr-1 text-red-600" /> Action Required (Missing Items)
@@ -94,16 +94,28 @@ const Dashboard = () => {
             <Clock className="w-3 h-3 mr-1 text-amber-600" /> Under BPLO Review
           </span>
         )
+      case 'pending_payment':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
+            <CreditCard className="w-3 h-3 mr-1 text-amber-700" /> Payment Assessment Issued
+          </span>
+        )
+      case 'payment_under_review':
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-sky-100 text-sky-900 border border-sky-300">
+            <Clock className="w-3 h-3 mr-1 text-sky-600" /> Receipt Under Treasury Audit
+          </span>
+        )
       case 'approved':
         return (
           <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-200">
-            <CheckCircle2 className="w-3 h-3 mr-1 text-emerald-600" /> Approved
+            <CheckCircle2 className="w-3 h-3 mr-1 text-emerald-600" /> Approved • Issuing
           </span>
         )
       case 'issued':
         return (
-          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-600 text-white shadow-sm">
-            <ShieldCheck className="w-3 h-3 mr-1" /> Active Permit Issued
+          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-600 text-white shadow-xs">
+            <ShieldCheck className="w-3 h-3 mr-1" /> Active Permit Issued (Printable)
           </span>
         )
       default:
@@ -124,14 +136,15 @@ const Dashboard = () => {
   const filteredPermits = permits.filter(permit => {
     if (activeFilter === 'All') return true
     if (activeFilter === 'In Review') return permit.status === 'submitted' || permit.status === 'under_review'
-    if (activeFilter === 'Approved') return permit.status === 'approved' || permit.status === 'issued'
-    if (activeFilter === 'Missing Requirements') return permit.status === 'rejected' || (permit.missingRequirements && permit.missingRequirements.length > 0)
+    if (activeFilter === 'Payment Needed') return permit.status === 'pending_payment' || permit.status === 'payment_under_review'
+    if (activeFilter === 'Approved / Issued') return permit.status === 'approved' || permit.status === 'issued'
+    if (activeFilter === 'Missing Requirements') return (permit.status === 'rejected' || permit.status === 'returned_for_correction') && (permit.missingRequirements?.length > 0 || permit.status === 'returned_for_correction')
     if (activeFilter === 'Drafts') return permit.status === 'draft'
     return true
   })
 
-  // Find any permit with missing requirements or deficiency remarks
-  const deficientPermits = permits.filter(p => p.status === 'rejected' || (p.missingRequirements && p.missingRequirements.length > 0))
+  // Find any permit with missing requirements or deficiency remarks that is actively deficient
+  const deficientPermits = permits.filter(p => (p.status === 'rejected' || p.status === 'returned_for_correction') && ((p.missingRequirements && p.missingRequirements.length > 0) || p.status === 'returned_for_correction'))
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
@@ -294,7 +307,7 @@ const Dashboard = () => {
 
               {/* Filter Tabs */}
               <div className="flex items-center space-x-1.5 overflow-x-auto pb-1">
-                {['All', 'In Review', 'Approved', 'Missing Requirements', 'Drafts'].map((tab) => (
+                {['All', 'In Review', 'Payment Needed', 'Approved / Issued', 'Missing Requirements', 'Drafts'].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveFilter(tab)}
@@ -429,13 +442,47 @@ const Dashboard = () => {
 
                         {/* Action */}
                         <td className="px-6 py-4 text-right">
-                          <Link
-                            to={`/permit-status/${permit._id}`}
-                            className="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-primary-50 text-slate-700 hover:text-primary-700 font-bold text-xs rounded-xl transition-all border border-slate-200 hover:border-primary-300"
-                          >
-                            View Dossier & Track
-                            <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
-                          </Link>
+                          {permit.status === 'issued' ? (
+                            <Link
+                              to={`/permit-status/${permit._id}`}
+                              className="inline-flex items-center px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+                            >
+                              <ShieldCheck className="w-3.5 h-3.5 mr-1" />
+                              View & Print Permit
+                            </Link>
+                          ) : permit.status === 'pending_payment' ? (
+                            <Link
+                              to={`/permit-status/${permit._id}`}
+                              className="inline-flex items-center px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+                            >
+                              <CreditCard className="w-3.5 h-3.5 mr-1" />
+                              View Voucher & Pay
+                            </Link>
+                          ) : permit.status === 'payment_under_review' ? (
+                            <Link
+                              to={`/permit-status/${permit._id}`}
+                              className="inline-flex items-center px-3.5 py-1.5 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+                            >
+                              <Clock className="w-3.5 h-3.5 mr-1" />
+                              Track Treasury Audit
+                            </Link>
+                          ) : (permit.status === 'rejected' || permit.status === 'returned_for_correction') ? (
+                            <Link
+                              to={`/permit-status/${permit._id}`}
+                              className="inline-flex items-center px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+                            >
+                              <AlertCircle className="w-3.5 h-3.5 mr-1" />
+                              Resolve Missing Items
+                            </Link>
+                          ) : (
+                            <Link
+                              to={`/permit-status/${permit._id}`}
+                              className="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-primary-50 text-slate-700 hover:text-primary-700 font-bold text-xs rounded-xl transition-all border border-slate-200 hover:border-primary-300"
+                            >
+                              View Dossier & Track
+                              <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
+                            </Link>
+                          )}
                         </td>
                       </tr>
                     )

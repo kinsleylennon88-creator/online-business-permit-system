@@ -47,7 +47,7 @@ router.post('/register', [
       });
     }
 
-    const { firstName, lastName, email, password, phone, gender, address } = req.body;
+    const { firstName, lastName, email, password, phone, gender, address, nationalIdFront, nationalIdBack } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
@@ -74,6 +74,8 @@ router.post('/register', [
       phone,
       gender: gender || 'prefer_not_to_say',
       address,
+      nationalIdFront: nationalIdFront || null,
+      nationalIdBack: nationalIdBack || null,
       role: 'user'
     });
 
@@ -109,6 +111,8 @@ router.post('/register', [
           phone: user.phone,
           gender: user.gender,
           address: user.address,
+          nationalIdFront: user.nationalIdFront,
+          nationalIdBack: user.nationalIdBack,
           role: user.role
         }
       }
@@ -240,6 +244,8 @@ router.get('/me', protect, async (req, res) => {
           address: user.address,
           role: user.role,
           profilePicture: user.profilePicture,
+          nationalIdFront: user.nationalIdFront,
+          nationalIdBack: user.nationalIdBack,
           isEmailVerified: user.isEmailVerified,
           createdAt: user.createdAt
         }

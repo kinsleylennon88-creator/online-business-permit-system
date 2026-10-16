@@ -7,7 +7,7 @@ const DocumentRequirement = require('../models/DocumentRequirement');
 const Notification = require('../models/Notification');
 const User = require('../models/User');
 const { protect, authorize } = require('../middleware/auth');
-const { uploadMultiple, uploadsDir } = require('../middleware/upload');
+const { uploadMultiple, uploadSingle, uploadsDir } = require('../middleware/upload');
 const { sendEmail, emailTemplates } = require('../utils/emailService');
 const { logAuditEvent } = require('../utils/auditLogger');
 
@@ -793,6 +793,386 @@ router.put('/:id/assessment', protect, authorize('admin', 'superadmin'), async (
       success: false,
       message: 'Server error while updating assessment'
     });
+  }
+});
+
+// @route   PUT /api/permits/:id/send-assessment
+// @desc    BPLO decides payment fees and forwards order of payment to client
+// @access  Private/Admin
+router.put('/:id/send-assessment', protect, authorize('admin', 'superadmin'), async (req, res) => {
+  try {
+    const { fees, remarks } = req.body;
+    const permit = await Permit.findById(req.params.id);
+
+    if (!permit) {
+      return res.status(404).json({ success: false, message: 'Permit application not found' });
+    }
+
+    const calculatedFees = {
+      businessTax: Number(fees?.businessTax) || 0,
+      mayorsPermit: Number(fees?.mayorsPermit) || 0,
+      sanitaryFee: Number(fees?.sanitaryFee) || 0,
+      fireSafetyFee: Number(fees?.fireSafetyFee) || 0,
+      environmentalFee: Number(fees?.environmentalFee) || 0,
+      garbageFee: Number(fees?.garbageFee) || 0,
+      plateStickerFee: Number(fees?.plateStickerFee) || 0,
+    };
+    calculatedFees.total = Object.values(calculatedFees).reduce((sum, val) => sum + val, 0);
+
+    permit.assessment = {
+      fees: calculatedFees,
+      assessedBy: req.user.id,
+      assessedAt: new Date(),
+      forwardedToClient: true,
+      forwardedAt: new Date(),
+      paymentStatus: 'pending'
+    };
+
+    permit.paymentInfo.amount = calculatedFees.total;
+    permit.paymentInfo.paymentStatus = 'pending';
+    permit.status = 'pending_payment';
+    permit.missingRequirements = [];
+
+    permit.approvalHistory.push({
+      action: 'payment_assessment_sent',
+      performedBy: req.user.id,
+      performedAt: new Date(),
+      remarks: remarks || `Payment assessment of ₱${calculatedFees.total.toLocaleString()} decided and forwarded to client by ${req.user.role === 'superadmin' ? 'Super Admin' : 'BPLO'}.`
+    });
+
+    await permit.save();
+
+    // Notify client
+    await Notification.create({
+      recipient: permit.applicant,
+      role: 'user',
+      title: 'Order of Payment Issued 💳',
+      message: `BPLO has finalized your payment assessment of ₱${calculatedFees.total.toLocaleString()} for ${permit.businessInfo?.businessName}. You can now view, download, or print your Order of Payment and upload receipt once paid.`,
+      relatedPermit: permit._id,
+      link: `/permit-status/${permit._id}`,
+      type: 'info'
+    });
+
+    if (req.user.role === 'superadmin') {
+      await Notification.create({
+        role: 'admin',
+        title: 'Super Admin Forwarded Assessment',
+        message: `Super Admin forwarded payment assessment for ${permit.businessInfo?.businessName} (${permit.trackingNumber}). BPLO notified.`,
+        relatedPermit: permit._id,
+        link: `/admin/permits`,
+        type: 'info'
+      });
+    }
+
+    await logAuditEvent(req, {
+      action: 'payment_assessment_sent',
+      entityType: 'payment',
+      entityId: permit._id.toString(),
+      trackingNumber: permit.trackingNumber,
+      result: 'success',
+      details: { fees: calculatedFees, total: calculatedFees.total }
+    });
+
+    res.json({
+      success: true,
+      message: 'Payment assessment forwarded to client successfully',
+      data: { permit }
+    });
+  } catch (error) {
+    console.error('Send assessment error:', error);
+    res.status(500).json({ success: false, message: 'Server error forwarding payment assessment' });
+  }
+});
+
+// @route   POST /api/permits/:id/payment-receipt
+// @desc    Client uploads payment receipt (OR number, date, file)
+// @access  Private
+router.post('/:id/payment-receipt', protect, uploadSingle('receipt'), async (req, res) => {
+  try {
+    const permit = await Permit.findById(req.params.id);
+    if (!permit) {
+      return res.status(404).json({ success: false, message: 'Permit application not found' });
+    }
+
+    if (!canAccessPermit(req.user, permit)) {
+      return res.status(403).json({ success: false, message: 'Not authorized for this permit' });
+    }
+
+    const { orNumber, paymentMethod, receiptDate, remarks } = req.body;
+    let receiptUrl = req.body.receiptUrl || '';
+    let receiptFileName = req.body.receiptFileName || '';
+
+    if (req.file) {
+      receiptUrl = req.file.path.startsWith('http') ? req.file.path : `/api/permits/${permit._id}/documents/file/${path.basename(req.file.path)}`;
+      receiptFileName = req.file.originalname;
+
+      permit.documents.push({
+        docType: 'payment_receipt',
+        requirementCode: 'PAYMENT_RECEIPT',
+        name: 'Official Payment Receipt',
+        originalName: req.file.originalname,
+        fileUrl: receiptUrl,
+        filePath: req.file.path,
+        fileSize: req.file.size,
+        mimeType: req.file.mimetype,
+        uploadedAt: new Date(),
+        uploadedBy: req.user.id,
+        agency: 'applicant',
+        status: 'pending',
+        version: 1
+      });
+    }
+
+    permit.paymentInfo = {
+      paymentFrequency: permit.paymentInfo?.paymentFrequency || 'annually',
+      amount: permit.paymentInfo?.amount || 0,
+      receiptDate: receiptDate ? new Date(receiptDate) : (permit.paymentInfo?.receiptDate || new Date()),
+      preferredPaymentDate: permit.paymentInfo?.preferredPaymentDate,
+      orNumber: orNumber || permit.paymentInfo?.orNumber || '',
+      paymentMethod: paymentMethod || permit.paymentInfo?.paymentMethod || 'Treasury Cashier',
+      paymentStatus: 'receipt_uploaded',
+      receiptUrl: receiptUrl || permit.paymentInfo?.receiptUrl,
+      receiptFileName: receiptFileName || permit.paymentInfo?.receiptFileName,
+      receiptUploadedAt: new Date(),
+      verificationNotes: remarks || ''
+    };
+
+    permit.status = 'payment_under_review';
+
+    permit.approvalHistory.push({
+      action: 'payment_receipt_uploaded',
+      performedBy: req.user.id,
+      performedAt: new Date(),
+      remarks: `Client uploaded payment receipt (OR #${orNumber || 'Pending'}, Method: ${paymentMethod || 'Treasury'}). Awaiting Treasury verification.`
+    });
+
+    await permit.save();
+
+    // Notify Admin & Treasury
+    await Notification.create({
+      role: 'admin',
+      title: 'Payment Verification Required 💰',
+      message: `Applicant uploaded payment receipt for ${permit.businessInfo?.businessName} (${permit.trackingNumber}). Treasury verification required.`,
+      relatedPermit: permit._id,
+      link: `/admin/permits`,
+      type: 'warning'
+    });
+
+    await logAuditEvent(req, {
+      action: 'payment_receipt_uploaded',
+      entityType: 'payment',
+      entityId: permit._id.toString(),
+      trackingNumber: permit.trackingNumber,
+      result: 'success',
+      details: { orNumber, paymentMethod, receiptUrl }
+    });
+
+    res.json({
+      success: true,
+      message: 'Payment receipt uploaded successfully and queued for Treasury verification',
+      data: { permit }
+    });
+  } catch (error) {
+    console.error('Payment receipt upload error:', error);
+    res.status(500).json({ success: false, message: 'Server error uploading payment receipt: ' + error.message });
+  }
+});
+
+// @route   PUT /api/permits/:id/verify-payment
+// @desc    Treasury / Admin confirms or flags payment receipt
+// @access  Private/Admin
+router.put('/:id/verify-payment', protect, authorize('admin', 'superadmin'), async (req, res) => {
+  try {
+    const { verified, orNumber, remarks } = req.body;
+    const permit = await Permit.findById(req.params.id);
+
+    if (!permit) {
+      return res.status(404).json({ success: false, message: 'Permit application not found' });
+    }
+
+    if (verified) {
+      permit.paymentInfo.paymentStatus = 'verified';
+      permit.paymentInfo.verifiedBy = req.user.id;
+      permit.paymentInfo.verifiedAt = new Date();
+      if (orNumber) permit.paymentInfo.orNumber = orNumber;
+      if (remarks) permit.paymentInfo.verificationNotes = remarks;
+
+      // Payment verified -> Ready for BPLO permit issuance
+      permit.status = 'approved';
+
+      // Generate permit number if not yet generated
+      if (!permit.permitNumber) {
+        const year = new Date().getFullYear();
+        permit.permitNumber = `BP-${year}-${Math.floor(1000 + Math.random() * 9000)}`;
+      }
+
+      permit.approvalHistory.push({
+        action: 'payment_verified',
+        performedBy: req.user.id,
+        performedAt: new Date(),
+        remarks: remarks || `Treasury confirmed payment (OR #${permit.paymentInfo.orNumber || 'Recorded'}). BPLO authorized to issue permit.`
+      });
+
+      await permit.save();
+
+      // Notify BPLO
+      await Notification.create({
+        role: 'admin',
+        title: 'Payment Verified: Permit Ready for Issuance 📜',
+        message: `Treasury has verified payment for ${permit.businessInfo?.businessName} (${permit.trackingNumber}). BPLO can now issue the business permit.`,
+        relatedPermit: permit._id,
+        link: `/admin/permits`,
+        type: 'success'
+      });
+
+      // If Super Admin performed verification, notify BPLO
+      if (req.user.role === 'superadmin') {
+        await Notification.create({
+          role: 'admin',
+          title: 'Super Admin Verified Payment',
+          message: `Super Admin verified payment for ${permit.businessInfo?.businessName} in lieu of Treasury/BPLO.`,
+          relatedPermit: permit._id,
+          link: `/admin/permits`,
+          type: 'info'
+        });
+      }
+
+      // Notify Applicant
+      await Notification.create({
+        recipient: permit.applicant,
+        role: 'user',
+        title: 'Payment Verified by Treasury ✅',
+        message: `Your payment has been successfully confirmed and verified by the Municipal Treasury. Your Mayor's Business Permit is being finalized for issuance.`,
+        relatedPermit: permit._id,
+        link: `/permit-status/${permit._id}`,
+        type: 'success'
+      });
+    } else {
+      permit.paymentInfo.paymentStatus = 'rejected';
+      permit.status = 'pending_payment';
+      if (remarks) permit.paymentInfo.verificationNotes = remarks;
+
+      permit.approvalHistory.push({
+        action: 'reviewed',
+        performedBy: req.user.id,
+        performedAt: new Date(),
+        remarks: remarks || 'Payment verification rejected. Applicant requested to re-upload receipt.'
+      });
+
+      await permit.save();
+
+      // Notify applicant
+      await Notification.create({
+        recipient: permit.applicant,
+        role: 'user',
+        title: 'Payment Verification Action Needed ⚠️',
+        message: remarks || `The Municipal Treasury was unable to verify your payment receipt. Please re-upload a clear and valid official receipt.`,
+        relatedPermit: permit._id,
+        link: `/permit-status/${permit._id}`,
+        type: 'warning'
+      });
+    }
+
+    await logAuditEvent(req, {
+      action: 'payment_verification_completed',
+      entityType: 'payment',
+      entityId: permit._id.toString(),
+      trackingNumber: permit.trackingNumber,
+      result: verified ? 'success' : 'failure',
+      details: { verified, orNumber: permit.paymentInfo.orNumber, remarks }
+    });
+
+    res.json({
+      success: true,
+      message: verified ? 'Payment confirmed and verified successfully' : 'Payment rejected; client notified to re-upload',
+      data: { permit }
+    });
+  } catch (error) {
+    console.error('Verify payment error:', error);
+    res.status(500).json({ success: false, message: 'Server error verifying payment' });
+  }
+});
+
+// @route   PUT /api/permits/:id/issue
+// @desc    BPLO issues digital business permit certificate
+// @access  Private/Admin
+router.put('/:id/issue', protect, authorize('admin', 'superadmin'), async (req, res) => {
+  try {
+    const permit = await Permit.findById(req.params.id);
+    if (!permit) {
+      return res.status(404).json({ success: false, message: 'Permit application not found' });
+    }
+
+    const year = new Date().getFullYear();
+    if (!permit.permitNumber) {
+      permit.permitNumber = `BP-${year}-${Math.floor(1000 + Math.random() * 9000)}`;
+    }
+
+    permit.status = 'issued';
+    permit.issuedAt = new Date();
+    
+    // Set expiration to December 31 of current calendar year
+    const expiration = new Date();
+    expiration.setMonth(11, 31); // Dec 31
+    expiration.setHours(23, 59, 59, 999);
+    permit.expiresAt = expiration;
+
+    permit.approvalHistory.push({
+      action: 'issued',
+      performedBy: req.user.id,
+      performedAt: new Date(),
+      remarks: req.body.remarks || `Official Mayor's Business Permit generated and issued by ${req.user.role === 'superadmin' ? 'Super Admin' : 'BPLO'} according to municipal records.`
+    });
+
+    await permit.save();
+
+    // If super admin issued, notify BPLO
+    if (req.user.role === 'superadmin') {
+      await Notification.create({
+        role: 'admin',
+        title: 'Super Admin Issued Permit',
+        message: `Super Admin issued Mayor Business Permit (${permit.permitNumber}) for ${permit.businessInfo?.businessName}.`,
+        relatedPermit: permit._id,
+        link: `/admin/permits`,
+        type: 'info'
+      });
+    }
+
+    // Notify Applicant
+    await Notification.create({
+      recipient: permit.applicant,
+      role: 'user',
+      title: 'Official Business Permit Issued! 🏛️',
+      message: `Your Mayor's Business Permit (${permit.permitNumber}) is ready! You can now view, download, or directly print your official municipal certificate.`,
+      relatedPermit: permit._id,
+      link: `/permit-status/${permit._id}`,
+      type: 'success'
+    });
+
+    await logAuditEvent(req, {
+      action: 'permit_issued',
+      entityType: 'permit',
+      entityId: permit._id.toString(),
+      trackingNumber: permit.trackingNumber,
+      result: 'success',
+      details: { permitNumber: permit.permitNumber, issuedAt: permit.issuedAt, expiresAt: permit.expiresAt }
+    });
+
+    try {
+      const user = await User.findById(permit.applicant);
+      await sendEmail(emailTemplates.permitApproved(user, permit));
+    } catch (emailError) {
+      console.error('Email error on permit issuance:', emailError.message);
+    }
+
+    res.json({
+      success: true,
+      message: 'Mayor Business Permit issued successfully',
+      data: { permit }
+    });
+  } catch (error) {
+    console.error('Issue permit error:', error);
+    res.status(500).json({ success: false, message: 'Server error issuing permit' });
   }
 });
 

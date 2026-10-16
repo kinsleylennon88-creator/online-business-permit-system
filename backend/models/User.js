@@ -64,6 +64,8 @@ const userSchema = new mongoose.Schema({
   },
   lastLogin: Date,
   profilePicture: String,
+  nationalIdFront: String,
+  nationalIdBack: String,
   createdAt: {
     type: Date,
     default: Date.now

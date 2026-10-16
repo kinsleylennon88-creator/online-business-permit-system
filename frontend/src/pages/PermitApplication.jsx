@@ -28,6 +28,7 @@ import Button from '../components/shared/Button'
 import Input from '../components/shared/Input'
 import Badge from '../components/shared/Badge'
 import PermitStepper from '../components/permit/PermitStepper'
+import TreasurerSeal from '../components/shared/TreasurerSeal'
 import toast from 'react-hot-toast'
 
 // 1. Business Ownership Types in ALPHABETICAL ORDER (A to Z) including One Person Corporation
@@ -259,6 +260,25 @@ const PermitApplication = () => {
     }
   }
 
+  const handleStep3Continue = () => {
+    // All requirements should be required in documents (Flowchart: Documents Complete?)
+    if (docRequirements.length > 0) {
+      const missing = docRequirements.filter(req => {
+        const uploadedItem = uploadedFiles[req.name]
+        return !uploadedItem || uploadedItem.length === 0
+      })
+
+      if (missing.length > 0) {
+        toast.error(
+          `Missed Information: All clearances are mandatory. Please attach: ${missing.map(m => m.name).join(', ')}`,
+          { duration: 5000 }
+        )
+        return
+      }
+    }
+    nextStep()
+  }
+
   const handleFinalSubmit = async () => {
     setIsLoading(true)
     try {
@@ -276,10 +296,15 @@ const PermitApplication = () => {
   // STEP 1: Permit Type & Business Identity
   const renderStep1 = () => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-      <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
-        
-        {/* Permit Type Selector (Requirement 1) */}
-        <div>
+      <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
+        {/* Fill up Form Background: transparent logo of treasurer */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
+          <TreasurerSeal className="w-[480px] h-[480px] text-amber-900 opacity-[0.06] transform -rotate-12" />
+        </div>
+
+        <div className="relative z-10 space-y-6">
+          {/* Permit Type Selector (Requirement 1) */}
+          <div>
           <label className="block text-sm font-extrabold text-slate-900 mb-3">
             Select Permit Application Type <span className="text-red-500">*</span>
           </label>
@@ -451,6 +476,7 @@ const PermitApplication = () => {
             <ArrowRight className="w-5 h-5 ml-2" />
           </button>
         </div>
+        </div>
       </div>
     </motion.div>
   )
@@ -458,8 +484,14 @@ const PermitApplication = () => {
   // STEP 2: Ownership & Payment Information (Requirement 2 & 3)
   const renderStep2 = () => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-      <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
-        <div className="flex items-center space-x-3 pb-4 border-b border-slate-100">
+      <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
+        {/* Fill up Form Background: transparent logo of treasurer */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
+          <TreasurerSeal className="w-[480px] h-[480px] text-amber-900 opacity-[0.06] transform -rotate-12" />
+        </div>
+
+        <div className="relative z-10 space-y-6">
+          <div className="flex items-center space-x-3 pb-4 border-b border-slate-100">
           <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center text-primary-700">
             <User className="w-5 h-5" />
           </div>
@@ -534,16 +566,28 @@ const PermitApplication = () => {
           </div>
         </div>
 
-        {/* Optional Receipt Date Picker */}
+        {/* Preferred Date of Payment if Approved by Treasurer */}
         <div>
-          <label className="block text-sm font-bold text-slate-900 mb-1">
-            Date of Payment Receipt (Optional / If paid at Treasury)
-          </label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-sm font-bold text-slate-900">
+              Preferred date of payment if Approved by treasurer <span className="text-red-500">*</span>
+            </label>
+            <span className="text-[11px] font-bold text-primary-600 bg-primary-50 px-2.5 py-0.5 rounded-full">
+              Treasury Schedule
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 mb-2">
+            Select your preferred target date to settle municipal fees once your application is assessed and approved by the Municipal Treasurer.
+          </p>
           <input
             type="date"
-            className="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 text-sm font-medium focus:border-primary-600 outline-none"
-            {...register('paymentInfo.receiptDate')}
+            min={new Date().toISOString().split('T')[0]}
+            className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 text-sm font-semibold focus:border-primary-600 focus:ring-4 focus:ring-primary-100 outline-none bg-white"
+            {...register('paymentInfo.receiptDate', { required: 'Please select your preferred date of payment' })}
           />
+          {errors.paymentInfo?.receiptDate && (
+            <p className="text-xs font-bold text-red-600 mt-1">{errors.paymentInfo.receiptDate.message}</p>
+          )}
         </div>
 
         <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
@@ -564,6 +608,7 @@ const PermitApplication = () => {
             Continue to Step 3: Clearances
             <ArrowRight className="w-5 h-5 ml-2" />
           </button>
+        </div>
         </div>
       </div>
     </motion.div>
@@ -666,7 +711,7 @@ const PermitApplication = () => {
         </button>
         <button
           type="button"
-          onClick={nextStep}
+          onClick={handleStep3Continue}
           disabled={isUploading}
           className="inline-flex items-center px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-bold text-base rounded-xl shadow-md transition-all focus:ring-4 focus:ring-primary-200"
         >
@@ -680,16 +725,22 @@ const PermitApplication = () => {
   // STEP 4: Review & Final Submission
   const renderStep4 = () => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-      <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
-        <div className="flex items-center space-x-3 pb-4 border-b border-slate-100">
-          <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center text-primary-700">
-            <ShieldCheck className="w-6 h-6" />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-slate-900">Step 4: Final Verification & Submission</h3>
-            <p className="text-xs text-slate-500">Please review your business details and declared information</p>
-          </div>
+      <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
+        {/* Fill up Form Background: transparent logo of treasurer */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
+          <TreasurerSeal className="w-[480px] h-[480px] text-amber-900 opacity-[0.06] transform -rotate-12" />
         </div>
+
+        <div className="relative z-10 space-y-6">
+          <div className="flex items-center space-x-3 pb-4 border-b border-slate-100">
+            <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center text-primary-700">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-900">Step 4: Final Verification & Submission</h3>
+              <p className="text-xs text-slate-500">Please review your business details and declared information</p>
+            </div>
+          </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-200 text-xs sm:text-sm">
           <div>
@@ -765,6 +816,7 @@ const PermitApplication = () => {
             {isLoading ? 'Submitting Application...' : 'Submit Application to BPLO'}
           </button>
         </div>
+        </div>
       </div>
     </motion.div>
   )
@@ -798,13 +850,20 @@ const PermitApplication = () => {
         </div>
       </div>
 
-      <div className="container max-w-4xl mt-8">
-        <AnimatePresence mode="wait">
-          {currentStep === 1 && renderStep1()}
-          {currentStep === 2 && renderStep2()}
-          {currentStep === 3 && renderStep3()}
-          {currentStep === 4 && renderStep4()}
-        </AnimatePresence>
+      <div className="container max-w-4xl mt-8 relative">
+        {/* Fill up Form Background: transparent logo of treasurer */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0">
+          <TreasurerSeal className="w-[500px] h-[500px] text-primary-950 opacity-[0.06] transform -rotate-12" />
+        </div>
+
+        <div className="relative z-10">
+          <AnimatePresence mode="wait">
+            {currentStep === 1 && renderStep1()}
+            {currentStep === 2 && renderStep2()}
+            {currentStep === 3 && renderStep3()}
+            {currentStep === 4 && renderStep4()}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   )

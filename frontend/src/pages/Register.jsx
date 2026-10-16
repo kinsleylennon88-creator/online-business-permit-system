@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { Eye, EyeOff, Mail, Lock, User, Phone, MapPin, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, User, Phone, MapPin, ArrowRight, ShieldCheck, CheckCircle2, Upload } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useAuth } from '../contexts/AuthContext'
 import Button from '../components/shared/Button'
 import Input from '../components/shared/Input'
 import Badge from '../components/shared/Badge'
+import toast from 'react-hot-toast'
 
 const barangays = [
   'Poblacion', 'Aganan', 'Balabago', 'Barasalon', 'Bongol', 'Bucari', 'Calinog', 'Carpenter',
@@ -18,6 +19,10 @@ const barangays = [
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [idFrontPreview, setIdFrontPreview] = useState(null)
+  const [idFrontFile, setIdFrontFile] = useState(null)
+  const [idBackPreview, setIdBackPreview] = useState(null)
+  const [idBackFile, setIdBackFile] = useState(null)
   const { register: registerUser } = useAuth()
   const navigate = useNavigate()
 
@@ -30,11 +35,43 @@ const Register = () => {
 
   const password = watch('password')
 
+  const handleIdUpload = (e, side) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size must be under 5MB')
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      if (side === 'front') {
+        setIdFrontPreview(reader.result)
+        setIdFrontFile(file)
+      } else {
+        setIdBackPreview(reader.result)
+        setIdBackFile(file)
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
   const onSubmit = async (data) => {
+    if (!idFrontPreview || !idBackPreview) {
+      toast.error('Please upload both the Front and Back photos of your Philippine National ID.')
+      return
+    }
+
     setIsLoading(true)
     try {
-      await registerUser(data)
-      navigate('/dashboard')
+      await registerUser({
+        ...data,
+        nationalIdFront: idFrontPreview,
+        nationalIdBack: idBackPreview
+      })
+      toast.success('Account established! Proceeding to Permit Application...')
+      navigate('/apply-permit')
     } catch (error) {
       // Error is handled in AuthContext
     } finally {
@@ -218,6 +255,81 @@ const Register = () => {
                   })}
                   error={errors.confirmPassword?.message}
                 />
+              </div>
+            </div>
+
+            {/* National ID Verification (Requirement from Flowchart & Specs) */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-brand-400 uppercase tracking-widest">
+                  Philippine National ID (PhilSys) Verification <span className="text-red-500">*</span>
+                </h3>
+                <span className="text-xs text-primary-600 font-semibold bg-primary-50 px-2 py-0.5 rounded-md">
+                  Front & Back Required
+                </span>
+              </div>
+              <p className="text-xs text-brand-500">
+                Please attach clear photos or scanned copies of your valid Philippine National ID card.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* ID Front */}
+                <div className="border-2 border-dashed border-brand-200 rounded-2xl p-4 text-center hover:border-primary-400 transition-colors bg-white/70">
+                  <label className="block text-xs font-bold text-brand-700 mb-2">National ID (Front)</label>
+                  {idFrontPreview ? (
+                    <div className="relative group">
+                      <img src={idFrontPreview} alt="National ID Front" className="w-full h-32 object-cover rounded-xl shadow-xs border border-brand-100" />
+                      <button
+                        type="button"
+                        onClick={() => { setIdFrontPreview(null); setIdFrontFile(null); }}
+                        className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 text-xs hover:bg-red-700 shadow-sm"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="cursor-pointer flex flex-col items-center justify-center h-32 border-2 border-slate-100 rounded-xl hover:bg-brand-50/50 transition-colors">
+                      <Upload className="w-6 h-6 text-brand-400 mb-1" />
+                      <span className="text-xs font-bold text-primary-600">Upload Front Photo</span>
+                      <span className="text-[10px] text-brand-400 mt-0.5">JPG, PNG or WEBP (max 5MB)</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleIdUpload(e, 'front')}
+                      />
+                    </label>
+                  )}
+                </div>
+
+                {/* ID Back */}
+                <div className="border-2 border-dashed border-brand-200 rounded-2xl p-4 text-center hover:border-primary-400 transition-colors bg-white/70">
+                  <label className="block text-xs font-bold text-brand-700 mb-2">National ID (Back)</label>
+                  {idBackPreview ? (
+                    <div className="relative group">
+                      <img src={idBackPreview} alt="National ID Back" className="w-full h-32 object-cover rounded-xl shadow-xs border border-brand-100" />
+                      <button
+                        type="button"
+                        onClick={() => { setIdBackPreview(null); setIdBackFile(null); }}
+                        className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 text-xs hover:bg-red-700 shadow-sm"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="cursor-pointer flex flex-col items-center justify-center h-32 border-2 border-slate-100 rounded-xl hover:bg-brand-50/50 transition-colors">
+                      <Upload className="w-6 h-6 text-brand-400 mb-1" />
+                      <span className="text-xs font-bold text-primary-600">Upload Back Photo</span>
+                      <span className="text-[10px] text-brand-400 mt-0.5">JPG, PNG or WEBP (max 5MB)</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => handleIdUpload(e, 'back')}
+                      />
+                    </label>
+                  )}
+                </div>
               </div>
             </div>
 

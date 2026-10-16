@@ -210,6 +210,7 @@ const permitSchema = new mongoose.Schema({
       default: 'annually'
     },
     receiptDate: Date,
+    preferredPaymentDate: Date,
     orNumber: String,
     amount: {
       type: Number,
@@ -218,9 +219,18 @@ const permitSchema = new mongoose.Schema({
     paymentMethod: String,
     paymentStatus: {
       type: String,
-      enum: ['pending', 'paid', 'verified'],
+      enum: ['pending', 'paid', 'receipt_uploaded', 'verified', 'rejected'],
       default: 'pending'
-    }
+    },
+    receiptUrl: String,
+    receiptFileName: String,
+    receiptUploadedAt: Date,
+    verifiedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    verifiedAt: Date,
+    verificationNotes: String
   },
   documents: [documentSchema],
   agencyReviews: {
@@ -240,6 +250,8 @@ const permitSchema = new mongoose.Schema({
       sanitaryFee: { type: Number, default: 0 },
       fireSafetyFee: { type: Number, default: 0 },
       environmentalFee: { type: Number, default: 0 },
+      garbageFee: { type: Number, default: 0 },
+      plateStickerFee: { type: Number, default: 0 },
       total: { type: Number, default: 0 }
     },
     assessedBy: {
@@ -247,6 +259,11 @@ const permitSchema = new mongoose.Schema({
       ref: 'User'
     },
     assessedAt: Date,
+    forwardedToClient: {
+      type: Boolean,
+      default: false
+    },
+    forwardedAt: Date,
     paymentStatus: {
       type: String,
       enum: ['pending', 'paid', 'verified'],
@@ -266,6 +283,8 @@ const permitSchema = new mongoose.Schema({
       'pending_fire_review',
       'pending_sanitation_review',
       'returned_for_correction',
+      'pending_payment',
+      'payment_under_review',
       'rejected',
       'approved',
       'issued',
@@ -306,6 +325,9 @@ const permitSchema = new mongoose.Schema({
         'sanitation_rejected',
         'sanitation_correction_requested',
         'returned_for_correction',
+        'payment_assessment_sent',
+        'payment_receipt_uploaded',
+        'payment_verified',
         'approved',
         'rejected',
         'issued',

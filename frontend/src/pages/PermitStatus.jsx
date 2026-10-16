@@ -33,6 +33,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Card, CardHeader, CardBody } from '../components/shared/Card'
 import Button from '../components/shared/Button'
 import Badge from '../components/shared/Badge'
+import OrderOfPaymentModal from '../components/permit/OrderOfPaymentModal'
+import BusinessPermitCertificate from '../components/permit/BusinessPermitCertificate'
 
 const PermitStatus = () => {
   const { id } = useParams()
@@ -40,6 +42,15 @@ const PermitStatus = () => {
   const [permit, setPermit] = useState(null)
   const [loading, setLoading] = useState(true)
   const [uploadingDoc, setUploadingDoc] = useState(null)
+
+  // Payment and Certificate Modals State
+  const [showOrderPaymentModal, setShowOrderPaymentModal] = useState(false)
+  const [showCertificateModal, setShowCertificateModal] = useState(false)
+  const [receiptFile, setReceiptFile] = useState(null)
+  const [orNumberInput, setOrNumberInput] = useState('')
+  const [paymentMethodInput, setPaymentMethodInput] = useState('Treasury Cashier')
+  const [receiptDateInput, setReceiptDateInput] = useState(new Date().toISOString().split('T')[0])
+  const [isSubmittingPayment, setIsSubmittingPayment] = useState(false)
 
   useEffect(() => {
     fetchPermit()
@@ -49,12 +60,46 @@ const PermitStatus = () => {
     try {
       setLoading(true)
       const response = await permitService.getPermit(id)
-      setPermit(response.data?.data?.permit)
+      const fetchedPermit = response.data?.data?.permit
+      setPermit(fetchedPermit)
+      if (fetchedPermit?.paymentInfo?.orNumber) {
+        setOrNumberInput(fetchedPermit.paymentInfo.orNumber)
+      }
+      if (fetchedPermit?.paymentInfo?.paymentMethod) {
+        setPaymentMethodInput(fetchedPermit.paymentInfo.paymentMethod)
+      }
     } catch (error) {
       toast.error('Failed to load permit application dossier')
       navigate('/dashboard')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleUploadPaymentReceipt = async (e) => {
+    e.preventDefault()
+    if (!receiptFile && !permit?.paymentInfo?.receiptUrl) {
+      return toast.error('Please attach a clear photo or copy of your payment receipt.')
+    }
+    if (!orNumberInput.trim() && !permit?.paymentInfo?.orNumber) {
+      return toast.error('Please enter the Official Receipt (OR) Number.')
+    }
+
+    try {
+      setIsSubmittingPayment(true)
+      const fd = new FormData()
+      if (receiptFile) fd.append('receipt', receiptFile)
+      fd.append('orNumber', orNumberInput.trim() || permit?.paymentInfo?.orNumber || '')
+      fd.append('paymentMethod', paymentMethodInput)
+      fd.append('receiptDate', receiptDateInput)
+
+      await permitService.uploadPaymentReceipt(id, fd)
+      toast.success('Payment receipt submitted! Queued for Treasury staff verification.')
+      fetchPermit()
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to submit payment receipt')
+    } finally {
+      setIsSubmittingPayment(false)
     }
   }
 
@@ -100,19 +145,33 @@ const PermitStatus = () => {
           icon: Clock,
           desc: 'Your application is actively undergoing clearance evaluation by BPLO, Bureau of Fire, and Bureau of Sanitation.'
         }
+      case 'pending_payment':
+        return {
+          label: 'Order of Payment Issued • Settle Assessment',
+          variant: 'warning',
+          icon: CreditCard,
+          desc: 'BPLO has finalized your fees assessment. Please view your Order of Payment, settle at the Treasury, and upload your receipt.'
+        }
+      case 'payment_under_review':
+        return {
+          label: 'Payment Receipt Under Treasury Verification',
+          variant: 'warning',
+          icon: Clock,
+          desc: 'Your payment receipt proof has been submitted and is currently being verified by the Municipal Treasury.'
+        }
       case 'approved':
         return {
-          label: 'Application Approved & Assessed',
+          label: 'Payment Verified • Approved by Licensing Board',
           variant: 'success',
           icon: CheckCircle2,
-          desc: 'Your application has passed all agency requirements and has been approved by the Municipal Licensing Board.'
+          desc: 'Your payment has been verified by the Treasury. Your Mayor Business Permit is ready for issuance by the BPLO.'
         }
       case 'issued':
         return {
-          label: 'Active Business Permit Issued',
+          label: 'Official Mayor\'s Business Permit Issued',
           variant: 'success',
           icon: ShieldCheck,
-          desc: 'Your official Mayor\'s Business Permit is active and registered in the municipal database.'
+          desc: 'Your official Mayor\'s Business Permit certificate has been issued. You can view, download, or directly print your municipal permit.'
         }
       default:
         return {
@@ -224,8 +283,223 @@ const PermitStatus = () => {
           {/* Main Case Dossier */}
           <div className="lg:col-span-2 space-y-6">
 
-            {/* DEFICIENCY / CORRECTION NOTICES */}
-            {(missingCount > 0 || permit.status === 'returned_for_correction' || permit.status === 'rejected' || permit.adminComments) && (
+            {/* 1. ISSUED PERMIT CERTIFICATE SHOWCASE BANNER */}
+            {permit.status === 'issued' && (
+              <div className="bg-gradient-to-r from-amber-600 via-amber-700 to-amber-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border-2 border-amber-400/40 relative overflow-hidden">
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div className="space-y-2">
+                    <div className="inline-flex items-center space-x-2 bg-amber-400/20 px-3 py-1 rounded-full text-xs font-bold text-amber-200 border border-amber-400/30">
+                      <ShieldCheck className="w-4 h-4 text-amber-300" />
+                      <span>Official Regulatory Permit Certificate Generated</span>
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                      Mayor's Business Permit Issued!
+                    </h2>
+                    <p className="text-sm text-amber-100 max-w-xl leading-relaxed">
+                      Your business permit certificate has been officially issued by the Municipality of Janiuay. You can view the high-resolution certificate, print it, or download the digital copy below.
+                    </p>
+                    <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-amber-200 pt-1">
+                      <span>Permit No: <strong className="font-mono text-white text-sm">{permit.permitNumber}</strong></span>
+                      <span>•</span>
+                      <span>Business ID: <strong className="font-mono text-white text-sm">{permit.businessIdNumber}</strong></span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-shrink-0">
+                    <button
+                      onClick={() => setShowCertificateModal(true)}
+                      className="px-5 py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-sm rounded-xl transition-all shadow-md flex items-center justify-center"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      View Certificate
+                    </button>
+                    <button
+                      onClick={() => setShowCertificateModal(true)}
+                      className="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold text-sm rounded-xl transition-all border border-white/20 flex items-center justify-center"
+                    >
+                      <Printer className="w-4 h-4 mr-2" />
+                      Print / Download
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 2. MUNICIPAL TREASURY PAYMENT ASSESSMENT & RECEIPT PROOF (Image 1, 2, 3) */}
+            {(permit.assessment?.forwardedToClient || permit.status === 'pending_payment' || permit.status === 'payment_under_review' || permit.paymentInfo?.amount > 0 || permit.status === 'approved' || permit.status === 'issued') && (
+              <Card className="border-2 border-primary-200 bg-white shadow-sm overflow-hidden">
+                <CardHeader
+                  title="Municipal Treasury Assessment & Payment Proof"
+                  subtitle="Order of payment voucher and receipt settlement"
+                  icon={<CreditCard className="w-5 h-5 text-primary-600" />}
+                />
+                <CardBody className="space-y-6">
+                  {/* Assessment Summary Box */}
+                  <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Total Regulatory Assessment
+                      </span>
+                      <p className="text-3xl font-extrabold text-slate-900 font-mono">
+                        ₱{Number(permit.assessment?.fees?.total || permit.paymentInfo?.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Target Payment Date: <strong>{permit.paymentInfo?.receiptDate ? new Date(permit.paymentInfo.receiptDate).toLocaleDateString() : 'Scheduled by Treasury'}</strong>
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        leftIcon={<FileText className="w-4 h-4 text-primary-600" />}
+                        onClick={() => setShowOrderPaymentModal(true)}
+                      >
+                        View / Print Order of Payment
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Payment Receipt Status / Upload Form */}
+                  {permit.paymentInfo?.paymentStatus === 'verified' || permit.status === 'approved' || permit.status === 'issued' ? (
+                    <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <CheckCircle2 className="w-6 h-6 text-emerald-600 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-bold text-emerald-950">
+                            Payment Verified by Municipal Treasury
+                          </p>
+                          <p className="text-xs text-emerald-800">
+                            Official Receipt (OR) No: <strong>{permit.paymentInfo?.orNumber || 'Recorded in Treasury'}</strong> • Method: <strong>{permit.paymentInfo?.paymentMethod || 'Treasury Cashier'}</strong>
+                          </p>
+                        </div>
+                      </div>
+                      {permit.paymentInfo?.receiptUrl && (
+                        <a
+                          href={getFileViewUrl(permit.paymentInfo.receiptUrl)}
+                          onClick={(e) => handleViewFile(e, permit.paymentInfo.receiptUrl)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors flex items-center"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5 mr-1" /> View Receipt
+                        </a>
+                      )}
+                    </div>
+                  ) : permit.paymentInfo?.paymentStatus === 'receipt_uploaded' || permit.status === 'payment_under_review' ? (
+                    <div className="p-5 bg-sky-50 rounded-2xl border border-sky-200 space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <Clock className="w-6 h-6 text-sky-600 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-bold text-sky-950">
+                            Payment Receipt Submitted • Treasury Verification in Progress
+                          </p>
+                          <p className="text-xs text-sky-800">
+                            OR No: <strong>{permit.paymentInfo?.orNumber || orNumberInput || 'Under audit'}</strong> • Date Paid: <strong>{permit.paymentInfo?.receiptDate ? new Date(permit.paymentInfo.receiptDate).toLocaleDateString() : 'Today'}</strong>
+                          </p>
+                        </div>
+                      </div>
+                      <div className="pt-2 border-t border-sky-200/60 flex items-center justify-between text-xs text-sky-900">
+                        <span>Treasury staff will verify this payment to trigger permit issuance.</span>
+                        {permit.paymentInfo?.receiptUrl && (
+                          <a
+                            href={getFileViewUrl(permit.paymentInfo.receiptUrl)}
+                            onClick={(e) => handleViewFile(e, permit.paymentInfo.receiptUrl)}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="font-bold underline flex items-center"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5 mr-1" /> View Uploaded Receipt
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    /* Receipt Upload Form */
+                    <form onSubmit={handleUploadPaymentReceipt} className="space-y-4 p-5 rounded-2xl bg-amber-50/50 border border-amber-200">
+                      <div className="flex items-center space-x-2">
+                        <Upload className="w-5 h-5 text-amber-700" />
+                        <h4 className="text-sm font-bold text-amber-950">
+                          Upload Payment Receipt Proof (Treasury, Bank or e-Wallet)
+                        </h4>
+                      </div>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        After paying to the treasurer or via bank, upload your Official Receipt (OR) to allow the admin and treasury to verify your payment.
+                      </p>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 mb-1">
+                            Official Receipt (OR) Number <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g., OR-2026-8812"
+                            value={orNumberInput}
+                            onChange={(e) => setOrNumberInput(e.target.value)}
+                            required
+                            className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-mono font-bold outline-none focus:border-primary-500 bg-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 mb-1">
+                            Payment Method
+                          </label>
+                          <select
+                            value={paymentMethodInput}
+                            onChange={(e) => setPaymentMethodInput(e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold outline-none focus:border-primary-500 bg-white"
+                          >
+                            <option value="Treasury Cashier">Treasury Office Cashier</option>
+                            <option value="Land Bank of the Philippines">Land Bank (LBP)</option>
+                            <option value="GCash / e-Payment">GCash / e-Payment</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 mb-1">
+                            Date of Payment Receipt
+                          </label>
+                          <input
+                            type="date"
+                            value={receiptDateInput}
+                            onChange={(e) => setReceiptDateInput(e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-medium outline-none focus:border-primary-500 bg-white"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                          Attach Photo / Scanned Copy of Receipt <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="file"
+                          accept="image/*,.pdf"
+                          onChange={(e) => setReceiptFile(e.target.files?.[0] || null)}
+                          className="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-primary-600 file:text-white hover:file:bg-primary-700 cursor-pointer"
+                        />
+                        <span className="text-[10px] text-slate-400 mt-1 block">Supported formats: JPG, PNG, WEBP, PDF (Max 5MB)</span>
+                      </div>
+
+                      <div className="pt-2 flex justify-end">
+                        <Button
+                          type="submit"
+                          isLoading={isSubmittingPayment}
+                          leftIcon={<Upload className="w-4 h-4" />}
+                        >
+                          Submit Payment Proof to Treasury
+                        </Button>
+                      </div>
+                    </form>
+                  )}
+                </CardBody>
+              </Card>
+            )}
+
+            {/* 3. DEFICIENCY / CORRECTION NOTICES (Deleted once complied and granted by BPLO) */}
+            {((permit.status === 'returned_for_correction' || permit.status === 'rejected') && (missingCount > 0 || permit.status === 'returned_for_correction')) && (
               <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-start space-x-3">
                   <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
@@ -468,6 +742,20 @@ const PermitStatus = () => {
           </div>
         </div>
       </div>
+
+      {/* Order of Payment Voucher Modal */}
+      <OrderOfPaymentModal
+        isOpen={showOrderPaymentModal}
+        onClose={() => setShowOrderPaymentModal(false)}
+        permit={permit}
+      />
+
+      {/* Official Municipality of Janiuay Mayor's Business Permit Certificate Modal */}
+      <BusinessPermitCertificate
+        isOpen={showCertificateModal}
+        onClose={() => setShowCertificateModal(false)}
+        permit={permit}
+      />
     </div>
   )
 }

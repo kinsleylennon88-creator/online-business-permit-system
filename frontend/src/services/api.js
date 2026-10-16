@@ -109,6 +109,12 @@ export const permitService = {
   approvePermit: (id, data) => api.put(`/permits/${id}/approve`, data),
   rejectPermit: (id, data) => api.put(`/permits/${id}/reject`, data),
   updateAssessment: (id, data) => api.put(`/permits/${id}/assessment`, data),
+  sendAssessment: (id, data) => api.put(`/permits/${id}/send-assessment`, data),
+  uploadPaymentReceipt: (id, formData) => api.post(`/permits/${id}/payment-receipt`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  verifyPayment: (id, data) => api.put(`/permits/${id}/verify-payment`, data),
+  issuePermit: (id, data = {}) => api.put(`/permits/${id}/issue`, data),
   deletePermit: (id) => api.delete(`/permits/${id}`),
 }
 

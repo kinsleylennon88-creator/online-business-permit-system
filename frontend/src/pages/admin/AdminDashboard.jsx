@@ -174,25 +174,28 @@ const AdminDashboard = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
+          className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-12"
         >
-          {/* Stats */}
+          {/* Real-time BPLO & Municipal Stats (Image 5: Admin dashboard should see total applied, under review, etc.) */}
           {[
-            { label: 'Total Registries', value: metrics?.permits?.total, icon: FileText, color: 'text-primary-600', bg: 'bg-primary-50', change: '+12% growth' },
-            { label: 'Active Citizens', value: metrics?.users?.total, icon: Users, color: 'text-secondary-600', bg: 'bg-secondary-50', change: '89 active now' },
-            { label: 'Issuance Velocity', value: `${metrics?.permits?.approvalRate}%`, icon: TrendingUp, color: 'text-success-600', bg: 'bg-success-50', change: 'Optimized' },
-            { label: 'System Uptime', value: '99.9%', icon: Shield, color: 'text-brand-600', bg: 'bg-brand-50', change: 'No incidents' }
+            { label: 'Total Applied', value: metrics?.permits?.total || 0, icon: FileText, color: 'text-primary-600', bg: 'bg-primary-50', change: 'All Applications' },
+            { label: 'Under Review', value: metrics?.permits?.pending || 0, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', change: 'BPLO / Clearances' },
+            { label: 'Pending Payment', value: metrics?.permits?.pendingPayment || 0, icon: CreditCard, color: 'text-sky-600', bg: 'bg-sky-50', change: 'Treasury Settlement' },
+            { label: 'Permits Issued', value: metrics?.permits?.issued || 0, icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', change: 'Active Certificates' },
+            { label: 'Deficiencies', value: metrics?.permits?.deficient || 0, icon: AlertCircle, color: 'text-rose-600', bg: 'bg-rose-50', change: 'Corrections Needed' }
           ].map((stat, i) => (
             <motion.div key={i} variants={itemVariants}>
               <Card className="hover:shadow-premium group transition-all duration-300">
-                <CardBody className="flex items-center justify-between">
-                  <div>
-                    <p className="text-[10px] font-bold text-brand-400 uppercase tracking-widest mb-1">{stat.label}</p>
-                    <p className="text-3xl font-display font-bold text-brand-900">{stat.value || 0}</p>
-                    <p className="text-[10px] text-success-600 font-bold mt-1 uppercase tracking-tight">{stat.change}</p>
+                <CardBody className="p-4 flex flex-col justify-between">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-bold text-brand-400 uppercase tracking-widest">{stat.label}</p>
+                    <div className={`p-2 ${stat.bg} rounded-xl group-hover:scale-110 transition-transform`}>
+                      <stat.icon className={`w-4 h-4 ${stat.color}`} />
+                    </div>
                   </div>
-                  <div className={`p-4 ${stat.bg} rounded-2xl group-hover:scale-110 transition-transform`}>
-                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                  <div>
+                    <p className="text-2xl sm:text-3xl font-display font-extrabold text-brand-900">{stat.value}</p>
+                    <p className="text-[10px] text-slate-500 font-semibold mt-0.5 uppercase tracking-tight">{stat.change}</p>
                   </div>
                 </CardBody>
               </Card>

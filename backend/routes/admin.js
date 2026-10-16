@@ -381,6 +381,9 @@ router.get('/metrics', async (req, res) => {
 
     const totalPermits = await Permit.countDocuments();
     const pendingPermits = await Permit.countDocuments({ status: { $in: ['submitted', 'under_review', 'under_admin_review'] } });
+    const pendingPayment = await Permit.countDocuments({ status: { $in: ['pending_payment', 'payment_under_review'] } });
+    const issuedPermits = await Permit.countDocuments({ status: 'issued' });
+    const deficientPermits = await Permit.countDocuments({ status: { $in: ['returned_for_correction', 'rejected'] } });
     const approvedThisMonth = await Permit.countDocuments({ 
       status: { $in: ['approved', 'issued'] }, 
       updatedAt: { $gte: thisMonth } 
@@ -442,6 +445,9 @@ router.get('/metrics', async (req, res) => {
         permits: {
           total: totalPermits,
           pending: pendingPermits,
+          pendingPayment,
+          issued: issuedPermits,
+          deficient: deficientPermits,
           approvedThisMonth,
           rejectedThisMonth,
           approvalRate
@@ -483,8 +489,15 @@ router.get('/permits', async (req, res) => {
     const { status, permitType, barangay, search } = req.query;
     const skip = (page - 1) * limit;
 
-    const query = {};
-    if (status) query.status = status;
+    if (status) {
+      if (status === 'under_review' || status === 'submitted') {
+        query.status = { $in: ['submitted', 'under_review'] };
+      } else if (status === 'deficient' || status === 'rejected' || status === 'returned_for_correction') {
+        query.status = { $in: ['rejected', 'returned_for_correction'] };
+      } else {
+        query.status = status;
+      }
+    }
     if (permitType) query.permitType = permitType;
     if (barangay) query['businessInfo.businessAddress.barangay'] = barangay;
     if (search) {
