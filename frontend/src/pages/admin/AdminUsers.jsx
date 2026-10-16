@@ -34,6 +34,30 @@ const AdminUsers = () => {
   const [showRoleModal, setShowRoleModal] = useState(false)
   const [newRole, setNewRole] = useState('')
 
+  // Lock background window scroll when modal is open
+  useEffect(() => {
+    if (showRoleModal) {
+      const scrollY = window.scrollY
+      const originalOverflow = document.body.style.overflow
+      const originalPosition = document.body.style.position
+      const originalTop = document.body.style.top
+      const originalWidth = document.body.style.width
+
+      document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
+
+      return () => {
+        document.body.style.overflow = originalOverflow
+        document.body.style.position = originalPosition
+        document.body.style.top = originalTop
+        document.body.style.width = originalWidth
+        window.scrollTo(0, scrollY)
+      }
+    }
+  }, [showRoleModal])
+
   useEffect(() => {
     fetchUsers()
   }, [searchTerm, roleFilter, pagination.current])
@@ -252,15 +276,17 @@ const AdminUsers = () => {
         {/* Role Modal */}
         <AnimatePresence>
           {showRoleModal && selectedUser && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overscroll-contain">
               <motion.div 
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-brand-900/40 backdrop-blur-sm"
+                className="absolute inset-0 bg-brand-900/40 backdrop-blur-sm touch-none"
                 onClick={() => setShowRoleModal(false)}
+                onTouchMove={(e) => e.preventDefault()}
               />
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                className="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden"
+                className="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden overscroll-contain"
+                onTouchMove={(e) => e.stopPropagation()}
               >
                 <div className="p-8">
                   <div className="flex items-center space-x-3 mb-6">

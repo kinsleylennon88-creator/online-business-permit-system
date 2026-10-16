@@ -513,34 +513,20 @@ export default function Layout() {
 
       {/* Main Content Viewport */}
       <main className="flex-1 relative">
-        {/* Background Watermark based on role */}
-        {isAdmin && (
-          <div className="fixed inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0 select-none">
-            <img 
-              src="/janiuay-logo.png" 
-              alt="Official Seal Background" 
-              className="w-[560px] h-[560px] max-w-[85vw] max-h-[85vh] object-contain opacity-[0.045] pointer-events-none transform -rotate-6" 
-            />
-          </div>
-        )}
-        {user?.role === 'fire_reviewer' && (
-          <div className="fixed inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0 select-none">
-            <img 
-              src="/bfp-logo.png" 
-              alt="Bureau of Fire Protection Logo Background" 
-              className="w-[560px] h-[560px] max-w-[85vw] max-h-[85vh] object-contain opacity-[0.055] pointer-events-none transform -rotate-6" 
-            />
-          </div>
-        )}
-        {user?.role === 'sanitation_reviewer' && (
-          <div className="fixed inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0 select-none">
-            <img 
-              src="/sanitation-logo.png" 
-              alt="Bureau of Sanitation Logo Background" 
-              className="w-[560px] h-[560px] max-w-[85vw] max-h-[85vh] object-contain opacity-[0.055] pointer-events-none transform -rotate-6" 
-            />
-          </div>
-        )}
+        {/* Single Central Background Watermark Seal */}
+        <div className="fixed inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0 select-none">
+          <img 
+            src={
+              user?.role === 'fire_reviewer' 
+                ? '/bfp-logo.png' 
+                : user?.role === 'sanitation_reviewer' 
+                ? '/sanitation-logo.png' 
+                : '/janiuay-logo.png'
+            } 
+            alt="Official Seal Background" 
+            className="w-[500px] h-[500px] max-w-[85vw] max-h-[85vh] object-contain rounded-full opacity-[0.038] pointer-events-none" 
+          />
+        </div>
         <div className="relative z-10">
           <Outlet />
         </div>

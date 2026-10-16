@@ -53,6 +53,30 @@ const AgencyReviewQueue = () => {
   const [agencyFile, setAgencyFile] = useState(null)
   const [submitting, setSubmitting] = useState(false)
 
+  // Lock background window scroll when review modal is open on mobile
+  useEffect(() => {
+    if (showReviewModal) {
+      const scrollY = window.scrollY
+      const originalOverflow = document.body.style.overflow
+      const originalPosition = document.body.style.position
+      const originalTop = document.body.style.top
+      const originalWidth = document.body.style.width
+
+      document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
+
+      return () => {
+        document.body.style.overflow = originalOverflow
+        document.body.style.position = originalPosition
+        document.body.style.top = originalTop
+        document.body.style.width = originalWidth
+        window.scrollTo(0, scrollY)
+      }
+    }
+  }, [showReviewModal])
+
   useEffect(() => {
     fetchQueue()
   }, [statusFilter, searchTerm])
@@ -288,10 +312,23 @@ const AgencyReviewQueue = () => {
         {/* Agency Review & Inspection Modal */}
         <AnimatePresence>
           {showReviewModal && selectedPermit && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={() => setShowReviewModal(false)} />
-              <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} className="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden z-10 max-h-[90vh] flex flex-col">
-                <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overscroll-contain">
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }} 
+                className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm touch-none" 
+                onClick={() => setShowReviewModal(false)}
+                onTouchMove={(e) => e.preventDefault()}
+              />
+              <motion.div 
+                initial={{ scale: 0.95, opacity: 0, y: 20 }} 
+                animate={{ scale: 1, opacity: 1, y: 0 }} 
+                exit={{ scale: 0.95, opacity: 0, y: 20 }} 
+                className="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden z-10 max-h-[85vh] sm:max-h-[90vh] flex flex-col overscroll-contain"
+                onTouchMove={(e) => e.stopPropagation()}
+              >
+                <div className="p-4 sm:p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 p-1 flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
                       <img 
@@ -301,7 +338,7 @@ const AgencyReviewQueue = () => {
                       />
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-slate-900">
+                      <h2 className="text-base sm:text-xl font-bold text-slate-900">
                         {isFire ? 'Bureau of Fire Protection Clearance Review' : 'Bureau of Sanitation Clearance Review'}
                       </h2>
                       <p className="text-xs text-slate-500">
@@ -311,7 +348,11 @@ const AgencyReviewQueue = () => {
                   </div>
                 </div>
 
-                <form onSubmit={handleDecisionSubmit} className="p-6 overflow-y-auto space-y-6 text-xs flex-1">
+                <form 
+                  onSubmit={handleDecisionSubmit} 
+                  className="p-4 sm:p-6 overflow-y-auto flex-1 min-h-0 overscroll-contain space-y-6 text-xs"
+                  style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
+                >
                   {/* Business & Applicant Info Snapshot */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <div>

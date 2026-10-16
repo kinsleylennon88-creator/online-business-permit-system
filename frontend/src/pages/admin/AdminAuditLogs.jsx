@@ -41,6 +41,30 @@ const AdminAuditLogs = () => {
   const [selectedLog, setSelectedLog] = useState(null)
   const [showDetailModal, setShowDetailModal] = useState(false)
 
+  // Lock background window scroll when modal is open
+  useEffect(() => {
+    if (showDetailModal) {
+      const scrollY = window.scrollY
+      const originalOverflow = document.body.style.overflow
+      const originalPosition = document.body.style.position
+      const originalTop = document.body.style.top
+      const originalWidth = document.body.style.width
+
+      document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
+
+      return () => {
+        document.body.style.overflow = originalOverflow
+        document.body.style.position = originalPosition
+        document.body.style.top = originalTop
+        document.body.style.width = originalWidth
+        window.scrollTo(0, scrollY)
+      }
+    }
+  }, [showDetailModal])
+
   useEffect(() => {
     fetchLogs()
   }, [pagination.current, roleFilter, actionFilter, resultFilter, startDate, endDate])
@@ -354,34 +378,39 @@ const AdminAuditLogs = () => {
         {/* Audit Event Detail Modal */}
         <AnimatePresence>
           {showDetailModal && selectedLog && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overscroll-contain">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+                className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm touch-none"
                 onClick={() => setShowDetailModal(false)}
+                onTouchMove={(e) => e.preventDefault()}
               />
 
               <motion.div
                 initial={{ scale: 0.95, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                className="relative bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden z-10 max-h-[90vh] flex flex-col"
+                className="relative bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden z-10 max-h-[85vh] sm:max-h-[90vh] flex flex-col overscroll-contain"
+                onTouchMove={(e) => e.stopPropagation()}
               >
-                <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                <div className="p-4 sm:p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
                   <div className="flex items-center space-x-3">
                     <div className="p-3 bg-primary-100 rounded-2xl text-primary-700">
                       <Shield className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900">Audit Log Record Details</h3>
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900">Audit Log Record Details</h3>
                       <p className="text-xs text-slate-500">ID: {selectedLog._id}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-6 overflow-y-auto space-y-4 text-xs">
+                <div 
+                  className="p-4 sm:p-6 overflow-y-auto flex-1 min-h-0 overscroll-contain space-y-4 text-xs"
+                  style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
+                >
                   <div className="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <div>
                       <span className="text-[10px] font-bold text-slate-400 uppercase">Timestamp</span>
@@ -415,7 +444,7 @@ const AdminAuditLogs = () => {
                   </div>
                 </div>
 
-                <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end shrink-0">
                   <Button size="sm" variant="secondary" onClick={() => setShowDetailModal(false)}>
                     Close
                   </Button>

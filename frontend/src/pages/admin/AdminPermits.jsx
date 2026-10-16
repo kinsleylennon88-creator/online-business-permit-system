@@ -95,6 +95,38 @@ const AdminPermits = () => {
   const [orderPaymentPermit, setOrderPaymentPermit] = useState(null)
   const [isIssuingPermit, setIsIssuingPermit] = useState(false)
 
+  // Lock background window scroll when any modal is open on mobile or desktop
+  useEffect(() => {
+    const isAnyModalOpen = Boolean(
+      showModal || 
+      showAssessmentModal || 
+      showVerificationModal || 
+      showCertificateModal || 
+      showOrderPaymentModal
+    )
+
+    if (isAnyModalOpen) {
+      const scrollY = window.scrollY
+      const originalOverflow = document.body.style.overflow
+      const originalPosition = document.body.style.position
+      const originalTop = document.body.style.top
+      const originalWidth = document.body.style.width
+
+      document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
+
+      return () => {
+        document.body.style.overflow = originalOverflow
+        document.body.style.position = originalPosition
+        document.body.style.top = originalTop
+        document.body.style.width = originalWidth
+        window.scrollTo(0, scrollY)
+      }
+    }
+  }, [showModal, showAssessmentModal, showVerificationModal, showCertificateModal, showOrderPaymentModal])
+
   useEffect(() => {
     fetchPermits()
   }, [searchTerm, statusFilter, pagination.current])
@@ -600,29 +632,31 @@ const AdminPermits = () => {
         {/* 1. INTERACTIVE AUDIT MODAL (Checklist + Deficiencies + Grant) */}
         <AnimatePresence>
           {showModal && selectedPermit && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overscroll-contain">
               <motion.div 
                 initial={{ opacity: 0 }} 
                 animate={{ opacity: 1 }} 
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+                className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm touch-none"
                 onClick={() => setShowModal(false)}
+                onTouchMove={(e) => e.preventDefault()}
               />
               
               <motion.div 
                 initial={{ scale: 0.95, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                className="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden z-10 max-h-[90vh] flex flex-col"
+                className="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden z-10 max-h-[85vh] sm:max-h-[90vh] flex flex-col overscroll-contain"
+                onTouchMove={(e) => e.stopPropagation()}
               >
                 {/* Modal Header */}
-                <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                <div className="p-4 sm:p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
                   <div className="flex items-center space-x-3">
                     <div className="p-3 bg-primary-100 rounded-2xl text-primary-700">
                       <ShieldCheck className="w-6 h-6" />
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-slate-900">
+                      <h2 className="text-lg sm:text-xl font-bold text-slate-900">
                         BPLO Application Audit & Compliance Review
                       </h2>
                       <p className="text-xs text-slate-500">
@@ -633,7 +667,10 @@ const AdminPermits = () => {
                 </div>
 
                 {/* Modal Body */}
-                <div className="p-6 overflow-y-auto space-y-6">
+                <div 
+                  className="p-4 sm:p-6 overflow-y-auto flex-1 min-h-0 overscroll-contain space-y-6"
+                  style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
+                >
                   {/* Applicant Uploaded Documents */}
                   <div>
                     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
@@ -769,30 +806,32 @@ const AdminPermits = () => {
         {/* 2. BPLO PAYMENT ASSESSMENT MODAL (Image 5: "BPLO decide payment assessment then forward to client") */}
         <AnimatePresence>
           {showAssessmentModal && assessmentPermit && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overscroll-contain">
               <motion.div 
                 initial={{ opacity: 0 }} 
                 animate={{ opacity: 1 }} 
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+                className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm touch-none"
                 onClick={() => setShowAssessmentModal(false)}
+                onTouchMove={(e) => e.preventDefault()}
               />
 
               <motion.div 
                 initial={{ scale: 0.95, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                className="relative bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden z-10 max-h-[90vh] flex flex-col"
+                className="relative bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden z-10 max-h-[85vh] sm:max-h-[90vh] flex flex-col overscroll-contain"
+                onTouchMove={(e) => e.stopPropagation()}
               >
-                <form onSubmit={handleSendAssessment} className="flex flex-col h-full">
+                <form onSubmit={handleSendAssessment} className="flex flex-col h-full min-h-0">
                   {/* Header */}
-                  <div className="p-6 border-b border-slate-100 bg-emerald-50/50 flex items-center justify-between">
+                  <div className="p-4 sm:p-6 border-b border-slate-100 bg-emerald-50/50 flex items-center justify-between shrink-0">
                     <div className="flex items-center space-x-3">
                       <div className="p-3 bg-emerald-100 rounded-2xl text-emerald-700">
                         <DollarSign className="w-6 h-6" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-slate-900">
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">
                           Decide Payment Assessment & Order Voucher
                         </h3>
                         <p className="text-xs text-slate-500">
@@ -803,7 +842,10 @@ const AdminPermits = () => {
                   </div>
 
                   {/* Body with fee inputs */}
-                  <div className="p-6 overflow-y-auto space-y-4">
+                  <div 
+                    className="p-4 sm:p-6 overflow-y-auto flex-1 min-h-0 overscroll-contain space-y-4"
+                    style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
+                  >
                     <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs flex justify-between items-center">
                       <div>
                         <span className="text-slate-500">Declared Capital / Gross:</span>
@@ -956,7 +998,7 @@ const AdminPermits = () => {
                   </div>
 
                   {/* Footer */}
-                  <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+                  <div className="p-4 sm:p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-between shrink-0">
                     <button
                       type="button"
                       onClick={() => setShowAssessmentModal(false)}
@@ -982,29 +1024,31 @@ const AdminPermits = () => {
         {/* 3. TREASURY PAYMENT VERIFICATION MODAL (Image 4 & 5: Treasury confirms payment -> BPLO issues) */}
         <AnimatePresence>
           {showVerificationModal && verificationPermit && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overscroll-contain">
               <motion.div 
                 initial={{ opacity: 0 }} 
                 animate={{ opacity: 1 }} 
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+                className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm touch-none"
                 onClick={() => setShowVerificationModal(false)}
+                onTouchMove={(e) => e.preventDefault()}
               />
 
               <motion.div 
                 initial={{ scale: 0.95, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                className="relative bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden z-10 max-h-[90vh] flex flex-col"
+                className="relative bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden z-10 max-h-[85vh] sm:max-h-[90vh] flex flex-col overscroll-contain"
+                onTouchMove={(e) => e.stopPropagation()}
               >
                 {/* Header */}
-                <div className="p-6 border-b border-slate-100 bg-sky-50/50 flex items-center justify-between">
+                <div className="p-4 sm:p-6 border-b border-slate-100 bg-sky-50/50 flex items-center justify-between shrink-0">
                   <div className="flex items-center space-x-3">
                     <div className="p-3 bg-sky-100 rounded-2xl text-sky-700">
                       <Receipt className="w-6 h-6" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900">
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900">
                         Treasury Payment Receipt Audit & Verification
                       </h3>
                       <p className="text-xs text-slate-500">
@@ -1015,7 +1059,10 @@ const AdminPermits = () => {
                 </div>
 
                 {/* Body */}
-                <div className="p-6 overflow-y-auto space-y-4">
+                <div 
+                  className="p-4 sm:p-6 overflow-y-auto flex-1 min-h-0 overscroll-contain space-y-4"
+                  style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
+                >
                   {/* Payment Details Card */}
                   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 grid grid-cols-2 gap-3 text-xs">
                     <div>
@@ -1109,7 +1156,7 @@ const AdminPermits = () => {
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-6 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="p-4 sm:p-6 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
                   <button
                     type="button"
                     onClick={() => setShowVerificationModal(false)}

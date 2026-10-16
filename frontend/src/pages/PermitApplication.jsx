@@ -293,11 +293,6 @@ const PermitApplication = () => {
   const renderStep1 = () => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
       <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-        {/* Fill up Form Background: transparent official municipal seal */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
-          <img src="/janiuay-logo.png" alt="Official Seal" className="w-[450px] h-[450px] object-contain opacity-[0.05] transform -rotate-12 pointer-events-none" />
-        </div>
-
         <div className="relative z-10 space-y-6">
           {/* Permit Type Selector (Requirement 1) */}
           <div>
@@ -481,11 +476,6 @@ const PermitApplication = () => {
   const renderStep2 = () => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
       <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-        {/* Fill up Form Background: transparent official municipal seal */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
-          <img src="/janiuay-logo.png" alt="Official Seal" className="w-[450px] h-[450px] object-contain opacity-[0.05] transform -rotate-12 pointer-events-none" />
-        </div>
-
         <div className="relative z-10 space-y-6">
           <div className="flex items-center space-x-3 pb-4 border-b border-slate-100">
           <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center text-primary-700">
@@ -722,11 +712,6 @@ const PermitApplication = () => {
   const renderStep4 = () => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
       <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-        {/* Fill up Form Background: transparent official municipal seal */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
-          <img src="/janiuay-logo.png" alt="Official Seal" className="w-[450px] h-[450px] object-contain opacity-[0.05] transform -rotate-12 pointer-events-none" />
-        </div>
-
         <div className="relative z-10 space-y-6">
           <div className="flex items-center space-x-3 pb-4 border-b border-slate-100">
             <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center text-primary-700">
@@ -847,11 +832,6 @@ const PermitApplication = () => {
       </div>
 
       <div className="container max-w-4xl mt-8 relative">
-        {/* Fill up Form Background: transparent official municipal seal */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0">
-          <img src="/janiuay-logo.png" alt="Official Seal" className="w-[480px] h-[480px] object-contain opacity-[0.05] transform -rotate-12 pointer-events-none" />
-        </div>
-
         <div className="relative z-10">
           <AnimatePresence mode="wait">
             {currentStep === 1 && renderStep1()}

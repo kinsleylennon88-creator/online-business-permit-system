@@ -145,14 +145,6 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-brand-50/30 pb-20 relative">
       {/* Admin Header with Official Seal & Background Watermark */}
       <div className="bg-white border-b border-brand-100 pt-8 sm:pt-10 pb-16 sm:pb-20 relative overflow-hidden">
-        {/* Subtle Background Watermark of Official Seal */}
-        <div className="absolute right-0 sm:right-12 top-1/2 -translate-y-1/2 pointer-events-none select-none opacity-[0.07] flex items-center justify-center">
-          <img 
-            src="/janiuay-logo.png" 
-            alt="Official Seal" 
-            className="w-72 h-72 sm:w-96 sm:h-96 object-contain transform rotate-6 pointer-events-none" 
-          />
-        </div>
         <div className="absolute top-0 right-0 w-1/4 h-full bg-primary-500/5 skew-x-12 translate-x-1/2 pointer-events-none" />
 
         <div className="container relative z-10">
