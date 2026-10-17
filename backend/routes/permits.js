@@ -361,6 +361,14 @@ router.put('/:id/documents', protect, uploadMultiple('documents', 10), async (re
     if (permit.missingRequirements && permit.missingRequirements.length > 0) {
       const uploadedNames = req.files.map((f, idx) => docNames[f.originalname] || docNames[idx] || f.originalname);
       permit.missingRequirements = permit.missingRequirements.filter(mr => !uploadedNames.some(un => un.includes(mr) || mr.includes(un)));
+      
+      // If all missing requirements have been provided, clear the deficiency notice and restore status
+      if (permit.missingRequirements.length === 0) {
+        permit.adminComments = '';
+        if (permit.status === 'returned_for_correction') {
+          permit.status = 'under_review';
+        }
+      }
     }
 
     await permit.save();
@@ -607,7 +615,7 @@ router.put('/:id/approve', protect, authorize('admin', 'superadmin'), async (req
 
     permit.status = 'approved';
     permit.missingRequirements = [];
-    permit.adminComments = req.body.remarks || 'Application approved by BPLO Licensing Board.';
+    permit.adminComments = '';
     permit.remarks = req.body.remarks || 'Application approved by BPLO Licensing Board.';
     
     if (!permit.permitNumber) {
@@ -837,6 +845,7 @@ router.put('/:id/send-assessment', protect, authorize('admin', 'superadmin'), as
     permit.paymentInfo.paymentStatus = 'pending';
     permit.status = 'pending_payment';
     permit.missingRequirements = [];
+    permit.adminComments = '';
 
     permit.approvalHistory.push({
       action: 'payment_assessment_sent',

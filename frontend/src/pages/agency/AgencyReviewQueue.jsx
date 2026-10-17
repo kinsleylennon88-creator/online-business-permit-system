@@ -35,9 +35,11 @@ import { getFileViewUrl, handleViewFile } from '../../utils/fileUrl'
 const AgencyReviewQueue = () => {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const isFire = user?.role === 'fire_reviewer'
-  const isSanitation = user?.role === 'sanitation_reviewer'
-  const agencyDomain = isFire ? 'fire' : isSanitation ? 'sanitation' : 'fire'
+  const isAdmin = user?.role === 'admin' || user?.role === 'superadmin'
+  const [adminAgencyTab, setAdminAgencyTab] = useState('fire')
+  const isFire = user?.role === 'fire_reviewer' || (isAdmin && adminAgencyTab === 'fire')
+  const isSanitation = user?.role === 'sanitation_reviewer' || (isAdmin && adminAgencyTab === 'sanitation')
+  const agencyDomain = isSanitation ? 'sanitation' : 'fire'
   const agencyTitle = isFire ? 'Bureau of Fire Protection (BFP)' : isSanitation ? 'Bureau of Sanitation / Municipal Health' : 'Agency Review Portal'
 
   const [permits, setPermits] = useState([])
@@ -79,7 +81,7 @@ const AgencyReviewQueue = () => {
 
   useEffect(() => {
     fetchQueue()
-  }, [statusFilter, searchTerm])
+  }, [agencyDomain, statusFilter, searchTerm])
 
   const fetchQueue = async () => {
     try {
@@ -162,9 +164,18 @@ const AgencyReviewQueue = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
+    <div className="min-h-screen bg-transparent pb-20 relative">
+      {/* Central Background Watermark Seal for Active Agency */}
+      <div className="fixed inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0 select-none">
+        <img 
+          src={isSanitation ? '/sanitation-logo.png' : '/bfp-logo.png'} 
+          alt="Agency Watermark" 
+          className="w-[450px] sm:w-[580px] h-[450px] sm:h-[580px] max-w-[85vw] max-h-[85vh] object-contain opacity-[0.09] pointer-events-none select-none filter contrast-105" 
+        />
+      </div>
+
       {/* Top Banner */}
-      <div className="bg-white border-b border-slate-200 pt-8 pb-10">
+      <div className="bg-white border-b border-slate-200 pt-8 pb-10 relative z-10">
         <div className="container">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="flex items-start sm:items-center space-x-4">
@@ -200,13 +211,40 @@ const AgencyReviewQueue = () => {
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <span className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200">
-                {permits.length} Assigned Records
-              </span>
-              <span className="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-900 text-xs font-bold border border-amber-200">
-                {permits.filter(p => p.myAgencyReview?.status === 'pending').length} Pending Inspection
-              </span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              {isAdmin && (
+                <div className="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-2xl border border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => setAdminAgencyTab('fire')}
+                    className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      isFire ? 'bg-red-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    <Flame className="w-3.5 h-3.5" />
+                    <span>Fire (BFP)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAdminAgencyTab('sanitation')}
+                    className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      isSanitation ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Sanitation</span>
+                  </button>
+                </div>
+              )}
+
+              <div className="flex items-center space-x-2">
+                <span className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200">
+                  {permits.length} Assigned Records
+                </span>
+                <span className="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-900 text-xs font-bold border border-amber-200">
+                  {permits.filter(p => p.myAgencyReview?.status === 'pending').length} Pending Inspection
+                </span>
+              </div>
             </div>
           </div>
         </div>

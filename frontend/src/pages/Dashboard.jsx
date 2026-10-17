@@ -194,7 +194,7 @@ const Dashboard = () => {
   const deficientPermits = permits.filter(p => (p.status === 'rejected' || p.status === 'returned_for_correction') && ((p.missingRequirements && p.missingRequirements.length > 0) || p.status === 'returned_for_correction'))
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
+    <div className="min-h-screen bg-transparent pb-20">
       {/* Dashboard Top Header */}
       <div className="bg-white border-b border-slate-200 pt-8 pb-10">
         <div className="container">

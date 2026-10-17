@@ -155,7 +155,7 @@ const AdminAuditLogs = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
+    <div className="min-h-screen bg-transparent pb-20">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 pt-8 pb-10">
         <div className="container">

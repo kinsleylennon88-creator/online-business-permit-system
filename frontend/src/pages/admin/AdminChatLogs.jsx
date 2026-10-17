@@ -98,7 +98,7 @@ const AdminChatLogs = () => {
   }
 
   return (
-    <div className="min-h-screen bg-brand-50/50 pb-20">
+    <div className="min-h-screen bg-transparent pb-20">
       <div className="bg-white border-b border-brand-100 pt-8 pb-12">
         <div className="container">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">

@@ -202,7 +202,6 @@ export const OrderOfPaymentModal = ({ isOpen, onClose, permit }) => {
               <p className="font-bold text-slate-800 uppercase tracking-wide">Settlement Channels & Instructions:</p>
               <ul className="list-disc pl-4 space-y-0.5">
                 <li><strong>Over-the-Counter:</strong> Pay at the Municipal Treasurer Cashier Window, Ground Floor, Municipal Hall, Janiuay.</li>
-                <li><strong>Online/Bank Deposit:</strong> Land Bank of the Philippines - Janiuay Branch (Account Name: Municipality of Janiuay General Fund).</li>
                 <li><strong>After Payment:</strong> Secure your Official Receipt (OR) and upload a photo/scanned copy in your citizen portal to trigger permit release.</li>
               </ul>
             </div>

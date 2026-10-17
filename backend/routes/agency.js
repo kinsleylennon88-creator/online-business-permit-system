@@ -224,7 +224,38 @@ router.put('/permits/:id/review', async (req, res) => {
     });
 
     // Check overall permit status progression
-    if (status === 'correction_requested') {
+    if (status === 'approved') {
+      permit.agencyReviews[agencyDomain].correctionReason = '';
+
+      // If adminComments was a correction request from this agency, clear it
+      if (permit.adminComments && (
+        permit.adminComments.includes(agencyLabel) ||
+        permit.adminComments.includes(agencyDomain) ||
+        permit.adminComments.toLowerCase().includes('correction request')
+      )) {
+        permit.adminComments = '';
+      }
+
+      // Remove agency correction remarks from missingRequirements
+      if (permit.missingRequirements && permit.missingRequirements.length > 0) {
+        permit.missingRequirements = permit.missingRequirements.filter(item => 
+          !item.toLowerCase().includes('correction') &&
+          !item.toLowerCase().includes(agencyDomain) &&
+          !item.toLowerCase().includes(agencyLabel.toLowerCase())
+        );
+      }
+
+      // Check if both agencies are approved or not in correction_requested
+      const fireStatus = agencyDomain === 'fire' ? 'approved' : permit.agencyReviews.fire?.status;
+      const sanitationStatus = agencyDomain === 'sanitation' ? 'approved' : permit.agencyReviews.sanitation?.status;
+
+      if (fireStatus !== 'correction_requested' && sanitationStatus !== 'correction_requested') {
+        if (permit.status === 'returned_for_correction') {
+          permit.status = 'under_review';
+          permit.adminComments = '';
+        }
+      }
+    } else if (status === 'correction_requested') {
       permit.status = 'returned_for_correction';
       permit.adminComments = `[${agencyLabel}] Correction Request: ${correctionReason || remarks}`;
       if (!permit.missingRequirements) permit.missingRequirements = [];

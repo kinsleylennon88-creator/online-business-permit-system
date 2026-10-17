@@ -110,7 +110,7 @@ const AdminUsers = () => {
   }
 
   return (
-    <div className="min-h-screen bg-brand-50/50 pb-20">
+    <div className="min-h-screen bg-transparent pb-20">
       <div className="bg-white border-b border-brand-100 pt-8 pb-12">
         <div className="container">
           <Link to="/admin" className="flex items-center text-brand-400 hover:text-brand-900 transition-colors font-bold text-sm mb-6">

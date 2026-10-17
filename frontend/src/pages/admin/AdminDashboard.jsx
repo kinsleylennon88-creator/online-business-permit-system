@@ -142,7 +142,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-brand-50/30 pb-20 relative">
+    <div className="min-h-screen bg-transparent pb-20 relative">
       {/* Admin Header with Official Seal & Background Watermark */}
       <div className="bg-white border-b border-brand-100 pt-8 sm:pt-10 pb-16 sm:pb-20 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-1/4 h-full bg-primary-500/5 skew-x-12 translate-x-1/2 pointer-events-none" />

@@ -123,7 +123,7 @@ const AdminDocumentRequirements = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
+    <div className="min-h-screen bg-transparent pb-20">
       <div className="bg-white border-b border-slate-200 pt-8 pb-10">
         <div className="container">
           <Link to="/admin" className="inline-flex items-center text-slate-500 hover:text-slate-900 transition-colors font-bold text-xs mb-4">

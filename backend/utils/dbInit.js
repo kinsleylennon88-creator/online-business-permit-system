@@ -88,7 +88,14 @@ const ensureUser = async (userData) => {
  */
 const seedDocumentRequirements = async () => {
   const count = await DocumentRequirement.countDocuments();
-  if (count > 0) return;
+  if (count > 0) {
+    // Ensure Police Clearance is required in existing database
+    await DocumentRequirement.updateMany(
+      { code: 'REQ-POLICE' },
+      { $set: { isRequired: true, applicablePermitType: 'all' } }
+    );
+    return;
+  }
 
   const requirements = [
     {
@@ -157,8 +164,8 @@ const seedDocumentRequirements = async () => {
       description: 'Local PNP clearance certificate for business owner / representative.',
       issuingAgency: 'Philippine National Police - Janiuay Station',
       notes: '1 clear copy',
-      isRequired: false,
-      applicablePermitType: 'new',
+      isRequired: true,
+      applicablePermitType: 'all',
       applicableBusinessType: ['all'],
       reviewingAgency: 'applicant',
       order: 6

@@ -222,7 +222,7 @@ const PermitStatus = () => {
   const sanitationReview = permit.agencyReviews?.sanitation || {}
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
+    <div className="min-h-screen bg-transparent pb-20">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 pt-8 pb-10">
         <div className="container">
@@ -421,11 +421,11 @@ const PermitStatus = () => {
                       <div className="flex items-center space-x-2">
                         <Upload className="w-5 h-5 text-amber-700" />
                         <h4 className="text-sm font-bold text-amber-950">
-                          Upload Payment Receipt Proof (Treasury, Bank or e-Wallet)
+                          Upload Official Payment Receipt (Municipal Treasury Cashier)
                         </h4>
                       </div>
                       <p className="text-xs text-slate-600 leading-relaxed">
-                        After paying to the treasurer or via bank, upload your Official Receipt (OR) to allow the admin and treasury to verify your payment.
+                        After paying at the Municipal Treasurer Cashier window, upload your Official Receipt (OR) to allow the admin and treasury to verify your payment.
                       </p>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -452,9 +452,7 @@ const PermitStatus = () => {
                             onChange={(e) => setPaymentMethodInput(e.target.value)}
                             className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold outline-none focus:border-primary-500 bg-white"
                           >
-                            <option value="Treasury Cashier">Treasury Office Cashier</option>
-                            <option value="Land Bank of the Philippines">Land Bank (LBP)</option>
-                            <option value="GCash / e-Payment">GCash / e-Payment</option>
+                            <option value="Treasury Cashier">Treasury Office Cashier (Over-the-Counter)</option>
                           </select>
                         </div>
 
@@ -499,8 +497,8 @@ const PermitStatus = () => {
               </Card>
             )}
 
-            {/* 3. DEFICIENCY / CORRECTION NOTICES (Deleted once complied and granted by BPLO) */}
-            {((permit.status === 'returned_for_correction' || permit.status === 'rejected') && (missingCount > 0 || permit.status === 'returned_for_correction')) && (
+            {/* 3. DEFICIENCY / CORRECTION NOTICES (Deleted once complied, granted, or approved) */}
+            {permit.status === 'returned_for_correction' && (missingCount > 0 || fireReview.status === 'correction_requested' || sanitationReview.status === 'correction_requested') && (
               <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-start space-x-3">
                   <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
@@ -574,7 +572,7 @@ const PermitStatus = () => {
                       <strong>BFP Inspection Findings:</strong> {fireReview.remarks}
                     </p>
                   )}
-                  {fireReview.correctionReason && (
+                  {fireReview.status === 'correction_requested' && fireReview.correctionReason && (
                     <p className="text-xs text-amber-900 bg-amber-50 p-2.5 rounded-xl border border-amber-200">
                       <strong>BFP Correction Request:</strong> {fireReview.correctionReason}
                     </p>
@@ -600,7 +598,7 @@ const PermitStatus = () => {
                       <strong>Sanitation Findings:</strong> {sanitationReview.remarks}
                     </p>
                   )}
-                  {sanitationReview.correctionReason && (
+                  {sanitationReview.status === 'correction_requested' && sanitationReview.correctionReason && (
                     <p className="text-xs text-amber-900 bg-amber-50 p-2.5 rounded-xl border border-amber-200">
                       <strong>Sanitation Correction Request:</strong> {sanitationReview.correctionReason}
                     </p>

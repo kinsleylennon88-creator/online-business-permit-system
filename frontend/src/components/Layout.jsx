@@ -516,7 +516,7 @@ export default function Layout() {
       </header>
 
       {/* Main Content Viewport */}
-      <main className="flex-1 relative">
+      <main className="flex-1 relative bg-slate-50 min-h-[calc(100vh-4rem)]">
         {/* Single Central Background Watermark Seal */}
         <div className="fixed inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0 select-none">
           <img 
@@ -528,7 +528,7 @@ export default function Layout() {
                 : '/janiuay-logo.png'
             } 
             alt="Official Seal Background" 
-            className="w-[500px] h-[500px] max-w-[85vw] max-h-[85vh] object-contain rounded-full opacity-[0.038] pointer-events-none" 
+            className="w-[450px] sm:w-[580px] h-[450px] sm:h-[580px] max-w-[85vw] max-h-[85vh] object-contain opacity-[0.09] pointer-events-none select-none filter contrast-105" 
           />
         </div>
         <div className="relative z-10">

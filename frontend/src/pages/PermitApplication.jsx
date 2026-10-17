@@ -642,27 +642,42 @@ const PermitApplication = () => {
           docRequirements.map((req, idx) => {
             const uploadedItem = uploadedFiles[req.name]
             const isUploaded = Boolean(uploadedItem && uploadedItem.length > 0)
+            const isRequired = req.isRequired || req.code === 'REQ-POLICE' || req.name?.toLowerCase().includes('police')
 
             return (
               <div
                 key={idx}
                 className={`bg-white p-4 sm:p-5 rounded-2xl border-2 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                  isUploaded ? 'border-emerald-300 bg-emerald-50/20' : 'border-slate-200 hover:border-primary-300'
+                  isUploaded 
+                    ? 'border-emerald-300 bg-emerald-50/20' 
+                    : isRequired 
+                    ? 'border-red-200 bg-red-50/10 hover:border-red-400' 
+                    : 'border-slate-200 hover:border-primary-300'
                 }`}
               >
                 <div className="flex items-start space-x-3">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold flex-shrink-0 ${
-                    isUploaded ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'
+                    isUploaded 
+                      ? 'bg-emerald-100 text-emerald-700' 
+                      : isRequired 
+                      ? 'bg-red-100 text-red-600 border border-red-200' 
+                      : 'bg-slate-100 text-slate-600'
                   }`}>
                     {isUploaded ? <CheckCircle2 className="w-6 h-6" /> : <FileText className="w-5 h-5" />}
                   </div>
                   <div>
                     <div className="flex items-center space-x-2">
-                      <span className="text-[10px] font-extrabold text-primary-700 bg-primary-100 px-2 py-0.5 rounded">
+                      <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded ${
+                        isRequired ? 'bg-red-100 text-red-700' : 'bg-primary-100 text-primary-700'
+                      }`}>
                         {req.code}
                       </span>
                       <h4 className="text-sm font-bold text-slate-900">{req.name}</h4>
-                      {req.isRequired && <span className="text-[10px] text-red-600 font-bold">*Required</span>}
+                      {isRequired && (
+                        <span className="text-[10px] text-red-600 font-extrabold bg-red-50 border border-red-200 px-1.5 py-0.5 rounded tracking-wide">
+                          *Required
+                        </span>
+                      )}
                     </div>
                     <p className="text-xs text-slate-500 mt-0.5">
                       Issuing Office: <strong>{req.issuingAgency || 'Local Hall'}</strong> • {req.notes || req.description}
@@ -817,7 +832,7 @@ const PermitApplication = () => {
   )
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20">
+    <div className="min-h-screen bg-transparent pb-20">
       <div className="bg-white border-b border-slate-200 pt-8 pb-8">
         <div className="container max-w-4xl">
           <div className="flex items-center justify-between mb-4">
