@@ -77,26 +77,26 @@ export const UnifiedApplicationForm = ({
       <div 
         ref={page1Ref} 
         id="uaf-page-1"
-        className="uaf-page bg-white p-6 sm:p-8 border border-slate-300 shadow-sm mx-auto mb-8 relative"
+        className="uaf-page bg-white p-3.5 sm:p-8 border border-slate-300 shadow-sm mx-auto mb-8 relative"
         style={{ width: '100%', maxWidth: '850px', minHeight: '1100px', boxSizing: 'border-box' }}
       >
         {/* Header Section */}
-        <div className="flex items-start justify-between border-b-2 border-black pb-2 mb-3">
-          <div className="flex items-center space-x-3">
-            <img src="/janiuay-logo.png" alt="Municipal Seal" className="w-16 h-16 object-contain" />
-            <div>
-              <p className="text-[10px] uppercase font-bold tracking-wider text-slate-700">Republic of the Philippines</p>
-              <p className="text-[10px] uppercase font-bold text-slate-700">Province of Iloilo</p>
-              <h1 className="text-sm font-black uppercase tracking-tight text-black">Municipality of Janiuay</h1>
-              <p className="text-[9.5px] font-bold text-slate-800">BUSINESS PERMITS AND LICENSING OFFICE (BPLO)</p>
+        <div className="flex flex-col sm:flex-row print:!flex-row items-center sm:items-start justify-between border-b-2 border-black pb-2 mb-3 gap-3">
+          <div className="flex items-center space-x-2.5 sm:space-x-3 w-full sm:w-auto text-left">
+            <img src="/janiuay-logo.png" alt="Municipal Seal" className="w-12 h-12 sm:w-16 sm:h-16 object-contain shrink-0" />
+            <div className="min-w-0">
+              <p className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-slate-700">Republic of the Philippines</p>
+              <p className="text-[9px] sm:text-[10px] uppercase font-bold text-slate-700">Province of Iloilo</p>
+              <h1 className="text-xs sm:text-sm font-black uppercase tracking-tight text-black">Municipality of Janiuay</h1>
+              <p className="text-[8.5px] sm:text-[9.5px] font-bold text-slate-800">BUSINESS PERMITS AND LICENSING OFFICE (BPLO)</p>
             </div>
           </div>
 
           {/* Top-Right Control Box: Payment & Type */}
-          <div className="border border-black p-2 rounded text-[10px] w-64 bg-slate-50">
-            <div className="flex items-center justify-between border-b border-black pb-1 mb-1">
-              <span className="font-bold">APPLICATION:</span>
-              <div className="flex items-center space-x-2">
+          <div className="border border-black p-2 rounded text-[10px] w-full sm:w-64 print:!w-64 bg-slate-50 shrink-0">
+            <div className="flex flex-col xs:flex-row xs:items-center justify-between border-b border-black pb-1 mb-1 gap-1">
+              <span className="font-bold text-[9.5px]">APPLICATION:</span>
+              <div className="flex flex-wrap items-center gap-1.5 sm:space-x-2">
                 <label className="flex items-center space-x-0.5">
                   <input type="checkbox" checked={isNew} readOnly className="w-3 h-3 text-black rounded" />
                   <span className="font-black">NEW</span>
@@ -112,9 +112,9 @@ export const UnifiedApplicationForm = ({
               </div>
             </div>
 
-            <div className="flex items-center justify-between border-b border-black pb-1 mb-1">
-              <span className="font-bold">PAYMENT:</span>
-              <div className="flex items-center space-x-2">
+            <div className="flex flex-col xs:flex-row xs:items-center justify-between border-b border-black pb-1 mb-1 gap-1">
+              <span className="font-bold text-[9.5px]">PAYMENT:</span>
+              <div className="flex flex-wrap items-center gap-1.5 sm:space-x-2">
                 <label className="flex items-center space-x-0.5">
                   <input type="checkbox" checked={paymentFreq === 'annually'} readOnly className="w-3 h-3 text-black" />
                   <span>Annually</span>
@@ -160,7 +160,7 @@ export const UnifiedApplicationForm = ({
           </div>
 
           {/* Entity Radio / Checkbox Bar */}
-          <div className="p-2 border-b border-black bg-slate-50 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px]">
+          <div className="p-2 border-b border-black bg-slate-50 flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-1 text-[9.5px] sm:text-[10px]">
             <span className="font-bold">Entity Type:</span>
             <label className="flex items-center space-x-1">
               <input type="checkbox" checked={isSole} readOnly className="w-3 h-3" />
@@ -188,7 +188,7 @@ export const UnifiedApplicationForm = ({
           </div>
 
           {/* DTI / TIN Grid */}
-          <div className="grid grid-cols-2 divide-x divide-black border-b border-black">
+          <div className="grid grid-cols-1 sm:grid-cols-2 print:!grid-cols-2 divide-y sm:divide-y-0 sm:divide-x print:!divide-x print:!divide-y-0 divide-black border-b border-black">
             <div className="p-1.5">
               <span className="font-bold text-[9.5px] block text-slate-700">DTI / CDA / SEC Registration Number:</span>
               <span className="font-mono text-[11px] font-bold text-black uppercase">
@@ -214,7 +214,7 @@ export const UnifiedApplicationForm = ({
           {/* Main Office Address */}
           <div className="p-1.5 border-b border-black">
             <span className="font-bold text-[9.5px] block text-slate-700 mb-0.5">Main Office Address:</span>
-            <div className="grid grid-cols-4 gap-2 text-[10px]">
+            <div className="grid grid-cols-2 sm:grid-cols-4 print:!grid-cols-4 gap-2 text-[9.5px] sm:text-[10px]">
               <div>
                 <span className="text-slate-500 block text-[8.5px]">House / Bldg No:</span>
                 <span className="font-semibold">{bAddress.houseNo || 'N/A'}</span>
@@ -251,7 +251,7 @@ export const UnifiedApplicationForm = ({
           </div>
 
           {/* Contact Details */}
-          <div className="grid grid-cols-3 divide-x divide-black border-b border-black bg-slate-50">
+          <div className="grid grid-cols-1 sm:grid-cols-3 print:!grid-cols-3 divide-y sm:divide-y-0 sm:divide-x print:!divide-x print:!divide-y-0 divide-black border-b border-black bg-slate-50">
             <div className="p-1.5">
               <span className="text-slate-600 block text-[8.5px]">Telephone No:</span>
               <span className="font-semibold">{ownerInfo.tel || '(033) 330-1288'}</span>
@@ -262,17 +262,17 @@ export const UnifiedApplicationForm = ({
             </div>
             <div className="p-1.5">
               <span className="text-slate-600 block text-[8.5px]">E-mail Address:</span>
-              <span className="font-semibold text-black">{ownerInfo.email || 'N/A'}</span>
+              <span className="font-semibold text-black break-all sm:break-normal">{ownerInfo.email || 'N/A'}</span>
             </div>
           </div>
 
           {/* Owner Details */}
-          <div className="grid grid-cols-2 divide-x divide-black">
+          <div className="grid grid-cols-1 sm:grid-cols-2 print:!grid-cols-2 divide-y sm:divide-y-0 sm:divide-x print:!divide-x print:!divide-y-0 divide-black">
             <div className="p-1.5">
               <span className="font-bold text-[9.5px] block text-slate-700">
                 (For Sole Proprietorship) Name of Owner:
               </span>
-              <div className="grid grid-cols-4 gap-1 text-[10px] mt-0.5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 print:!grid-cols-4 gap-1 text-[9.5px] sm:text-[10px] mt-0.5">
                 <div>
                   <span className="text-[8px] text-slate-500 block">Surname</span>
                   <span className="font-bold uppercase">{ownerInfo.lastName || 'Dela Cruz'}</span>
@@ -296,7 +296,7 @@ export const UnifiedApplicationForm = ({
               <span className="font-bold text-[9.5px] block text-slate-700">
                 (For Corp/Partnership/Coop) Officer / President:
               </span>
-              <div className="grid grid-cols-4 gap-1 text-[10px] mt-0.5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 print:!grid-cols-4 gap-1 text-[9.5px] sm:text-[10px] mt-0.5">
                 <div>
                   <span className="text-[8px] text-slate-500 block">Surname</span>
                   <span className="font-semibold uppercase">{isCorp || isPartnership ? ownerInfo.lastName : '-'}</span>
@@ -325,7 +325,7 @@ export const UnifiedApplicationForm = ({
           </div>
 
           {/* Operation Parameters */}
-          <div className="grid grid-cols-4 divide-x divide-black border-b border-black text-[9.5px]">
+          <div className="grid grid-cols-2 sm:grid-cols-4 print:!grid-cols-4 divide-y sm:divide-y-0 sm:divide-x print:!divide-x print:!divide-y-0 divide-black border-b border-black text-[9px] sm:text-[9.5px]">
             <div className="p-1.5">
               <span className="text-slate-600 block">Total Floor Area (sq.m.):</span>
               <span className="font-mono font-bold text-xs">{businessInfo.businessArea || '48.50'} sq.m.</span>
@@ -345,7 +345,7 @@ export const UnifiedApplicationForm = ({
           </div>
 
           {/* Location & Property ownership */}
-          <div className="p-1.5 border-b border-black bg-slate-50 text-[10px] flex items-center justify-between">
+          <div className="p-1.5 border-b border-black bg-slate-50 text-[9.5px] sm:text-[10px] flex flex-col sm:flex-row print:!flex-row items-start sm:items-center justify-between gap-1.5">
             <div className="flex items-center space-x-2">
               <span className="font-bold">Business Location Address:</span>
               <label className="flex items-center space-x-1">
@@ -353,7 +353,7 @@ export const UnifiedApplicationForm = ({
                 <span>Same as Main Office Address ({barangay}, {municipality})</span>
               </label>
             </div>
-            <div className="flex items-center space-x-2 text-[9.5px]">
+            <div className="flex flex-wrap items-center gap-1.5 sm:space-x-2 text-[9px] sm:text-[9.5px]">
               <span className="font-bold">Owned Property?</span>
               <span>☑ Yes  ☐ No</span>
               <span className="text-slate-600">Tax Dec / PIN: <b>TD-2026-JNY-8831</b></span>
@@ -361,8 +361,8 @@ export const UnifiedApplicationForm = ({
           </div>
 
           {/* Business Activity & Incentives */}
-          <div className="p-1.5 border-b border-black flex items-center justify-between text-[9.5px]">
-            <div className="flex items-center space-x-3">
+          <div className="p-1.5 border-b border-black flex flex-col sm:flex-row print:!flex-row items-start sm:items-center justify-between gap-1.5 text-[9px] sm:text-[9.5px]">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <span className="font-bold">Business Activity:</span>
               <span>☑ Main Office</span>
               <span>☐ Branch Office</span>
@@ -376,8 +376,8 @@ export const UnifiedApplicationForm = ({
           </div>
 
           {/* Line of Business Table */}
-          <div className="p-0">
-            <table className="w-full text-[9.5px] border-collapse">
+          <div className="p-0 overflow-x-auto print:overflow-visible">
+            <table className="w-full min-w-[560px] sm:min-w-full text-[9px] sm:text-[9.5px] border-collapse">
               <thead>
                 <tr className="bg-slate-100 border-b border-black text-center font-bold">
                   <th className="border-r border-black p-1 text-left w-1/4">Line of Business</th>
@@ -412,7 +412,7 @@ export const UnifiedApplicationForm = ({
         </div>
 
         {/* Legal Undertaking / Oath */}
-        <div className="border border-black p-2 bg-slate-50 text-[8.5px] leading-tight text-justify mb-3 space-y-1">
+        <div className="border border-black p-2 bg-slate-50 text-[8px] sm:text-[8.5px] leading-tight text-justify mb-3 space-y-1">
           <p>
             <b>I DECLARE UNDER PENALTY OF PERJURY</b> that all information in this application are true and correct based on my personal knowledge and authentic records submitted to the Municipality of Janiuay. Any false or misleading information supplied, or production of fake/falsified documents shall be grounds for appropriate legal action against me and automatically revokes the permit.
           </p>
@@ -426,7 +426,7 @@ export const UnifiedApplicationForm = ({
 
         {/* Bottom Signatures Box */}
         <div className="border border-black p-3 bg-white">
-          <div className="grid grid-cols-2 gap-8 items-end">
+          <div className="grid grid-cols-1 sm:grid-cols-2 print:!grid-cols-2 gap-4 sm:gap-8 items-end">
             <div>
               <div className="border-b border-black pb-1 mb-1 text-center">
                 <span className="font-bold uppercase tracking-wider text-sm text-black block">{ownerFullName}</span>
@@ -437,7 +437,7 @@ export const UnifiedApplicationForm = ({
               </p>
             </div>
 
-            <div className="border-l border-slate-300 pl-4 text-[9.5px] space-y-1">
+            <div className="border-t sm:border-t-0 sm:border-l border-slate-300 pt-2 sm:pt-0 sm:pl-4 text-[9.5px] space-y-1">
               <div className="flex justify-between border-b border-slate-200 pb-0.5">
                 <span className="text-slate-600">Date of Application:</span>
                 <span className="font-bold">{receiptDateFormatted}</span>
@@ -464,33 +464,33 @@ export const UnifiedApplicationForm = ({
       <div 
         ref={page2Ref} 
         id="uaf-page-2"
-        className="uaf-page bg-white p-6 sm:p-8 border border-slate-300 shadow-sm mx-auto relative"
+        className="uaf-page bg-white p-3.5 sm:p-8 border border-slate-300 shadow-sm mx-auto relative"
         style={{ width: '100%', maxWidth: '850px', minHeight: '1100px', boxSizing: 'border-box' }}
       >
         {/* Page 2 Header */}
-        <div className="flex items-center justify-between border-b-2 border-black pb-2 mb-3">
-          <div className="flex items-center space-x-3">
-            <img src="/janiuay-logo.png" alt="Seal" className="w-12 h-12 object-contain" />
+        <div className="flex flex-col sm:flex-row print:!flex-row items-start sm:items-center justify-between border-b-2 border-black pb-2 mb-3 gap-2">
+          <div className="flex items-center space-x-2.5 sm:space-x-3">
+            <img src="/janiuay-logo.png" alt="Seal" className="w-10 h-10 sm:w-12 sm:h-12 object-contain shrink-0" />
             <div>
-              <p className="text-[9.5px] uppercase font-bold text-slate-600">Municipality of Janiuay • BPLO Command Center</p>
-              <h2 className="text-sm font-extrabold uppercase text-black">Verification of Regulatory Documents</h2>
-              <p className="text-[9px] text-slate-500 italic">For New Business Application and Renewal Tracking</p>
+              <p className="text-[9px] sm:text-[9.5px] uppercase font-bold text-slate-600">Municipality of Janiuay • BPLO Command Center</p>
+              <h2 className="text-xs sm:text-sm font-extrabold uppercase text-black">Verification of Regulatory Documents</h2>
+              <p className="text-[8.5px] sm:text-[9px] text-slate-500 italic">For New Business Application and Renewal Tracking</p>
             </div>
           </div>
-          <div className="text-right text-[9.5px]">
+          <div className="text-left sm:text-right text-[9.5px]">
             <span className="text-slate-500 block">Tracking Number:</span>
             <span className="font-mono font-bold text-black">{trackingNo}</span>
           </div>
         </div>
 
         {/* Document Verification Table */}
-        <div className="border border-black mb-4">
-          <div className="bg-slate-900 text-white font-serif px-2 py-1 uppercase font-bold text-[10.5px] flex items-center justify-between">
+        <div className="border border-black mb-4 overflow-x-auto print:overflow-visible">
+          <div className="bg-slate-900 text-white font-serif px-2 py-1 uppercase font-bold text-[10.5px] flex items-center justify-between min-w-[580px] sm:min-w-full">
             <span>Verification of Documents &amp; Regulatory Agency Clearances</span>
             <span className="text-[9px] font-sans font-normal opacity-80">Official Municipal Evaluator Audit</span>
           </div>
 
-          <table className="w-full text-[9.5px] border-collapse">
+          <table className="w-full min-w-[580px] sm:min-w-full text-[9px] sm:text-[9.5px] border-collapse">
             <thead>
               <tr className="bg-slate-100 border-b border-black text-center font-bold">
                 <th className="border-r border-black p-1.5 text-left w-5/12">Description</th>
@@ -598,9 +598,9 @@ export const UnifiedApplicationForm = ({
           </table>
 
           {/* Evaluator verification box */}
-          <div className="p-2 bg-slate-50 border-t border-black flex items-center justify-between">
+          <div className="p-2 bg-slate-50 border-t border-black flex flex-col sm:flex-row print:!flex-row items-start sm:items-center justify-between gap-2">
             <span className="font-bold text-[10px]">Verified and Audited by:</span>
-            <div className="text-center w-72">
+            <div className="text-center w-full sm:w-72 print:!w-72">
               <div className="border-b border-black font-bold uppercase text-[10.5px] pb-0.5">
                 Maria S. Santos / BPLO Staff Evaluator
               </div>
@@ -610,13 +610,13 @@ export const UnifiedApplicationForm = ({
         </div>
 
         {/* Section: Breakdown of Monthly Gross or Receipts for CY 20___ */}
-        <div className="border border-black mb-4">
-          <div className="bg-slate-200 px-2 py-0.5 font-bold uppercase text-[10px] border-b border-black flex items-center justify-between">
+        <div className="border border-black mb-4 overflow-x-auto print:overflow-visible">
+          <div className="bg-slate-200 px-2 py-0.5 font-bold uppercase text-[10px] border-b border-black flex items-center justify-between min-w-[500px] sm:min-w-full">
             <span>Breakdown of Monthly Gross or Receipts for CY {currentYear}</span>
             <span className="text-[9px] font-normal italic font-serif">For Business Renewal Assessment</span>
           </div>
 
-          <table className="w-full text-[9px] border-collapse">
+          <table className="w-full min-w-[500px] sm:min-w-full text-[9px] border-collapse">
             <thead>
               <tr className="bg-slate-100 border-b border-black text-center font-bold">
                 <th className="border-r border-black p-1 w-24 text-left">MONTH</th>
@@ -660,7 +660,7 @@ export const UnifiedApplicationForm = ({
 
         {/* Page 2 Signatures */}
         <div className="border border-black p-4 bg-white mt-auto">
-          <div className="grid grid-cols-2 gap-8 items-end">
+          <div className="grid grid-cols-1 sm:grid-cols-2 print:!grid-cols-2 gap-6 sm:gap-8 items-end">
             <div>
               <div className="border-b border-black pb-1 mb-1 text-center">
                 <span className="font-bold uppercase tracking-wider text-sm text-black block">{ownerFullName}</span>
