@@ -60,15 +60,22 @@ const connectDB = async () => {
 };
 
 /**
- * Helper to ensure accounts exist with guaranteed password match
+ * Helper to ensure accounts exist with guaranteed password match while preserving user ObjectId
  */
 const ensureUser = async (userData) => {
-  const existing = await User.findOne({ email: userData.email.toLowerCase() });
-  if (existing) {
-    await User.deleteOne({ _id: existing._id });
+  let user = await User.findOne({ email: userData.email.toLowerCase() });
+  if (user) {
+    // Never delete existing user! Preserving _id prevents orphaned permits and missing transactions
+    user.firstName = userData.firstName;
+    user.lastName = userData.lastName;
+    user.phone = userData.phone;
+    user.role = userData.role;
+    if (userData.address) user.address = userData.address;
+    await user.save();
+    return user;
   }
 
-  const user = new User({
+  user = new User({
     firstName: userData.firstName,
     lastName: userData.lastName,
     email: userData.email.toLowerCase(),
@@ -297,6 +304,17 @@ const seedInitialData = async () => {
 
     // 6. Seed Document Requirements
     await seedDocumentRequirements();
+
+    // Re-link any permits whose applicant ID became detached or orphaned
+    const allUsers = await User.find({}, '_id email');
+    for (const u of allUsers) {
+      if (u.email) {
+        await Permit.updateMany(
+          { 'ownerInfo.email': u.email.toLowerCase(), applicant: { $ne: u._id } },
+          { $set: { applicant: u._id } }
+        );
+      }
+    }
 
     // 7. Seed Sample Permits
     const permitCount = await Permit.countDocuments();

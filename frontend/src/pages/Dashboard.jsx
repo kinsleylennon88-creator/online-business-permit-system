@@ -111,7 +111,7 @@ const Dashboard = () => {
       
       setStats({
         total: permitsData.length,
-        pending: permitsData.filter(p => ['submitted', 'under_review', 'pending_payment', 'payment_under_review'].includes(p.status)).length,
+        pending: permitsData.filter(p => ['submitted', 'under_review', 'under_admin_review', 'pending_fire_review', 'pending_sanitation_review', 'pending_payment', 'payment_under_review'].includes(p.status)).length,
         approved: permitsData.filter(p => p.status === 'approved' || p.status === 'issued').length,
         rejected: permitsData.filter(p => (p.status === 'rejected' || p.status === 'returned_for_correction') && ((p.missingRequirements && p.missingRequirements.length > 0) || p.status === 'returned_for_correction')).length
       })
@@ -136,9 +136,12 @@ const Dashboard = () => {
         return <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-700">Draft Application</span>
       case 'submitted':
       case 'under_review':
+      case 'under_admin_review':
+      case 'pending_fire_review':
+      case 'pending_sanitation_review':
         return (
           <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-900 border border-amber-200">
-            <Clock className="w-3 h-3 mr-1 text-amber-600" /> Under BPLO Review
+            <Clock className="w-3 h-3 mr-1 text-amber-600" /> Under Review
           </span>
         )
       case 'pending_payment':
@@ -182,7 +185,7 @@ const Dashboard = () => {
   // Filtered permits based on tab selection
   const filteredPermits = permits.filter(permit => {
     if (activeFilter === 'All') return true
-    if (activeFilter === 'In Review') return permit.status === 'submitted' || permit.status === 'under_review'
+    if (activeFilter === 'In Review') return ['submitted', 'under_review', 'under_admin_review', 'pending_fire_review', 'pending_sanitation_review'].includes(permit.status)
     if (activeFilter === 'Payment Needed') return permit.status === 'pending_payment' || permit.status === 'payment_under_review'
     if (activeFilter === 'Approved / Issued') return permit.status === 'approved' || permit.status === 'issued'
     if (activeFilter === 'Missing Requirements') return (permit.status === 'rejected' || permit.status === 'returned_for_correction') && (permit.missingRequirements?.length > 0 || permit.status === 'returned_for_correction')
@@ -500,152 +503,286 @@ const Dashboard = () => {
               )}
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                  <tr>
-                    <th className="px-6 py-4">Business Entity & Category</th>
-                    <th className="px-6 py-4">Date Applied</th>
-                    <th className="px-6 py-4">Status / Review Stage</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {filteredPermits.map((permit) => {
-                    const missingCount = permit.missingRequirements?.length || 0
-                    const trackingNo = permit.trackingNumber || permit.applicationNumber || 'N/A'
-                    const isRenewal = permit.permitType === 'renewal'
-                    const fireReview = permit.agencyReviews?.fire || permit.agencyReviews?.bureau_of_fire || {}
-                    const sanitationReview = permit.agencyReviews?.sanitation || permit.agencyReviews?.bureau_of_sanitation || {}
-                    const fireStatus = fireReview.status || 'pending'
-                    const sanitationStatus = sanitationReview.status || 'pending'
+            <div>
+              {/* Mobile Card List (Visible on phones & small screens) */}
+              <div className="block md:hidden divide-y divide-slate-100">
+                {filteredPermits.map((permit) => {
+                  const missingCount = permit.missingRequirements?.length || 0
+                  const trackingNo = permit.trackingNumber || permit.applicationNumber || 'N/A'
+                  const isRenewal = permit.permitType === 'renewal'
+                  const fireReview = permit.agencyReviews?.fire || permit.agencyReviews?.bureau_of_fire || {}
+                  const sanitationReview = permit.agencyReviews?.sanitation || permit.agencyReviews?.bureau_of_sanitation || {}
+                  const fireStatus = fireReview.status || 'pending'
+                  const sanitationStatus = sanitationReview.status || 'pending'
 
-                    return (
-                      <tr key={permit._id} className="hover:bg-slate-50/70 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 rounded-xl bg-primary-100 text-primary-700 font-extrabold flex items-center justify-center text-sm flex-shrink-0">
-                              {permit.businessInfo?.businessName?.[0] || 'B'}
-                            </div>
-                            <div>
-                              <div className="flex items-center space-x-2">
-                                <p className="text-sm font-bold text-slate-900">
-                                  {permit.businessInfo?.businessName || 'Untitled Application'}
-                                </p>
-                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                  isRenewal ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' : 'bg-sky-100 text-sky-700 border border-sky-200'
-                                }`}>
-                                  {isRenewal ? 'Renewal Permit' : 'New Permit'}
-                                </span>
-                              </div>
-                              <p className="text-xs text-slate-500 mt-0.5">
-                                {permit.businessInfo?.businessNature || 'General Merchandise'} • {permit.businessInfo?.businessAddress?.barangay || 'Poblacion'}
-                              </p>
-                              <div className="flex items-center space-x-2 mt-1">
-                                <span className="text-[11px] font-mono font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
-                                  {trackingNo}
-                                </span>
-                                {permit.businessIdNumber && (
-                                  <span className="text-[11px] font-mono text-slate-500">
-                                    BIN: {permit.businessIdNumber}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
+                  return (
+                    <div key={`m-${permit._id}`} className="p-4 sm:p-5 space-y-3.5 hover:bg-slate-50/70 transition-colors">
+                      {/* Top: Business Name & Type Badge */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center space-x-3 min-w-0">
+                          <div className="w-10 h-10 rounded-xl bg-primary-100 text-primary-700 font-extrabold flex items-center justify-center text-sm shrink-0">
+                            {permit.businessInfo?.businessName?.[0] || 'B'}
                           </div>
-                        </td>
+                          <div className="min-w-0">
+                            <h4 className="text-sm font-bold text-slate-900 truncate">
+                              {permit.businessInfo?.businessName || 'Untitled Application'}
+                            </h4>
+                            <p className="text-xs text-slate-500 truncate mt-0.5">
+                              {permit.businessInfo?.businessNature || 'General Merchandise'} • {permit.businessInfo?.businessAddress?.barangay || 'Poblacion'}
+                            </p>
+                          </div>
+                        </div>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                          isRenewal ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' : 'bg-sky-100 text-sky-700 border border-sky-200'
+                        }`}>
+                          {isRenewal ? 'Renewal' : 'New Permit'}
+                        </span>
+                      </div>
 
-                        {/* Date Applied */}
-                        <td className="px-6 py-4">
-                          <div className="flex items-center text-xs text-slate-800 font-semibold">
-                            <Calendar className="w-3.5 h-3.5 mr-1.5 text-primary-600 flex-shrink-0" />
-                            {formatDate(permit.appliedAt || permit.createdAt)}
-                          </div>
-                          <span className="text-[11px] text-slate-400 block mt-0.5">
-                            Updated {formatDate(permit.updatedAt)}
+                      {/* Reference Numbers & Dates */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                        <div className="flex items-center space-x-2">
+                          <span className="font-mono font-semibold text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200 text-[11px]">
+                            {trackingNo}
                           </span>
-                        </td>
-
-                        {/* Status & Agency Progress */}
-                        <td className="px-6 py-4">
-                          <div>
-                            {getStatusBadge(permit.status, missingCount)}
-                            <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                              <span className={`inline-flex items-center text-[10px] font-black px-2 py-0.5 rounded-md border ${
-                                fireStatus === 'approved' 
-                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
-                                  : fireStatus === 'rejected' 
-                                  ? 'bg-red-50 text-red-800 border-red-300' 
-                                  : fireStatus === 'correction_requested' || fireStatus === 'returned'
-                                  ? 'bg-amber-50 text-amber-800 border-amber-300' 
-                                  : 'bg-slate-100 text-slate-700 border-slate-200'
-                              }`}>
-                                🔥 BFP Fire: {fireStatus === 'approved' ? 'APPROVED' : fireStatus === 'correction_requested' ? 'Action Needed' : fireStatus.toUpperCase()}
-                              </span>
-                              <span className={`inline-flex items-center text-[10px] font-black px-2 py-0.5 rounded-md border ${
-                                sanitationStatus === 'approved' 
-                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
-                                  : sanitationStatus === 'rejected' 
-                                  ? 'bg-red-50 text-red-800 border-red-300' 
-                                  : sanitationStatus === 'correction_requested' || sanitationStatus === 'returned'
-                                  ? 'bg-amber-50 text-amber-800 border-amber-300' 
-                                  : 'bg-slate-100 text-slate-700 border-slate-200'
-                              }`}>
-                                🩺 Sanitation: {sanitationStatus === 'approved' ? 'APPROVED' : sanitationStatus === 'correction_requested' ? 'Action Needed' : sanitationStatus.toUpperCase()}
-                              </span>
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Action */}
-                        <td className="px-6 py-4 text-right">
-                          {permit.status === 'issued' ? (
-                            <Link
-                              to={`/permit-status/${permit._id}`}
-                              className="inline-flex items-center px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
-                            >
-                              <ShieldCheck className="w-3.5 h-3.5 mr-1" />
-                              View & Print Permit
-                            </Link>
-                          ) : permit.status === 'pending_payment' ? (
-                            <Link
-                              to={`/permit-status/${permit._id}`}
-                              className="inline-flex items-center px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
-                            >
-                              <CreditCard className="w-3.5 h-3.5 mr-1" />
-                              View Voucher & Pay
-                            </Link>
-                          ) : permit.status === 'payment_under_review' ? (
-                            <Link
-                              to={`/permit-status/${permit._id}`}
-                              className="inline-flex items-center px-3.5 py-1.5 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
-                            >
-                              <Clock className="w-3.5 h-3.5 mr-1" />
-                              Track Treasury Audit
-                            </Link>
-                          ) : (permit.status === 'rejected' || permit.status === 'returned_for_correction') ? (
-                            <Link
-                              to={`/permit-status/${permit._id}`}
-                              className="inline-flex items-center px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
-                            >
-                              <AlertCircle className="w-3.5 h-3.5 mr-1" />
-                              Resolve Missing Items
-                            </Link>
-                          ) : (
-                            <Link
-                              to={`/permit-status/${permit._id}`}
-                              className="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-primary-50 text-slate-700 hover:text-primary-700 font-bold text-xs rounded-xl transition-all border border-slate-200 hover:border-primary-300"
-                            >
-                              View Dossier & Track
-                              <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
-                            </Link>
+                          {permit.businessIdNumber && (
+                            <span className="font-mono text-slate-500 text-[11px]">
+                              BIN: {permit.businessIdNumber}
+                            </span>
                           )}
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+                        </div>
+                        <div className="flex items-center text-[11px] text-slate-500 font-medium">
+                          <Calendar className="w-3 h-3 mr-1 text-primary-600" />
+                          {formatDate(permit.appliedAt || permit.createdAt)}
+                        </div>
+                      </div>
+
+                      {/* Status Badges & Clearances */}
+                      <div className="space-y-2">
+                        <div>{getStatusBadge(permit.status, missingCount)}</div>
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className={`inline-flex items-center text-[10px] font-black px-2 py-0.5 rounded-md border ${
+                            fireStatus === 'approved' 
+                              ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
+                              : fireStatus === 'rejected' 
+                              ? 'bg-red-50 text-red-800 border-red-300' 
+                              : fireStatus === 'correction_requested' || fireStatus === 'returned'
+                              ? 'bg-amber-50 text-amber-800 border-amber-300' 
+                              : 'bg-slate-100 text-slate-700 border-slate-200'
+                          }`}>
+                            🔥 BFP Fire: {fireStatus === 'approved' ? 'APPROVED' : fireStatus === 'correction_requested' ? 'Action Needed' : fireStatus.toUpperCase()}
+                          </span>
+                          <span className={`inline-flex items-center text-[10px] font-black px-2 py-0.5 rounded-md border ${
+                            sanitationStatus === 'approved' 
+                              ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
+                              : sanitationStatus === 'rejected' 
+                              ? 'bg-red-50 text-red-800 border-red-300' 
+                              : sanitationStatus === 'correction_requested' || sanitationStatus === 'returned'
+                              ? 'bg-amber-50 text-amber-800 border-amber-300' 
+                              : 'bg-slate-100 text-slate-700 border-slate-200'
+                          }`}>
+                            🩺 Sanitation: {sanitationStatus === 'approved' ? 'APPROVED' : sanitationStatus === 'correction_requested' ? 'Action Needed' : sanitationStatus.toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Full-width touch friendly action button */}
+                      <div className="pt-1">
+                        {permit.status === 'issued' ? (
+                          <Link
+                            to={`/permit-status/${permit._id}`}
+                            className="w-full inline-flex items-center justify-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+                          >
+                            <ShieldCheck className="w-4 h-4 mr-1.5" />
+                            View & Print Official Permit
+                          </Link>
+                        ) : permit.status === 'pending_payment' ? (
+                          <Link
+                            to={`/permit-status/${permit._id}`}
+                            className="w-full inline-flex items-center justify-center px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+                          >
+                            <CreditCard className="w-4 h-4 mr-1.5" />
+                            View Voucher & Pay
+                          </Link>
+                        ) : permit.status === 'payment_under_review' ? (
+                          <Link
+                            to={`/permit-status/${permit._id}`}
+                            className="w-full inline-flex items-center justify-center px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+                          >
+                            <Clock className="w-4 h-4 mr-1.5" />
+                            Track Treasury Audit
+                          </Link>
+                        ) : (permit.status === 'rejected' || permit.status === 'returned_for_correction') ? (
+                          <Link
+                            to={`/permit-status/${permit._id}`}
+                            className="w-full inline-flex items-center justify-center px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+                          >
+                            <AlertCircle className="w-4 h-4 mr-1.5" />
+                            Resolve Missing Items
+                          </Link>
+                        ) : (
+                          <Link
+                            to={`/permit-status/${permit._id}`}
+                            className="w-full inline-flex items-center justify-center px-4 py-2.5 bg-slate-100 hover:bg-primary-50 text-slate-700 hover:text-primary-700 font-bold text-xs rounded-xl transition-all border border-slate-200"
+                          >
+                            View Dossier & Track Status
+                            <ArrowUpRight className="w-3.5 h-3.5 ml-1.5" />
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Desktop Table View (Hidden on small mobile screens) */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    <tr>
+                      <th className="px-6 py-4">Business Entity & Category</th>
+                      <th className="px-6 py-4">Date Applied</th>
+                      <th className="px-6 py-4">Status / Review Stage</th>
+                      <th className="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {filteredPermits.map((permit) => {
+                      const missingCount = permit.missingRequirements?.length || 0
+                      const trackingNo = permit.trackingNumber || permit.applicationNumber || 'N/A'
+                      const isRenewal = permit.permitType === 'renewal'
+                      const fireReview = permit.agencyReviews?.fire || permit.agencyReviews?.bureau_of_fire || {}
+                      const sanitationReview = permit.agencyReviews?.sanitation || permit.agencyReviews?.bureau_of_sanitation || {}
+                      const fireStatus = fireReview.status || 'pending'
+                      const sanitationStatus = sanitationReview.status || 'pending'
+
+                      return (
+                        <tr key={permit._id} className="hover:bg-slate-50/70 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-10 h-10 rounded-xl bg-primary-100 text-primary-700 font-extrabold flex items-center justify-center text-sm shrink-0">
+                                {permit.businessInfo?.businessName?.[0] || 'B'}
+                              </div>
+                              <div>
+                                <div className="flex items-center space-x-2">
+                                  <p className="text-sm font-bold text-slate-900">
+                                    {permit.businessInfo?.businessName || 'Untitled Application'}
+                                  </p>
+                                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                    isRenewal ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' : 'bg-sky-100 text-sky-700 border border-sky-200'
+                                  }`}>
+                                    {isRenewal ? 'Renewal Permit' : 'New Permit'}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-slate-500 mt-0.5">
+                                  {permit.businessInfo?.businessNature || 'General Merchandise'} • {permit.businessInfo?.businessAddress?.barangay || 'Poblacion'}
+                                </p>
+                                <div className="flex items-center space-x-2 mt-1">
+                                  <span className="text-[11px] font-mono font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+                                    {trackingNo}
+                                  </span>
+                                  {permit.businessIdNumber && (
+                                    <span className="text-[11px] font-mono text-slate-500">
+                                      BIN: {permit.businessIdNumber}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Date Applied */}
+                          <td className="px-6 py-4">
+                            <div className="flex items-center text-xs text-slate-800 font-semibold">
+                              <Calendar className="w-3.5 h-3.5 mr-1.5 text-primary-600 shrink-0" />
+                              {formatDate(permit.appliedAt || permit.createdAt)}
+                            </div>
+                            <span className="text-[11px] text-slate-400 block mt-0.5">
+                              Updated {formatDate(permit.updatedAt)}
+                            </span>
+                          </td>
+
+                          {/* Status & Agency Progress */}
+                          <td className="px-6 py-4">
+                            <div>
+                              {getStatusBadge(permit.status, missingCount)}
+                              <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                                <span className={`inline-flex items-center text-[10px] font-black px-2 py-0.5 rounded-md border ${
+                                  fireStatus === 'approved' 
+                                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
+                                    : fireStatus === 'rejected' 
+                                    ? 'bg-red-50 text-red-800 border-red-300' 
+                                    : fireStatus === 'correction_requested' || fireStatus === 'returned'
+                                    ? 'bg-amber-50 text-amber-800 border-amber-300' 
+                                    : 'bg-slate-100 text-slate-700 border-slate-200'
+                                }`}>
+                                  🔥 BFP Fire: {fireStatus === 'approved' ? 'APPROVED' : fireStatus === 'correction_requested' ? 'Action Needed' : fireStatus.toUpperCase()}
+                                </span>
+                                <span className={`inline-flex items-center text-[10px] font-black px-2 py-0.5 rounded-md border ${
+                                  sanitationStatus === 'approved' 
+                                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300' 
+                                    : sanitationStatus === 'rejected' 
+                                    ? 'bg-red-50 text-red-800 border-red-300' 
+                                    : sanitationStatus === 'correction_requested' || sanitationStatus === 'returned'
+                                    ? 'bg-amber-50 text-amber-800 border-amber-300' 
+                                    : 'bg-slate-100 text-slate-700 border-slate-200'
+                                }`}>
+                                  🩺 Sanitation: {sanitationStatus === 'approved' ? 'APPROVED' : sanitationStatus === 'correction_requested' ? 'Action Needed' : sanitationStatus.toUpperCase()}
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Action */}
+                          <td className="px-6 py-4 text-right">
+                            {permit.status === 'issued' ? (
+                              <Link
+                                to={`/permit-status/${permit._id}`}
+                                className="inline-flex items-center px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+                              >
+                                <ShieldCheck className="w-3.5 h-3.5 mr-1" />
+                                View & Print Permit
+                              </Link>
+                            ) : permit.status === 'pending_payment' ? (
+                              <Link
+                                to={`/permit-status/${permit._id}`}
+                                className="inline-flex items-center px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+                              >
+                                <CreditCard className="w-3.5 h-3.5 mr-1" />
+                                View Voucher & Pay
+                              </Link>
+                            ) : permit.status === 'payment_under_review' ? (
+                              <Link
+                                to={`/permit-status/${permit._id}`}
+                                className="inline-flex items-center px-3.5 py-1.5 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+                              >
+                                <Clock className="w-3.5 h-3.5 mr-1" />
+                                Track Treasury Audit
+                              </Link>
+                            ) : (permit.status === 'rejected' || permit.status === 'returned_for_correction') ? (
+                              <Link
+                                to={`/permit-status/${permit._id}`}
+                                className="inline-flex items-center px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
+                              >
+                                <AlertCircle className="w-3.5 h-3.5 mr-1" />
+                                Resolve Missing Items
+                              </Link>
+                            ) : (
+                              <Link
+                                to={`/permit-status/${permit._id}`}
+                                className="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-primary-50 text-slate-700 hover:text-primary-700 font-bold text-xs rounded-xl transition-all border border-slate-200 hover:border-primary-300"
+                              >
+                                View Dossier & Track
+                                <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
+                              </Link>
+                            )}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>

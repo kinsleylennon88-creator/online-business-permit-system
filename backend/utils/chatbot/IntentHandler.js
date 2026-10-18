@@ -17,7 +17,20 @@ class IntentHandler {
       if (msg.includes('search') || msg.includes('find') || msg.includes('user') || msg.includes('citizen')) return 'user_search';
       if (msg.includes('draft') || msg.includes('write')) return 'draft_response';
     } else {
-      if (msg.includes('status') || msg.includes('check status') || msg.includes('where is my') || msg.includes('track')) return 'status_check';
+      if (
+        msg.includes('status') ||
+        msg.includes('check status') ||
+        msg.includes('where is my') ||
+        msg.includes('track') ||
+        msg.includes('my application') ||
+        msg.includes('my permit') ||
+        msg.includes('ticket') ||
+        msg.includes('follow up') ||
+        msg.includes('update on my') ||
+        /(?:bp|trk|bin)-\d{4}-\d+/i.test(msg)
+      ) {
+        return 'status_check';
+      }
     }
     
     if (msg.includes('human') || msg.includes('agent') || msg.includes('talk to a person') || msg.includes('officer')) return 'human_escalation';
@@ -63,42 +76,123 @@ class IntentHandler {
   static async handleStatusCheck(message, user, context) {
     if (!user) {
       return {
-        response: "🔒 **Please log in to your citizen account** to check real-time permit status and details.",
+        response: "🔒 **Please log in to your citizen account** to check real-time permit status and details.\n\nOnce logged in, I will automatically pull up your application history and current evaluation stage!",
         handled: true
       };
     }
 
     try {
-      const permitIdMatch = message.match(/BP-\d{4}-\d+/i);
-      let permit;
+      const userId = user.id || user._id;
+      const userEmail = user.email ? user.email.toLowerCase() : null;
 
-      if (permitIdMatch) {
-        permit = await Permit.findOne({ permitNumber: permitIdMatch[0].toUpperCase(), userId: user.id || user._id });
-      } else {
-        permit = await Permit.findOne({ userId: user.id || user._id }).sort({ createdAt: -1 });
+      // Extract tracking, permit, or BIN pattern if provided
+      const refMatch = message.match(/(?:BP|TRK|BIN)-\d{4}-\d+/i);
+
+      // Build resilient user query matching applicant ID or registered email
+      const userCondition = userEmail
+        ? { $or: [{ applicant: userId }, { 'ownerInfo.email': userEmail }] }
+        : { applicant: userId };
+
+      let permit = null;
+
+      if (refMatch) {
+        const refNo = refMatch[0].toUpperCase();
+        permit = await Permit.findOne({
+          $and: [
+            userCondition,
+            {
+              $or: [
+                { permitNumber: refNo },
+                { trackingNumber: refNo },
+                { businessIdNumber: refNo }
+              ]
+            }
+          ]
+        });
+      }
+
+      // If no explicit ref number matched, retrieve the latest application
+      if (!permit) {
+        permit = await Permit.findOne(userCondition).sort({ createdAt: -1 });
       }
 
       if (!permit) {
         return {
-          response: "I couldn't find any business permit applications under your account yet. You can click **'Apply for New Permit'** on your dashboard to start your application!",
+          response: `I couldn't find any business permit applications under your account (\`${user.email || 'Citizen'}\`) yet.\n\nYou can click **'Apply for New Permit'** on your dashboard to start your application! If you recently submitted, please allow a moment for the registry to synchronize.`,
           handled: true
         };
       }
 
-      const statusMessages = {
-        'draft': "Your application is currently in **DRAFT** status. Please complete the form and upload required clearances.",
-        'submitted': "Your application has been **SUBMITTED** and is queued for verification by BPLO officers (2-3 business days SLA).",
-        'under_review': "Your application is currently **UNDER REVIEW** by municipal department heads.",
-        'pending_payment': "🎉 Your application is **ASSESSED & READY FOR PAYMENT**. Please proceed to the payment step on your dashboard.",
-        'approved': "✅ Your business permit has been **APPROVED**! You can now view, download, or print your official permit certificate.",
-        'rejected': `❌ Your application was **REJECTED**. Reason: ${permit.rejectionReason || 'Please review requirements on your dashboard'}.`,
-        'expired': "⚠️ Your permit has **EXPIRED**. Please submit a renewal application."
+      // Auto-heal applicant ID on permit if it was previously detached
+      if (user._id && permit.applicant?.toString() !== user._id.toString()) {
+        permit.applicant = user._id;
+        permit.save().catch(e => console.warn('Non-blocking permit applicant auto-heal error:', e.message));
+      }
+
+      const bName = permit.businessInfo?.businessName || permit.businessName || 'Business Entity';
+      const refNumber = permit.trackingNumber || permit.permitNumber || permit.businessIdNumber || 'N/A';
+      const bType = (permit.businessInfo?.businessType || 'business').replace(/_/g, ' ');
+      const barangay = permit.businessInfo?.businessAddress?.barangay || 'Janiuay';
+
+      const fireReview = permit.agencyReviews?.fire || permit.agencyReviews?.bureau_of_fire || {};
+      const sanitationReview = permit.agencyReviews?.sanitation || permit.agencyReviews?.bureau_of_sanitation || {};
+      const fireStatus = fireReview.status || 'pending';
+      const sanitationStatus = sanitationReview.status || 'pending';
+
+      const formatAgencyBadge = (st) => {
+        if (st === 'approved') return '✅ Approved';
+        if (st === 'correction_requested') return '⚠️ Correction Needed';
+        if (st === 'rejected') return '❌ Rejected';
+        return '⏳ In Review';
       };
 
+      const assessmentAmount = permit.assessment?.fees?.total || permit.paymentInfo?.amount || 0;
+      const amountStr = assessmentAmount > 0 ? `₱${Number(assessmentAmount).toLocaleString()}` : 'Assessed by BPLO';
+
+      const statusMap = {
+        'draft': `📝 **Draft Application**\n\nYour application for **${bName}** is currently in draft. Please complete all form steps and upload required clearances to submit.`,
+        'submitted': `📬 **Submitted & Queued**\n\nYour application for **${bName}** has been received and is queued for BPLO initial verification (SLA: 2-3 business days).\n\n• **BFP Fire Clearance:** ${formatAgencyBadge(fireStatus)}\n• **Sanitation Clearance:** ${formatAgencyBadge(sanitationStatus)}`,
+        'under_admin_review': `🔍 **Under Administrative Review**\n\nBPLO licensing evaluators are actively reviewing your submitted application for **${bName}**.\n\n• **BFP Fire Clearance:** ${formatAgencyBadge(fireStatus)}\n• **Sanitation Clearance:** ${formatAgencyBadge(sanitationStatus)}`,
+        'under_review': `🔍 **Under Departmental Review**\n\nYour application for **${bName}** is undergoing departmental inspection and clearance reviews.\n\n• **BFP Fire Clearance:** ${formatAgencyBadge(fireStatus)}\n• **Sanitation Clearance:** ${formatAgencyBadge(sanitationStatus)}`,
+        'pending_fire_review': `🔥 **Queued for Bureau of Fire Protection (BFP)**\n\nYour application for **${bName}** is being evaluated for Fire Safety Inspection Certificate (FSIC).\n\n• **Sanitation Clearance:** ${formatAgencyBadge(sanitationStatus)}`,
+        'pending_sanitation_review': `🩺 **Queued for Sanitation Clearance**\n\nYour application for **${bName}** is undergoing sanitary inspection review by the Municipal Health Office.\n\n• **BFP Fire Clearance:** ${formatAgencyBadge(fireStatus)}`,
+        'returned_for_correction': `⚠️ **Action Required: Returned for Correction**\n\nEvaluator remarks: "${permit.remarks || permit.adminComments || 'Please check missing requirements'}".\n\nPlease visit your dashboard to upload the updated or missing clearance documents.`,
+        'pending_payment': `🎉 **Payment Assessment Issued!**\n\nBoth Fire Safety and Sanitary clearances are **APPROVED** for **${bName}**!\n\n• **Total Assessed Fees:** **${amountStr}**\n• **Payment Method:** Municipal Treasury Cashier\n\nYou can click **'View Voucher & Pay'** on your dashboard to view/print your official Order of Payment voucher.`,
+        'payment_under_review': `💳 **Payment Receipt Under Audit**\n\nYour payment confirmation for **${bName}** has been submitted and is currently undergoing Treasury verification. Once verified, your official permit certificate will be issued.`,
+        'approved': `✅ **Application Approved!**\n\nCongratulations! Your business permit for **${bName}** has been approved and is being signed/finalized.`,
+        'issued': `🏆 **Active Official Permit Issued!**\n\nYour Official Business Permit (\`${permit.permitNumber || refNumber}\`) for **${bName}** has been granted! You can download or print your permit certificate directly from your citizen dashboard.`,
+        'completed': `🏆 **Active Official Permit Issued!**\n\nYour Official Business Permit (\`${permit.permitNumber || refNumber}\`) for **${bName}** is active and completed.`,
+        'rejected': `❌ **Application Rejected**\n\nReason: "${permit.remarks || permit.adminComments || 'Please see dashboard notes'}". You can contact BPLO for guidance or submit an updated application.`,
+        'cancelled': `🚫 **Application Cancelled**\n\nThis application has been marked as cancelled.`,
+        'expired': `⚠️ **Permit Expired**\n\nYour previous permit has expired. Please submit a renewal application on your dashboard.`
+      };
+
+      const statusDetail = statusMap[permit.status] || `Current Status: **${permit.status.replace(/_/g, ' ').toUpperCase()}**`;
+
+      let response = `📋 **Permit Status Overview**\n`;
+      response += `• **Business:** **${bName}** (${bType})\n`;
+      response += `• **Tracking Reference:** \`${refNumber}\`\n`;
+      response += `• **Location:** Brgy. ${barangay}, Janiuay\n\n`;
+      response += `${statusDetail}\n\n`;
+
+      // Check if user has other permits
+      const otherPermits = await Permit.find({
+        ...userCondition,
+        _id: { $ne: permit._id }
+      }).sort({ createdAt: -1 }).limit(3);
+
+      if (otherPermits.length > 0) {
+        response += `📁 *Other applications on file:* ${otherPermits.map(p => `\`${p.trackingNumber || p.permitNumber || 'Application'}\` (${p.businessInfo?.businessName || 'Business'})`).join(', ')}`;
+      }
+
       return {
-        response: `📋 **Application Status for ${permit.businessName || 'Business'}** (\`${permit.permitNumber || 'N/A'}\`):\n\n${statusMessages[permit.status] || 'Current status: ' + permit.status}\n\nNeed to submit updated documents or ask about requirements? Just let me know!`,
+        response,
         handled: true,
-        data: { permitId: permit._id }
+        data: {
+          permitId: permit._id,
+          trackingNumber: permit.trackingNumber,
+          status: permit.status
+        }
       };
     } catch (error) {
       console.error('Error in handleStatusCheck:', error.message);

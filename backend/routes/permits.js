@@ -17,7 +17,9 @@ const router = express.Router();
 const canAccessPermit = (user, permit) => {
   if (!user || !permit) return false;
   if (['admin', 'superadmin', 'fire_reviewer', 'sanitation_reviewer'].includes(user.role)) return true;
-  return permit.applicant?.toString() === user._id.toString() || permit.applicant?._id?.toString() === user._id.toString();
+  const isApplicant = permit.applicant?.toString() === user._id.toString() || permit.applicant?._id?.toString() === user._id.toString();
+  const isOwnerEmail = user.email && permit.ownerInfo?.email && user.email.toLowerCase() === permit.ownerInfo.email.toLowerCase();
+  return isApplicant || isOwnerEmail;
 };
 
 // @route   GET /api/permits
@@ -31,9 +33,25 @@ router.get('/', protect, async (req, res) => {
     const permitType = req.query.permitType;
     const skip = (page - 1) * limit;
 
-    const query = { applicant: req.user.id };
+    const applicantId = req.user._id || req.user.id;
+    const userEmail = req.user.email ? req.user.email.toLowerCase() : null;
+
+    // Resilient query: match by applicant ID OR registered owner email to prevent data loss
+    const ownershipFilter = userEmail
+      ? { $or: [{ applicant: applicantId }, { 'ownerInfo.email': userEmail }] }
+      : { applicant: applicantId };
+
+    const query = { ...ownershipFilter };
     if (status) query.status = status;
     if (permitType) query.permitType = permitType;
+
+    // Non-blocking auto-heal: re-link any permits with matching email to applicant ID
+    if (userEmail) {
+      Permit.updateMany(
+        { 'ownerInfo.email': userEmail, applicant: { $ne: applicantId } },
+        { $set: { applicant: applicantId } }
+      ).exec().catch(err => console.warn('Permits auto-heal warning:', err.message));
+    }
 
     const permits = await Permit.find(query)
       .sort({ createdAt: -1 })
@@ -122,6 +140,18 @@ router.get('/:id', protect, async (req, res) => {
         success: false,
         message: 'You are not authorized to view this permit application.'
       });
+    }
+
+    // Auto-heal applicant reference if owner accessed via email match
+    if (
+      req.user.role === 'user' &&
+      req.user.email &&
+      permit.ownerInfo?.email &&
+      req.user.email.toLowerCase() === permit.ownerInfo.email.toLowerCase() &&
+      permit.applicant?._id?.toString() !== req.user._id.toString()
+    ) {
+      permit.applicant = req.user._id;
+      permit.save().catch(e => console.warn('Non-blocking applicant heal warning:', e.message));
     }
 
     res.json({
