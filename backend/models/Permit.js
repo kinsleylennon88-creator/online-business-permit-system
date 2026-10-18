@@ -137,6 +137,18 @@ const permitSchema = new mongoose.Schema({
       trim: true,
       maxlength: [100, 'Business name cannot exceed 100 characters']
     },
+    tradeName: {
+      type: String,
+      trim: true
+    },
+    registrationNumber: {
+      type: String,
+      trim: true
+    },
+    tin: {
+      type: String,
+      trim: true
+    },
     businessType: {
       type: String,
       required: [true, 'Business type is required'],
@@ -149,7 +161,12 @@ const permitSchema = new mongoose.Schema({
       ]
     },
     businessAddress: {
+      houseNo: String,
+      buildingName: String,
+      lotNo: String,
+      blockNo: String,
       street: String,
+      subdivision: String,
       barangay: {
         type: String,
         required: [true, 'Barangay is required']
@@ -161,6 +178,10 @@ const permitSchema = new mongoose.Schema({
       province: {
         type: String,
         default: 'Iloilo'
+      },
+      zipCode: {
+        type: String,
+        default: '5034'
       }
     },
     businessNature: {
@@ -175,7 +196,38 @@ const permitSchema = new mongoose.Schema({
     grossSales: {
       type: Number,
       default: 0
-    }
+    },
+    businessArea: {
+      type: Number,
+      default: 0
+    },
+    employees: {
+      male: { type: Number, default: 0 },
+      female: { type: Number, default: 0 },
+      residingInCity: { type: Number, default: 0 }
+    },
+    deliveryVehicles: {
+      vanTruck: { type: Number, default: 0 },
+      motorcycle: { type: Number, default: 0 }
+    },
+    propertyOwnership: {
+      isOwned: { type: Boolean, default: true },
+      taxDeclarationNo: String,
+      propertyIdNo: String
+    },
+    taxIncentives: {
+      hasIncentives: { type: Boolean, default: false }
+    },
+    businessActivity: {
+      type: String,
+      default: 'main_office'
+    },
+    lineOfBusiness: {
+      psic: { type: String, default: '47111' },
+      productsServices: { type: String, default: 'Commercial Goods & Services' },
+      units: { type: Number, default: 1 }
+    },
+    monthlyGross: [{ type: Number, default: 0 }]
   },
   ownerInfo: {
     firstName: {
@@ -187,6 +239,7 @@ const permitSchema = new mongoose.Schema({
       required: [true, 'Owner last name is required']
     },
     middleName: String,
+    suffix: String,
     gender: {
       type: String,
       enum: ['male', 'female', 'prefer_not_to_say'],
@@ -197,10 +250,26 @@ const permitSchema = new mongoose.Schema({
       required: [true, 'Phone number is required'],
       match: [/^09\d{9}$/, 'Please enter a valid Philippine mobile number']
     },
+    tel: String,
     email: {
       type: String,
       required: [true, 'Email is required'],
       match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
+    },
+    designation: {
+      type: String,
+      default: 'Proprietor'
+    },
+    corporateOfficer: {
+      firstName: String,
+      lastName: String,
+      middleName: String,
+      suffix: String,
+      nationality: {
+        type: String,
+        enum: ['filipino', 'foreign'],
+        default: 'filipino'
+      }
     }
   },
   paymentInfo: {

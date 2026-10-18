@@ -39,12 +39,40 @@ export const UnifiedApplicationForm = ({
 
   const currentYear = permit.createdAt ? new Date(permit.createdAt).getFullYear() : new Date().getFullYear()
 
+  const corporateOfficer = ownerInfo.corporateOfficer || {}
+  const designation = ownerInfo.designation || (isSole ? 'Proprietor' : (isCorp ? 'President' : 'Authorized Representative'))
+
+  const regNumber = businessInfo.registrationNumber || permit.dtiSecRegistration || (isSole ? `DTI-${currentYear}-${binNo.replace('BIN-', '')}` : `SEC-CS${currentYear}-${binNo.replace('BIN-', '')}`)
+  const tinNumber = businessInfo.tin || ownerInfo.tin || '009-842-192-000'
+  const tradeName = businessInfo.tradeName || businessInfo.businessName || 'Business Trade Name'
+
   const bAddress = businessInfo.businessAddress || {}
-  const street = bAddress.street || 'Main Street'
-  const barangay = bAddress.barangay || 'Poblacion'
+  const houseNo = bAddress.houseNo || 'Lot 1'
+  const buildingName = bAddress.buildingName || 'Commercial Space'
+  const lotNo = bAddress.lotNo || '1'
+  const blockNo = bAddress.blockNo || '1'
+  const street = bAddress.street || 'Aquino Noble St'
+  const subdivision = bAddress.subdivision || 'Commercial District'
+  const barangay = bAddress.barangay || 'Don T. Lutero Center (Poblacion)'
   const municipality = bAddress.municipality || 'Janiuay'
   const province = bAddress.province || 'Iloilo'
-  const zipCode = '5034'
+  const zipCode = bAddress.zipCode || '5034'
+
+  const floorArea = businessInfo.businessArea || 48.50
+  const maleEmployees = businessInfo.employees?.male ?? (businessInfo.maleEmployees ?? 2)
+  const femaleEmployees = businessInfo.employees?.female ?? (businessInfo.femaleEmployees ?? 2)
+  const residingInCity = businessInfo.employees?.residingInCity ?? (businessInfo.employeesInCity ?? (maleEmployees + femaleEmployees))
+  const vanTruckCount = businessInfo.deliveryVehicles?.vanTruck ?? (businessInfo.vanCount ?? 0)
+  const motorCount = businessInfo.deliveryVehicles?.motorcycle ?? (businessInfo.motorCount ?? 1)
+
+  const isOwned = businessInfo.propertyOwnership?.isOwned !== undefined ? Boolean(businessInfo.propertyOwnership.isOwned) : true
+  const taxDecNo = businessInfo.propertyOwnership?.taxDeclarationNo || businessInfo.propertyOwnership?.propertyIdNo || (isOwned ? `TD-${currentYear}-JNY-8831` : 'Commercial Lease Agreement')
+  const hasTaxIncentives = Boolean(businessInfo.taxIncentives?.hasIncentives)
+  const businessActivity = (businessInfo.businessActivity || 'main_office').toLowerCase()
+
+  const psicCode = businessInfo.lineOfBusiness?.psic || '47111'
+  const productsServices = businessInfo.lineOfBusiness?.productsServices || 'Commercial Goods, Services & Supplies'
+  const unitsCount = businessInfo.lineOfBusiness?.units || 1
 
   const ownerFullName = `${ownerInfo.firstName || ''} ${ownerInfo.middleName ? ownerInfo.middleName + ' ' : ''}${ownerInfo.lastName || ''}`.trim() || 'Juan Dela Cruz'
 
@@ -192,13 +220,13 @@ export const UnifiedApplicationForm = ({
             <div className="p-1.5">
               <span className="font-bold text-[9.5px] block text-slate-700">DTI / CDA / SEC Registration Number:</span>
               <span className="font-mono text-[11px] font-bold text-black uppercase">
-                {permit.dtiSecRegistration || permit.businessInfo?.registrationNumber || `DTI-${currentYear}-${binNo.replace('BIN-', '')}`}
+                {regNumber}
               </span>
             </div>
             <div className="p-1.5">
               <span className="font-bold text-[9.5px] block text-slate-700">Tax Identification Number (TIN):</span>
               <span className="font-mono text-[11px] font-bold text-black">
-                {permit.tin || permit.ownerInfo?.tin || '009-842-192-000'}
+                {tinNumber}
               </span>
             </div>
           </div>
@@ -207,7 +235,7 @@ export const UnifiedApplicationForm = ({
           <div className="p-1.5 border-b border-black bg-amber-50/40">
             <span className="font-bold text-[9.5px] block text-slate-700">Trade Name / Business Name / Franchise:</span>
             <span className="font-bold text-sm text-black uppercase tracking-tight">
-              {businessInfo.businessName || 'Business Trade Name'}
+              {tradeName}
             </span>
           </div>
 
@@ -217,15 +245,15 @@ export const UnifiedApplicationForm = ({
             <div className="grid grid-cols-2 sm:grid-cols-4 print:!grid-cols-4 gap-2 text-[9.5px] sm:text-[10px]">
               <div>
                 <span className="text-slate-500 block text-[8.5px]">House / Bldg No:</span>
-                <span className="font-semibold">{bAddress.houseNo || 'N/A'}</span>
+                <span className="font-semibold">{houseNo}</span>
               </div>
               <div>
                 <span className="text-slate-500 block text-[8.5px]">Building Name:</span>
-                <span className="font-semibold">{bAddress.buildingName || 'N/A'}</span>
+                <span className="font-semibold">{buildingName}</span>
               </div>
               <div>
                 <span className="text-slate-500 block text-[8.5px]">Lot / Block No:</span>
-                <span className="font-semibold">{bAddress.lotNo ? `Lot ${bAddress.lotNo}` : 'N/A'}</span>
+                <span className="font-semibold">{lotNo ? `Lot ${lotNo}${blockNo ? ` Blk ${blockNo}` : ''}` : 'Lot 1'}</span>
               </div>
               <div>
                 <span className="text-slate-500 block text-[8.5px]">Street:</span>
@@ -262,7 +290,7 @@ export const UnifiedApplicationForm = ({
             </div>
             <div className="p-1.5">
               <span className="text-slate-600 block text-[8.5px]">E-mail Address:</span>
-              <span className="font-semibold text-black break-all sm:break-normal">{ownerInfo.email || 'N/A'}</span>
+              <span className="font-semibold text-black break-all sm:break-normal">{ownerInfo.email || 'applicant@example.com'}</span>
             </div>
           </div>
 
@@ -299,19 +327,19 @@ export const UnifiedApplicationForm = ({
               <div className="grid grid-cols-2 sm:grid-cols-4 print:!grid-cols-4 gap-1 text-[9.5px] sm:text-[10px] mt-0.5">
                 <div>
                   <span className="text-[8px] text-slate-500 block">Surname</span>
-                  <span className="font-semibold uppercase">{isCorp || isPartnership ? ownerInfo.lastName : '-'}</span>
+                  <span className="font-semibold uppercase">{isCorp || isPartnership || isCoop ? (corporateOfficer.lastName || ownerInfo.lastName || '-') : '-'}</span>
                 </div>
                 <div>
                   <span className="text-[8px] text-slate-500 block">Given Name</span>
-                  <span className="font-semibold uppercase">{isCorp || isPartnership ? ownerInfo.firstName : '-'}</span>
+                  <span className="font-semibold uppercase">{isCorp || isPartnership || isCoop ? (corporateOfficer.firstName || ownerInfo.firstName || '-') : '-'}</span>
                 </div>
                 <div>
                   <span className="text-[8px] text-slate-500 block">Middle</span>
-                  <span className="font-semibold uppercase">{isCorp || isPartnership ? ownerInfo.middleName : '-'}</span>
+                  <span className="font-semibold uppercase">{isCorp || isPartnership || isCoop ? (corporateOfficer.middleName || ownerInfo.middleName || '-') : '-'}</span>
                 </div>
                 <div>
                   <span className="text-[8px] text-slate-500 block">Corporate</span>
-                  <span className="text-[9px]">☑ Filipino ☐ Foreign</span>
+                  <span className="text-[9px]">{corporateOfficer.nationality === 'foreign' ? '☐ Filipino ☑ Foreign' : '☑ Filipino ☐ Foreign'}</span>
                 </div>
               </div>
             </div>
@@ -328,19 +356,19 @@ export const UnifiedApplicationForm = ({
           <div className="grid grid-cols-2 sm:grid-cols-4 print:!grid-cols-4 divide-y sm:divide-y-0 sm:divide-x print:!divide-x print:!divide-y-0 divide-black border-b border-black text-[9px] sm:text-[9.5px]">
             <div className="p-1.5">
               <span className="text-slate-600 block">Total Floor Area (sq.m.):</span>
-              <span className="font-mono font-bold text-xs">{businessInfo.businessArea || '48.50'} sq.m.</span>
+              <span className="font-mono font-bold text-xs">{floorArea} sq.m.</span>
             </div>
             <div className="p-1.5">
               <span className="text-slate-600 block">Total Employees:</span>
-              <span className="font-bold">Male: {businessInfo.maleEmployees ?? 2} | Female: {businessInfo.femaleEmployees ?? 2}</span>
+              <span className="font-bold">Male: {maleEmployees} | Female: {femaleEmployees}</span>
             </div>
             <div className="p-1.5">
               <span className="text-slate-600 block">Residing in Municipality:</span>
-              <span className="font-bold">{businessInfo.employeesInCity ?? 4} personnel</span>
+              <span className="font-bold">{residingInCity} personnel</span>
             </div>
             <div className="p-1.5">
               <span className="text-slate-600 block">Delivery Vehicles:</span>
-              <span className="font-semibold">Van/Truck: {businessInfo.vanCount ?? 0} | MC: {businessInfo.motorCount ?? 1}</span>
+              <span className="font-semibold">Van/Truck: {vanTruckCount} | MC: {motorCount}</span>
             </div>
           </div>
 
@@ -355,8 +383,8 @@ export const UnifiedApplicationForm = ({
             </div>
             <div className="flex flex-wrap items-center gap-1.5 sm:space-x-2 text-[9px] sm:text-[9.5px]">
               <span className="font-bold">Owned Property?</span>
-              <span>☑ Yes  ☐ No</span>
-              <span className="text-slate-600">Tax Dec / PIN: <b>TD-2026-JNY-8831</b></span>
+              <span>{isOwned ? '☑ Yes  ☐ No' : '☐ Yes  ☑ No'}</span>
+              <span className="text-slate-600">Tax Dec / PIN: <b>{taxDecNo}</b></span>
             </div>
           </div>
 
@@ -364,14 +392,15 @@ export const UnifiedApplicationForm = ({
           <div className="p-1.5 border-b border-black flex flex-col sm:flex-row print:!flex-row items-start sm:items-center justify-between gap-1.5 text-[9px] sm:text-[9.5px]">
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <span className="font-bold">Business Activity:</span>
-              <span>☑ Main Office</span>
-              <span>☐ Branch Office</span>
-              <span>☐ Warehouse</span>
-              <span>☐ Admin Only</span>
+              <span>{businessActivity === 'main_office' ? '☑' : '☐'} Main Office</span>
+              <span>{businessActivity === 'branch_office' ? '☑' : '☐'} Branch Office</span>
+              <span>{businessActivity === 'warehouse' ? '☑' : '☐'} Warehouse</span>
+              <span>{businessActivity === 'admin_office' ? '☑' : '☐'} Admin Only</span>
+              <span>{!['main_office', 'branch_office', 'warehouse', 'admin_office'].includes(businessActivity) ? '☑' : '☐'} Others</span>
             </div>
             <div>
               <span className="font-bold">Government Tax Incentives? </span>
-              <span>☐ Yes  ☑ No</span>
+              <span>{hasTaxIncentives ? '☑ Yes  ☐ No' : '☐ Yes  ☑ No'}</span>
             </div>
           </div>
 
@@ -391,20 +420,20 @@ export const UnifiedApplicationForm = ({
               <tbody>
                 <tr className="border-b border-slate-300">
                   <td className="border-r border-black p-1.5 font-bold uppercase">{businessInfo.businessNature || 'Retail Trade'}</td>
-                  <td className="border-r border-black p-1.5 text-center font-mono">47111</td>
-                  <td className="border-r border-black p-1.5">Commercial Goods, Services &amp; Supplies</td>
-                  <td className="border-r border-black p-1.5 text-center">1</td>
+                  <td className="border-r border-black p-1.5 text-center font-mono">{psicCode}</td>
+                  <td className="border-r border-black p-1.5">{productsServices}</td>
+                  <td className="border-r border-black p-1.5 text-center">{unitsCount}</td>
                   <td className="border-r border-black p-1.5 text-right font-mono font-bold text-black">{isNew ? capFormatted : '-'}</td>
                   <td className="p-1.5 text-right font-mono font-bold text-black">{isRenewal ? grossFormatted : '-'}</td>
                 </tr>
                 {/* Secondary Row for official multi-line formatting */}
                 <tr>
-                  <td className="border-r border-black p-1.5 text-slate-400 italic">-- LGU Registered Line --</td>
-                  <td className="border-r border-black p-1.5 text-center text-slate-400">-</td>
-                  <td className="border-r border-black p-1.5 text-slate-400">-</td>
-                  <td className="border-r border-black p-1.5 text-center text-slate-400">-</td>
-                  <td className="border-r border-black p-1.5 text-right text-slate-400">-</td>
-                  <td className="p-1.5 text-right text-slate-400">-</td>
+                  <td className="border-r border-black p-1.5 text-slate-500 italic">Commercial Operations / Janiuay Zone</td>
+                  <td className="border-r border-black p-1.5 text-center text-slate-400">--</td>
+                  <td className="border-r border-black p-1.5 text-slate-600">Local Merchant Standard Operations</td>
+                  <td className="border-r border-black p-1.5 text-center text-slate-400">1</td>
+                  <td className="border-r border-black p-1.5 text-right text-slate-400">--</td>
+                  <td className="p-1.5 text-right text-slate-400">--</td>
                 </tr>
               </tbody>
             </table>
@@ -433,7 +462,7 @@ export const UnifiedApplicationForm = ({
               </div>
               <p className="text-[9px] uppercase font-bold text-center text-slate-700">Signature of Applicant / Owner over Printed Name</p>
               <p className="text-[8.5px] text-center text-slate-500 font-semibold mt-0.5">
-                Designation / Position / Title: <u>Proprietor / Authorized Officer</u>
+                Designation / Position / Title: <u>{designation}</u>
               </p>
             </div>
 
@@ -632,16 +661,16 @@ export const UnifiedApplicationForm = ({
                 'July', 'August', 'September', 'October', 'November', 'December'
               ].map((m, idx) => {
                 const monthlyBase = isRenewal && businessInfo.grossSales ? (businessInfo.grossSales / 12) : 0
-                const formattedMonthVal = monthlyBase > 0 
-                  ? monthlyBase.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                  : '-'
+                const formattedMonthVal = isRenewal 
+                  ? (monthlyBase > 0 ? `PHP ${monthlyBase.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'PHP 0.00')
+                  : 'PHP 0.00'
 
                 return (
                   <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'}>
                     <td className="border-r border-black p-1 font-semibold">{m}</td>
                     <td className="border-r border-black p-1 text-center font-mono">{formattedMonthVal}</td>
-                    <td className="border-r border-black p-1 text-center font-mono text-slate-400">-</td>
-                    <td className="border-r border-black p-1 text-center font-mono text-slate-400">-</td>
+                    <td className="border-r border-black p-1 text-center font-mono text-slate-500">N/A</td>
+                    <td className="border-r border-black p-1 text-center font-mono text-slate-500">N/A</td>
                     <td className="p-1 text-right font-mono font-bold">{formattedMonthVal}</td>
                   </tr>
                 )
@@ -649,10 +678,10 @@ export const UnifiedApplicationForm = ({
               {/* Grand Total Row */}
               <tr className="bg-slate-200 border-t-2 border-black font-bold">
                 <td className="border-r border-black p-1 uppercase">ANNUAL GROSS</td>
-                <td className="border-r border-black p-1 text-center font-mono font-black">{isRenewal ? grossFormatted : '-'}</td>
-                <td className="border-r border-black p-1 text-center font-mono text-slate-500">-</td>
-                <td className="border-r border-black p-1 text-center font-mono text-slate-500">-</td>
-                <td className="p-1 text-right font-mono font-black text-black">{isRenewal ? grossFormatted : (isNew ? capFormatted : '-')}</td>
+                <td className="border-r border-black p-1 text-center font-mono font-black">{isRenewal ? grossFormatted : 'PHP 0.00'}</td>
+                <td className="border-r border-black p-1 text-center font-mono text-slate-500">N/A</td>
+                <td className="border-r border-black p-1 text-center font-mono text-slate-500">N/A</td>
+                <td className="p-1 text-right font-mono font-black text-black">{isRenewal ? grossFormatted : `PHP 0.00 (${capFormatted})`}</td>
               </tr>
             </tbody>
           </table>
@@ -667,7 +696,7 @@ export const UnifiedApplicationForm = ({
               </div>
               <p className="text-[9px] uppercase font-bold text-center text-slate-700">Signature of Applicant / Owner over Printed Name</p>
               <p className="text-[8.5px] text-center text-slate-500 font-semibold mt-0.5">
-                Designation / Position / Title: <u>Proprietor / Authorized Officer</u>
+                Designation / Position / Title: <u>{designation}</u>
               </p>
             </div>
 

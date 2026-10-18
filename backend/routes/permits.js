@@ -295,6 +295,118 @@ router.post('/', protect, [
   }
 });
 
+// @route   PUT /api/permits/:id
+// @desc    Update draft permit application data
+// @access  Private
+router.put('/:id', protect, async (req, res) => {
+  try {
+    const permit = await Permit.findById(req.params.id);
+
+    if (!permit) {
+      return res.status(404).json({
+        success: false,
+        message: 'Permit application not found'
+      });
+    }
+
+    if (permit.applicant.toString() !== req.user.id && !['admin', 'superadmin'].includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to update this permit'
+      });
+    }
+
+    // Only allow editing if draft or returned_for_correction
+    if (!['draft', 'returned_for_correction'].includes(permit.status) && !['admin', 'superadmin'].includes(req.user.role)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Permit application is already under active review and cannot be modified directly.'
+      });
+    }
+
+    const {
+      permitType,
+      previousPermitNumber,
+      previousApplicationNumber,
+      previousPermitId,
+      businessInfo,
+      ownerInfo,
+      paymentInfo
+    } = req.body;
+
+    if (permitType) permit.permitType = permitType;
+    if (previousPermitNumber !== undefined) permit.previousPermitNumber = previousPermitNumber;
+    if (previousApplicationNumber !== undefined) permit.previousApplicationNumber = previousApplicationNumber;
+    if (previousPermitId !== undefined) permit.previousPermitId = previousPermitId;
+
+    if (businessInfo) {
+      const existingBI = permit.businessInfo ? permit.businessInfo.toObject() : {};
+      permit.businessInfo = {
+        ...existingBI,
+        ...businessInfo,
+        businessAddress: {
+          ...(existingBI.businessAddress || {}),
+          ...(businessInfo.businessAddress || {})
+        },
+        employees: {
+          ...(existingBI.employees || {}),
+          ...(businessInfo.employees || {})
+        },
+        deliveryVehicles: {
+          ...(existingBI.deliveryVehicles || {}),
+          ...(businessInfo.deliveryVehicles || {})
+        },
+        propertyOwnership: {
+          ...(existingBI.propertyOwnership || {}),
+          ...(businessInfo.propertyOwnership || {})
+        },
+        taxIncentives: {
+          ...(existingBI.taxIncentives || {}),
+          ...(businessInfo.taxIncentives || {})
+        },
+        lineOfBusiness: {
+          ...(existingBI.lineOfBusiness || {}),
+          ...(businessInfo.lineOfBusiness || {})
+        }
+      };
+    }
+
+    if (ownerInfo) {
+      const existingOI = permit.ownerInfo ? permit.ownerInfo.toObject() : {};
+      permit.ownerInfo = {
+        ...existingOI,
+        ...ownerInfo,
+        corporateOfficer: {
+          ...(existingOI.corporateOfficer || {}),
+          ...(ownerInfo.corporateOfficer || {})
+        }
+      };
+    }
+
+    if (paymentInfo) {
+      const existingPI = permit.paymentInfo ? permit.paymentInfo.toObject() : {};
+      permit.paymentInfo = {
+        ...existingPI,
+        ...paymentInfo
+      };
+    }
+
+    await permit.save();
+
+    res.json({
+      success: true,
+      message: 'Permit application updated successfully',
+      data: { permit }
+    });
+  } catch (error) {
+    console.error('Update permit error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while updating permit application'
+    });
+  }
+});
+
 // @route   PUT /api/permits/:id/documents
 // @desc    Upload or replace applicant documents with versioning
 // @access  Private

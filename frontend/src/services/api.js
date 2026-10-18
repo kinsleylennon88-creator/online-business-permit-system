@@ -102,6 +102,7 @@ export const permitService = {
   getRequirements: (params = {}) => api.get('/permits/requirements', { params }),
   getPermit: (id) => api.get(`/permits/${id}`),
   createPermit: (permitData) => api.post('/permits', permitData),
+  updatePermit: (id, permitData) => api.put(`/permits/${id}`, permitData),
   uploadDocuments: (id, formData) => api.put(`/permits/${id}/documents`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
     timeout: 120000
