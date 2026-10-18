@@ -233,38 +233,98 @@ class IntentHandler {
   }
 
   /**
-   * Handle user search for admins
+   * Handle user & registry search for admins
    */
   static async handleUserSearch(message) {
     try {
-      const searchTerms = message.replace(/search|find|user|citizen/gi, '').trim();
-      
-      if (!searchTerms || searchTerms.length < 3) {
-        return { response: "Please provide a citizen name or email to search (at least 3 characters).", handled: true };
+      // Clean query prefixes and conversational stop words (e.g. "search for", "find citizen:", "search for citizen: ")
+      let cleanQuery = message
+        .replace(/^(?:search|find|lookup|locate|show|get|query)\s+(?:for\s+)?(?:citizen|user|account|permit|business|registry)?[:\s]*/i, '')
+        .replace(/^(?:citizen|user|permit|business|registry)[:\s]*/i, '')
+        .replace(/^(?:for\s+)/i, '')
+        .trim();
+
+      // Also strip common trailing or leading quotes and colons
+      cleanQuery = cleanQuery.replace(/^["':\s]+|["':\s]+$/g, '').trim();
+
+      if (!cleanQuery || cleanQuery.length < 2) {
+        return {
+          response: "🔍 **Command Nexus Registry Search:**\n\nPlease provide a citizen name, email, business name, or tracking reference to search. For example:\n• `search for Juan`\n• `search Janiuay Agri-Supply`\n• `search TRK-2026-10201`\n• `search juan.delacruz@gmail.com`",
+          handled: true
+        };
       }
 
+      // Escape regex special characters so user input is safe
+      const escaped = cleanQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const searchRegex = new RegExp(escaped, 'i');
+
+      // 1. Search Users (Citizens, Staff, Reviewers)
       const users = await User.find({
         $or: [
-          { firstName: new RegExp(searchTerms, 'i') },
-          { lastName: new RegExp(searchTerms, 'i') },
-          { email: new RegExp(searchTerms, 'i') }
+          { firstName: searchRegex },
+          { lastName: searchRegex },
+          { email: searchRegex },
+          { phone: searchRegex }
         ]
-      }).limit(3);
+      }).select('-password').limit(5);
 
-      if (users.length === 0) {
-        return { response: `No citizen accounts found matching "${searchTerms}".`, handled: true };
+      // 2. Also search Permits (by business name, trackingNumber, permitNumber, or owner name)
+      const permits = await Permit.find({
+        $or: [
+          { 'businessInfo.businessName': searchRegex },
+          { trackingNumber: searchRegex },
+          { permitNumber: searchRegex },
+          { businessIdNumber: searchRegex },
+          { 'ownerInfo.firstName': searchRegex },
+          { 'ownerInfo.lastName': searchRegex },
+          { 'ownerInfo.email': searchRegex }
+        ]
+      }).limit(5);
+
+      if (users.length === 0 && permits.length === 0) {
+        return {
+          response: `No registered citizen accounts or permit applications found matching **"${cleanQuery}"**.\n\n*Tip: Try searching by partial first/last name, email prefix, or tracking number.*`,
+          handled: true
+        };
       }
 
-      let response = `🔍 **Citizen Directory Matches:**\n\n`;
-      users.forEach(u => {
-        response += `👤 **${u.firstName} ${u.lastName}** (\`${u.email}\`)\n`;
-        response += `   Role: ${u.role.toUpperCase()} | Registered: ${new Date(u.createdAt).toLocaleDateString()}\n\n`;
-      });
+      let response = `🔍 **Registry Search Results for "${cleanQuery}":**\n\n`;
 
-      return { response, handled: true };
+      if (users.length > 0) {
+        response += `👤 **Citizen & User Accounts (${users.length}):**\n`;
+        users.forEach(u => {
+          const roleBadge = u.role.toUpperCase();
+          const barangay = u.address?.barangay ? ` • Brgy. ${u.address.barangay}` : '';
+          response += `• **${u.firstName} ${u.lastName}** (\`${u.email}\`)\n`;
+          response += `  Role: **${roleBadge}** | Phone: ${u.phone || 'N/A'}${barangay}\n`;
+        });
+        response += `\n`;
+      }
+
+      if (permits.length > 0) {
+        response += `📋 **Business Permit Applications (${permits.length}):**\n`;
+        permits.forEach(p => {
+          const bName = p.businessInfo?.businessName || 'Business';
+          const refNo = p.trackingNumber || p.permitNumber || p.businessIdNumber || 'N/A';
+          const statusText = p.status.replace(/_/g, ' ').toUpperCase();
+          const owner = p.ownerInfo ? `${p.ownerInfo.firstName} ${p.ownerInfo.lastName}` : 'N/A';
+          response += `• **${bName}** (\`${refNo}\`)\n`;
+          response += `  Status: **${statusText}** | Owner: ${owner} | Brgy: ${p.businessInfo?.businessAddress?.barangay || 'Poblacion'}\n`;
+        });
+      }
+
+      return {
+        response,
+        handled: true,
+        data: {
+          query: cleanQuery,
+          userCount: users.length,
+          permitCount: permits.length
+        }
+      };
     } catch (error) {
       console.error('Error in handleUserSearch:', error.message);
-      return { response: "Error searching citizen records.", handled: true };
+      return { response: "Error searching registry records.", handled: true };
     }
   }
 }

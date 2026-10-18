@@ -71,7 +71,7 @@ const AdminChatAssistant = () => {
 
   const staffTools = [
     { label: 'Summarize Queue', query: 'Give me a summary of the pending cases.', icon: Activity },
-    { label: 'Search Registry', query: 'Search for citizen: ', icon: Search },
+    { label: 'Search Registry', query: 'Search registry', icon: Search },
     { label: 'Draft Approval', query: 'Draft a standard approval email for a business permit.', icon: Mail },
     { label: 'Review SOP', query: 'Show me the internal SOP for zoning clearance.', icon: ClipboardCheck }
   ]
