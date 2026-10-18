@@ -27,7 +27,8 @@ import {
   ExternalLink,
   Clock,
   Check,
-  X
+  X,
+  FileCheck
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { adminService, permitService } from '../../services/api'
@@ -39,6 +40,7 @@ import toast from 'react-hot-toast'
 import { getFileViewUrl, handleViewFile } from '../../utils/fileUrl'
 import OrderOfPaymentModal from '../../components/permit/OrderOfPaymentModal'
 import BusinessPermitCertificate from '../../components/permit/BusinessPermitCertificate'
+import UnifiedApplicationFormModal from '../../components/permit/UnifiedApplicationFormModal'
 
 // Standard clearances in Alphabetical Order (A to Z)
 const standardChecklist = [
@@ -94,6 +96,8 @@ const AdminPermits = () => {
   const [showOrderPaymentModal, setShowOrderPaymentModal] = useState(false)
   const [orderPaymentPermit, setOrderPaymentPermit] = useState(null)
   const [isIssuingPermit, setIsIssuingPermit] = useState(false)
+  const [showUafModal, setShowUafModal] = useState(false)
+  const [uafPermit, setUafPermit] = useState(null)
 
   // Lock background window scroll when any modal is open on mobile or desktop
   useEffect(() => {
@@ -522,6 +526,18 @@ const AdminPermits = () => {
                             >
                               <Eye className="w-4 h-4" />
                             </Link>
+
+                            {/* Official Unified Application Form (UAF) Dossier */}
+                            <button
+                              onClick={() => {
+                                setUafPermit(permit)
+                                setShowUafModal(true)
+                              }}
+                              className="p-1.5 rounded-lg text-amber-600 hover:text-amber-700 hover:bg-amber-50 transition-colors"
+                              title="Print / Export Official Unified Application Form (UAF)"
+                            >
+                              <FileCheck className="w-4 h-4" />
+                            </button>
 
                             {/* Issued -> View / Print Certificate */}
                             {isIssued && (
@@ -1204,6 +1220,13 @@ const AdminPermits = () => {
           isOpen={showCertificateModal}
           onClose={() => setShowCertificateModal(false)}
           permit={certificatePermit}
+        />
+
+        {/* 6. OFFICIAL 2-PAGE UNIFIED APPLICATION FORM (UAF-2026-REVISED) MODAL */}
+        <UnifiedApplicationFormModal
+          isOpen={showUafModal}
+          onClose={() => setShowUafModal(false)}
+          permit={uafPermit}
         />
       </div>
     </div>

@@ -39,6 +39,7 @@ import { Card, CardHeader, CardBody } from '../../components/shared/Card'
 import Button from '../../components/shared/Button'
 import Badge from '../../components/shared/Badge'
 import toast from 'react-hot-toast'
+import { useAuth } from '../../contexts/AuthContext'
 
 ChartJS.register(
   CategoryScale,
@@ -72,6 +73,7 @@ const defaultMetrics = {
 }
 
 const AdminDashboard = () => {
+  const { user } = useAuth()
   const [metrics, setMetrics] = useState(defaultMetrics)
   const [loading, setLoading] = useState(true)
 
@@ -167,7 +169,7 @@ const AdminDashboard = () => {
                   </span>
                 </div>
                 <h1 className="text-2xl sm:text-4xl font-display font-extrabold text-brand-900 tracking-tight leading-tight">
-                  Super Admin &amp; BPLO Command Center
+                  {user?.role === 'superadmin' ? 'Super Admin Command Center' : 'BPLO Admin Command Center'}
                 </h1>
                 <p className="mt-1 text-xs sm:text-base text-brand-500 font-medium">
                   Municipality of Janiuay, Province of Iloilo • Centralized monitoring for Business Permits &amp; Clearances.

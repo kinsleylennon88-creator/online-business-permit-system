@@ -78,10 +78,33 @@ export default function NotificationBell() {
       }
     }
     setIsOpen(false)
-    if (notif.link) {
-      navigate(notif.link)
-    } else if (notif.relatedPermit) {
-      navigate(`/permit-status/${notif.relatedPermit}`)
+
+    const isAgency = user?.role === 'fire_reviewer' || user?.role === 'sanitation_reviewer'
+    const isAdmin = user?.role === 'admin' || user?.role === 'superadmin'
+
+    if (isAgency) {
+      const permitId = notif.relatedPermit || (notif.link?.includes('/agency/review/') ? notif.link.split('/').pop() : null)
+      if (permitId) {
+        navigate(`/agency/queue?permitId=${permitId}`)
+      } else {
+        navigate('/agency/queue')
+      }
+    } else if (isAdmin) {
+      if (notif.relatedPermit) {
+        navigate(`/permit-status/${notif.relatedPermit}`)
+      } else if (notif.link) {
+        navigate(notif.link)
+      } else {
+        navigate('/admin/permits')
+      }
+    } else {
+      if (notif.relatedPermit) {
+        navigate(`/permit-status/${notif.relatedPermit}`)
+      } else if (notif.link) {
+        navigate(notif.link)
+      } else {
+        navigate('/dashboard')
+      }
     }
   }
 
@@ -249,11 +272,23 @@ export default function NotificationBell() {
           <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
             <span className="text-[11px] text-slate-500">Municipality of Janiuay BPLO</span>
             <Link
-              to="/dashboard"
+              to={
+                user?.role === 'fire_reviewer' || user?.role === 'sanitation_reviewer'
+                  ? '/agency/queue'
+                  : user?.role === 'admin' || user?.role === 'superadmin'
+                  ? '/admin'
+                  : '/dashboard'
+              }
               onClick={() => setIsOpen(false)}
               className="font-bold text-sky-600 hover:text-sky-700 flex items-center space-x-1"
             >
-              <span>Dashboard View</span>
+              <span>
+                {user?.role === 'fire_reviewer' || user?.role === 'sanitation_reviewer'
+                  ? 'Review Queue'
+                  : user?.role === 'admin' || user?.role === 'superadmin'
+                  ? 'Admin Center'
+                  : 'Dashboard View'}
+              </span>
               <ExternalLink className="w-3 h-3" />
             </Link>
           </div>

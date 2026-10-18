@@ -76,12 +76,15 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="apply-permit" element={<PermitApplication />} />
             <Route path="permit-status/:id" element={<PermitStatus />} />
+            <Route path="permit_status/:id" element={<PermitStatus />} />
             <Route path="profile" element={<Profile />} />
           </Route>
 
           {/* Protected agency reviewer routes */}
           <Route element={<AgencyRoute />}>
             <Route path="agency/queue" element={<AgencyReviewQueue />} />
+            <Route path="agency/review/:id" element={<AgencyReviewQueue />} />
+            <Route path="agency/review" element={<AgencyReviewQueue />} />
           </Route>
           
           {/* Protected admin routes */}

@@ -94,8 +94,10 @@ export default function Layout() {
                   )}
                 </div>
                 <p className="text-[10.5px] text-slate-500 font-medium truncate">
-                  {isAdmin 
-                    ? 'Super Admin & BPLO Command Center' 
+                  {user?.role === 'superadmin'
+                    ? 'Super Admin Command Center'
+                    : user?.role === 'admin'
+                    ? 'BPLO Admin Command Center'
                     : user?.role === 'fire_reviewer'
                     ? 'BFP Fire Safety Clearance Verification'
                     : user?.role === 'sanitation_reviewer'

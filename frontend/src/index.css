@@ -257,7 +257,48 @@ body.high-contrast .btn {
   .print-break-after {
     page-break-after: always;
   }
+
+  /* Scoped print rules for Unified Application Form */
+  body:has(#unified-application-form-print-area) {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  body:has(#unified-application-form-print-area) nav,
+  body:has(#unified-application-form-print-area) header,
+  body:has(#unified-application-form-print-area) footer,
+  body:has(#unified-application-form-print-area) .no-print {
+    display: none !important;
+  }
+
+  #unified-application-form-print-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    display: block !important;
+  }
+
+  .uaf-page {
+    page-break-after: always !important;
+    break-after: page !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    padding: 10mm 12mm !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .uaf-page:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
 }
+
 
 /* Mobile optimizations */
 @media (max-width: 640px) {

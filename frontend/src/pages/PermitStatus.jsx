@@ -36,6 +36,7 @@ import Button from '../components/shared/Button'
 import Badge from '../components/shared/Badge'
 import OrderOfPaymentModal from '../components/permit/OrderOfPaymentModal'
 import BusinessPermitCertificate from '../components/permit/BusinessPermitCertificate'
+import UnifiedApplicationFormModal from '../components/permit/UnifiedApplicationFormModal'
 
 const PermitStatus = () => {
   const { id } = useParams()
@@ -44,9 +45,10 @@ const PermitStatus = () => {
   const [loading, setLoading] = useState(true)
   const [uploadingDoc, setUploadingDoc] = useState(null)
 
-  // Payment and Certificate Modals State
+  // Payment, Certificate, and Unified Application Form Modals State
   const [showOrderPaymentModal, setShowOrderPaymentModal] = useState(false)
   const [showCertificateModal, setShowCertificateModal] = useState(false)
+  const [showUafModal, setShowUafModal] = useState(false)
   const [receiptFile, setReceiptFile] = useState(null)
   const [orNumberInput, setOrNumberInput] = useState('')
   const [paymentMethodInput, setPaymentMethodInput] = useState('Treasury Cashier')
@@ -234,8 +236,13 @@ const PermitStatus = () => {
               <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Dashboard
             </button>
             <div className="flex items-center space-x-2">
-              <Button variant="secondary" size="sm" leftIcon={<Printer className="w-4 h-4" />} onClick={() => window.print()}>
-                Print Application Dossier
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                leftIcon={<Printer className="w-4 h-4 text-primary-600" />} 
+                onClick={() => setShowUafModal(true)}
+              >
+                Print / Export Official Dossier (UAF)
               </Button>
             </div>
           </div>
@@ -753,6 +760,13 @@ const PermitStatus = () => {
       <BusinessPermitCertificate
         isOpen={showCertificateModal}
         onClose={() => setShowCertificateModal(false)}
+        permit={permit}
+      />
+
+      {/* Official 2-Page Unified Application Form (UAF-2026-Revised) Dossier Modal with Print & Image Export */}
+      <UnifiedApplicationFormModal
+        isOpen={showUafModal}
+        onClose={() => setShowUafModal(false)}
         permit={permit}
       />
     </div>

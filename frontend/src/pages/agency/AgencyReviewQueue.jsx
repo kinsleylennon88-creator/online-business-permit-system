@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { 
   Flame, 
   Sparkles, 
@@ -35,6 +35,8 @@ import { getFileViewUrl, handleViewFile } from '../../utils/fileUrl'
 const AgencyReviewQueue = () => {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const { id } = useParams()
+  const [searchParams] = useSearchParams()
   const isAdmin = user?.role === 'admin' || user?.role === 'superadmin'
   const [adminAgencyTab, setAdminAgencyTab] = useState('fire')
   const isFire = user?.role === 'fire_reviewer' || (isAdmin && adminAgencyTab === 'fire')
@@ -82,6 +84,14 @@ const AgencyReviewQueue = () => {
   useEffect(() => {
     fetchQueue()
   }, [agencyDomain, statusFilter, searchTerm])
+
+  // Automatically open review modal if route has permit id or ?permitId=...
+  useEffect(() => {
+    const targetPermitId = id || searchParams.get('permitId')
+    if (targetPermitId) {
+      handleOpenReview({ _id: targetPermitId })
+    }
+  }, [id, searchParams, agencyDomain])
 
   const fetchQueue = async () => {
     try {
