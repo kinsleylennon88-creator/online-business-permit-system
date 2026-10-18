@@ -148,7 +148,10 @@ const staticDir = fs.existsSync(frontendDist) ? frontendDist : publicDir;
 
 app.use(express.static(staticDir, {
   setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.html')) {
+    // Cache hashed assets aggressively (Vite bundles in /assets/)
+    if (filePath.includes('/assets/') || filePath.includes('\\assets\\')) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    } else if (filePath.endsWith('.html')) {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
@@ -191,6 +194,20 @@ app.use((req, res, next) => {
     });
   }
   
+  // Guard against missing static assets (e.g. outdated hashed .css / .js bundles).
+  // Never serve index.html (MIME text/html) for missing stylesheets or scripts!
+  if (
+    req.path.startsWith('/assets/') || 
+    /\.(css|js|map|json|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf|eot)$/i.test(req.path)
+  ) {
+    return res.status(404).type('text/plain').send('Asset not found');
+  }
+
+  // Set no-cache on SPA fallback index.html so browser always fetches fresh bundle manifests
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+
   // Otherwise, serve the modern React index.html for client-side routing
   if (fs.existsSync(path.join(frontendDist, 'index.html'))) {
     res.sendFile(path.join(frontendDist, 'index.html'));

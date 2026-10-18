@@ -8,12 +8,18 @@ import {
   Send, 
   MessageSquare,
   AlertCircle,
-  Building
+  Building,
+  Navigation,
+  ExternalLink,
+  Layers,
+  Compass
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [mapType, setMapType] = useState('roadmap') // 'roadmap' | 'satellite'
+  const [isMapLoading, setIsMapLoading] = useState(true)
   
   const {
     register,
@@ -149,6 +155,8 @@ const Contact = () => {
                       First Name
                     </label>
                     <input
+                      id="firstName"
+                      autoComplete="given-name"
                       {...register('firstName', { required: 'First name is required' })}
                       type="text"
                       className={`input ${errors.firstName ? 'border-red-500' : ''}`}
@@ -167,6 +175,8 @@ const Contact = () => {
                       Last Name
                     </label>
                     <input
+                      id="lastName"
+                      autoComplete="family-name"
                       {...register('lastName', { required: 'Last name is required' })}
                       type="text"
                       className={`input ${errors.lastName ? 'border-red-500' : ''}`}
@@ -186,6 +196,8 @@ const Contact = () => {
                     Email Address
                   </label>
                   <input
+                    id="email"
+                    autoComplete="email"
                     {...register('email', { 
                       required: 'Email is required',
                       pattern: {
@@ -210,6 +222,8 @@ const Contact = () => {
                     Phone Number
                   </label>
                   <input
+                    id="phone"
+                    autoComplete="tel"
                     {...register('phone', { 
                       required: 'Phone number is required',
                       pattern: {
@@ -234,6 +248,7 @@ const Contact = () => {
                     Subject
                   </label>
                   <select
+                    id="subject"
                     {...register('subject', { required: 'Please select a subject' })}
                     className={`input ${errors.subject ? 'border-red-500' : ''}`}
                   >
@@ -258,6 +273,7 @@ const Contact = () => {
                     Message
                   </label>
                   <textarea
+                    id="message"
                     {...register('message', { 
                       required: 'Message is required',
                       minLength: {
@@ -299,14 +315,106 @@ const Contact = () => {
 
             {/* Map and Additional Info */}
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">Find Us</h2>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900">Find Us</h2>
+                  <p className="text-sm text-gray-500 mt-1">Municipality of Janiuay Official BPLO Headquarters</p>
+                </div>
+                <div className="inline-flex rounded-lg border border-gray-200 bg-white p-1 shadow-sm text-xs font-medium self-start sm:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => { setMapType('roadmap'); setIsMapLoading(true); }}
+                    className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${
+                      mapType === 'roadmap'
+                        ? 'bg-primary-600 text-white shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Layers className="w-3.5 h-3.5" />
+                    Map
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setMapType('satellite'); setIsMapLoading(true); }}
+                    className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${
+                      mapType === 'satellite'
+                        ? 'bg-primary-600 text-white shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Compass className="w-3.5 h-3.5" />
+                    Satellite
+                  </button>
+                </div>
+              </div>
               
-              {/* Map placeholder */}
-              <div className="bg-gray-200 rounded-lg h-96 mb-8 flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600">Interactive Map</p>
-                  <p className="text-sm text-gray-500">Municipal Hall, Janiuay, Iloilo</p>
+              {/* Interactive Map Box */}
+              <div className="relative rounded-2xl overflow-hidden border border-gray-200 bg-gray-100 shadow-md mb-8 group">
+                {/* Header Strip inside Map Card */}
+                <div className="bg-white/95 backdrop-blur px-4 py-3 border-b border-gray-200 flex items-center justify-between z-10 relative">
+                  <div className="flex items-center space-x-2">
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                    <span className="text-xs font-semibold text-gray-900 uppercase tracking-wide">
+                      Municipal Hall • Janiuay, Iloilo
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href="https://www.google.com/maps/dir/?api=1&destination=Janiuay+Municipal+Hall+Iloilo"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-medium text-primary-600 hover:text-primary-700 flex items-center gap-1 hover:underline"
+                    >
+                      <Navigation className="w-3.5 h-3.5" />
+                      Get Directions
+                    </a>
+                    <span className="text-gray-300">|</span>
+                    <a
+                      href="https://www.google.com/maps/search/?api=1&query=Janiuay+Municipal+Hall+Iloilo"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-medium text-gray-600 hover:text-gray-900 flex items-center gap-1 hover:underline"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      Full Map
+                    </a>
+                  </div>
+                </div>
+
+                {/* Map iframe */}
+                <div className="relative h-96 w-full bg-slate-100">
+                  {isMapLoading && (
+                    <div className="absolute inset-0 bg-gray-100/90 flex flex-col items-center justify-center z-10 text-gray-500">
+                      <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary-600 border-t-transparent mb-2"></div>
+                      <p className="text-xs font-medium text-gray-600">Loading interactive map...</p>
+                      <p className="text-[11px] text-gray-400">Municipal Hall, Janiuay, Iloilo</p>
+                    </div>
+                  )}
+                  <iframe
+                    title="Janiuay Municipal Hall Interactive Map"
+                    src={
+                      mapType === 'satellite'
+                        ? 'https://maps.google.com/maps?q=Janiuay+Municipal+Hall,+Janiuay,+Iloilo,+Philippines&t=k&z=17&ie=UTF8&iwloc=&output=embed'
+                        : 'https://maps.google.com/maps?q=Janiuay+Municipal+Hall,+Janiuay,+Iloilo,+Philippines&t=m&z=16&ie=UTF8&iwloc=&output=embed'
+                    }
+                    className="w-full h-full border-0"
+                    loading="lazy"
+                    allowFullScreen
+                    referrerPolicy="no-referrer-when-downgrade"
+                    onLoad={() => setIsMapLoading(false)}
+                  ></iframe>
+                </div>
+
+                {/* Bottom detail bar */}
+                <div className="bg-slate-50 border-t border-gray-200 px-4 py-2.5 text-xs text-gray-600 flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-primary-600 shrink-0" />
+                    <span>Aquino Nobleza East, Janiuay, Iloilo 5034</span>
+                  </div>
+                  <span className="text-[11px] text-gray-500 font-mono">10.9576° N, 122.5029° E</span>
                 </div>
               </div>
 
