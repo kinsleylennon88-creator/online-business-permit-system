@@ -297,6 +297,157 @@ body.high-contrast .btn {
     page-break-after: auto !important;
     break-after: auto !important;
   }
+
+  /* Scoped print rules for Official Mayor's Business Permit Certificate */
+  @page {
+    size: portrait;
+    margin: 8mm;
+  }
+
+  body:has(#business-permit-certificate-modal),
+  body.has-certificate-modal-open {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body:has(#business-permit-certificate-modal) nav,
+  body:has(#business-permit-certificate-modal) header,
+  body:has(#business-permit-certificate-modal) footer,
+  body:has(#business-permit-certificate-modal) .no-print,
+  body:has(#business-permit-certificate-modal) .print\:hidden,
+  body.has-certificate-modal-open nav,
+  body.has-certificate-modal-open header,
+  body.has-certificate-modal-open footer,
+  body.has-certificate-modal-open .no-print,
+  body.has-certificate-modal-open .print\:hidden {
+    display: none !important;
+  }
+
+  body:has(#business-permit-certificate-modal) #root > *:not(:has(#business-permit-certificate-modal)),
+  body.has-certificate-modal-open #root > *:not(:has(#business-permit-certificate-modal)) {
+    display: none !important;
+  }
+
+  #business-permit-certificate-modal {
+    position: static !important;
+    inset: auto !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    overflow: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+  }
+
+  #business-permit-certificate-modal > div {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+  }
+
+  #business-permit-certificate-sheet {
+    width: 100% !important;
+    max-width: 194mm !important;
+    margin: 0 auto !important;
+    padding: 4mm !important;
+    background: #fffdfa !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    box-shadow: none !important;
+  }
+
+  #business-permit-certificate-sheet * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Scoped print rules for Municipal Treasury Order of Payment Voucher */
+  body:has(#order-of-payment-modal),
+  body.has-order-payment-modal-open {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body:has(#order-of-payment-modal) nav,
+  body:has(#order-of-payment-modal) header,
+  body:has(#order-of-payment-modal) footer,
+  body:has(#order-of-payment-modal) .no-print,
+  body:has(#order-of-payment-modal) .print\:hidden,
+  body.has-order-payment-modal-open nav,
+  body.has-order-payment-modal-open header,
+  body.has-order-payment-modal-open footer,
+  body.has-order-payment-modal-open .no-print,
+  body.has-order-payment-modal-open .print\:hidden {
+    display: none !important;
+  }
+
+  body:has(#order-of-payment-modal) #root > *:not(:has(#order-of-payment-modal)),
+  body.has-order-payment-modal-open #root > *:not(:has(#order-of-payment-modal)) {
+    display: none !important;
+  }
+
+  #order-of-payment-modal {
+    position: static !important;
+    inset: auto !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    overflow: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+  }
+
+  #order-of-payment-modal > div {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+  }
+
+  #order-of-payment-sheet {
+    width: 100% !important;
+    max-width: 194mm !important;
+    margin: 0 auto !important;
+    padding: 4mm !important;
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    box-shadow: none !important;
+  }
+
+  #order-of-payment-sheet * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }
 
 

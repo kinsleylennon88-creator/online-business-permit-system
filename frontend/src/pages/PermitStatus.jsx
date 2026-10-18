@@ -48,6 +48,7 @@ const PermitStatus = () => {
   // Payment, Certificate, and Unified Application Form Modals State
   const [showOrderPaymentModal, setShowOrderPaymentModal] = useState(false)
   const [showCertificateModal, setShowCertificateModal] = useState(false)
+  const [certificateAutoPrint, setCertificateAutoPrint] = useState(false)
   const [showUafModal, setShowUafModal] = useState(false)
   const [receiptFile, setReceiptFile] = useState(null)
   const [orNumberInput, setOrNumberInput] = useState('')
@@ -315,15 +316,21 @@ const PermitStatus = () => {
 
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-shrink-0">
                     <button
-                      onClick={() => setShowCertificateModal(true)}
-                      className="px-5 py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-sm rounded-xl transition-all shadow-md flex items-center justify-center"
+                      onClick={() => {
+                        setCertificateAutoPrint(false)
+                        setShowCertificateModal(true)
+                      }}
+                      className="px-5 py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-sm rounded-xl transition-all shadow-md flex items-center justify-center cursor-pointer"
                     >
                       <Eye className="w-4 h-4 mr-2" />
                       View Certificate
                     </button>
                     <button
-                      onClick={() => setShowCertificateModal(true)}
-                      className="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold text-sm rounded-xl transition-all border border-white/20 flex items-center justify-center"
+                      onClick={() => {
+                        setCertificateAutoPrint(true)
+                        setShowCertificateModal(true)
+                      }}
+                      className="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold text-sm rounded-xl transition-all border border-white/20 flex items-center justify-center cursor-pointer"
                     >
                       <Printer className="w-4 h-4 mr-2" />
                       Print / Download
@@ -759,8 +766,12 @@ const PermitStatus = () => {
       {/* Official Municipality of Janiuay Mayor's Business Permit Certificate Modal */}
       <BusinessPermitCertificate
         isOpen={showCertificateModal}
-        onClose={() => setShowCertificateModal(false)}
+        onClose={() => {
+          setShowCertificateModal(false)
+          setCertificateAutoPrint(false)
+        }}
         permit={permit}
+        autoPrint={certificateAutoPrint}
       />
 
       {/* Official 2-Page Unified Application Form (UAF-2026-Revised) Dossier Modal with Print & Image Export */}
