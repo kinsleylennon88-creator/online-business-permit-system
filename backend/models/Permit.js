@@ -468,6 +468,27 @@ permitSchema.pre('save', function(next) {
   next();
 });
 
+// Normalize Official Receipt (OR) Number to OR-YYYY-XXXX format
+permitSchema.pre('save', function(next) {
+  if (this.paymentInfo && this.paymentInfo.orNumber) {
+    const rawOr = String(this.paymentInfo.orNumber).trim().toUpperCase();
+    const year = this.issuedAt ? new Date(this.issuedAt).getFullYear() : new Date().getFullYear();
+
+    // 1. Correct 3-digit year typo e.g. OR-202-8812 / 202-8812 -> OR-2026-8812
+    const typoMatch = rawOr.match(/^(?:OR-)?20(\d)-(\d+)$/i);
+    if (typoMatch) {
+      const yearStr = String(year);
+      const correctedYear = yearStr.startsWith('20' + typoMatch[1]) ? yearStr : `20${typoMatch[1]}6`;
+      this.paymentInfo.orNumber = `OR-${correctedYear}-${typoMatch[2]}`;
+    } else if (/^\d{3,8}$/.test(rawOr)) {
+      this.paymentInfo.orNumber = `OR-${year}-${rawOr}`;
+    } else if (rawOr && !rawOr.startsWith('OR-') && !rawOr.includes('TREAS')) {
+      this.paymentInfo.orNumber = `OR-${rawOr}`;
+    }
+  }
+  next();
+});
+
 // Indexes
 permitSchema.index({ applicant: 1, createdAt: -1 });
 permitSchema.index({ status: 1, createdAt: -1 });

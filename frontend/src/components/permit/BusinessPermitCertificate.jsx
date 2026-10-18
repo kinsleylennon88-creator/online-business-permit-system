@@ -16,6 +16,7 @@ import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import toast from 'react-hot-toast'
 import Button from '../shared/Button'
+import { normalizeOrNumber } from '../../utils/orNumberFormatter'
 
 export const BusinessPermitCertificate = ({ isOpen, onClose, permit, autoPrint = false }) => {
   const certificateRef = useRef(null)
@@ -74,6 +75,7 @@ export const BusinessPermitCertificate = ({ isOpen, onClose, permit, autoPrint =
   const issueYear = permit.issuedAt ? new Date(permit.issuedAt).getFullYear() : new Date().getFullYear()
   const permitNumber = permit.permitNumber || `BP-${issueYear}-0001`
   const binNumber = permit.businessIdNumber || `BIN-${issueYear}-1001`
+  const orNumber = normalizeOrNumber(paymentInfo.orNumber, issueYear)
   const issueDateFormatted = permit.issuedAt
     ? new Date(permit.issuedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
     : new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
@@ -205,7 +207,7 @@ export const BusinessPermitCertificate = ({ isOpen, onClose, permit, autoPrint =
                   Official Mayor's Business Permit
                 </span>
                 <span className="text-[10px] text-amber-300 font-mono">
-                  {permitNumber} • {binNumber}
+                  {permitNumber} • {binNumber} • {orNumber}
                 </span>
               </div>
             </div>
@@ -382,19 +384,19 @@ export const BusinessPermitCertificate = ({ isOpen, onClose, permit, autoPrint =
                 <div className="grid grid-cols-2 sm:grid-cols-4 print:grid-cols-4 gap-2 sm:gap-3 p-2.5 sm:p-3 bg-amber-50/70 rounded-xl border border-amber-200 text-center text-xs font-sans">
                   <div>
                     <span className="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase">Permit Certificate No.</span>
-                    <p className="font-extrabold text-amber-950 font-mono text-xs sm:text-sm truncate">{permitNumber}</p>
+                    <p className="font-extrabold text-amber-950 font-mono text-[11px] sm:text-xs md:text-sm tracking-tight truncate" title={permitNumber}>{permitNumber}</p>
                   </div>
                   <div>
                     <span className="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase">Business ID (BIN)</span>
-                    <p className="font-bold text-slate-900 font-mono text-xs sm:text-sm truncate">{binNumber}</p>
+                    <p className="font-bold text-slate-900 font-mono text-[11px] sm:text-xs md:text-sm tracking-tight truncate" title={binNumber}>{binNumber}</p>
                   </div>
                   <div>
                     <span className="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase">Official Receipt (OR)</span>
-                    <p className="font-bold text-emerald-800 font-mono text-xs sm:text-sm truncate">{paymentInfo.orNumber || 'OR-PAID-TREAS'}</p>
+                    <p className="font-bold text-emerald-800 font-mono text-[11px] sm:text-xs md:text-sm tracking-tight truncate" title={orNumber}>{orNumber}</p>
                   </div>
                   <div>
                     <span className="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase">Amount Paid</span>
-                    <p className="font-bold text-slate-900 font-mono text-xs sm:text-sm">
+                    <p className="font-bold text-slate-900 font-mono text-[11px] sm:text-xs md:text-sm">
                       ₱{Number(paymentInfo.amount || assessment.fees?.total || 0).toLocaleString()}
                     </p>
                   </div>

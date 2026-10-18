@@ -41,6 +41,7 @@ import { getFileViewUrl, handleViewFile } from '../../utils/fileUrl'
 import OrderOfPaymentModal from '../../components/permit/OrderOfPaymentModal'
 import BusinessPermitCertificate from '../../components/permit/BusinessPermitCertificate'
 import UnifiedApplicationFormModal from '../../components/permit/UnifiedApplicationFormModal'
+import { normalizeOrNumber } from '../../utils/orNumberFormatter'
 
 // Standard clearances in Alphabetical Order (A to Z)
 const standardChecklist = [
@@ -250,7 +251,7 @@ const AdminPermits = () => {
   // --- Treasury Payment Verification Handlers ---
   const openVerificationModal = (permit) => {
     setVerificationPermit(permit)
-    setVerifyOrNumber(permit.paymentInfo?.orNumber || '')
+    setVerifyOrNumber(normalizeOrNumber(permit.paymentInfo?.orNumber || ''))
     setVerifyNotes(permit.paymentInfo?.verificationNotes || '')
     setShowVerificationModal(true)
   }
@@ -262,9 +263,10 @@ const AdminPermits = () => {
     }
     try {
       setIsSubmittingVerification(true)
+      const normalizedOr = normalizeOrNumber(verifyOrNumber.trim())
       await permitService.verifyPayment(verificationPermit._id, {
         verified,
-        orNumber: verifyOrNumber.trim(),
+        orNumber: normalizedOr,
         remarks: verifyNotes.trim()
       })
       toast.success(
@@ -1152,6 +1154,11 @@ const AdminPermits = () => {
                       placeholder="e.g., OR-2026-004821"
                       value={verifyOrNumber}
                       onChange={(e) => setVerifyOrNumber(e.target.value)}
+                      onBlur={() => {
+                        if (verifyOrNumber.trim()) {
+                          setVerifyOrNumber(normalizeOrNumber(verifyOrNumber))
+                        }
+                      }}
                       className="w-full px-3.5 py-2.5 rounded-xl border-2 border-slate-200 text-xs font-mono font-bold outline-none focus:border-sky-500"
                       required
                     />

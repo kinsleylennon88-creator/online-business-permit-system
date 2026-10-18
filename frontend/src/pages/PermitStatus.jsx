@@ -37,6 +37,7 @@ import Badge from '../components/shared/Badge'
 import OrderOfPaymentModal from '../components/permit/OrderOfPaymentModal'
 import BusinessPermitCertificate from '../components/permit/BusinessPermitCertificate'
 import UnifiedApplicationFormModal from '../components/permit/UnifiedApplicationFormModal'
+import { normalizeOrNumber } from '../utils/orNumberFormatter'
 
 const PermitStatus = () => {
   const { id } = useParams()
@@ -67,7 +68,7 @@ const PermitStatus = () => {
       const fetchedPermit = response.data?.data?.permit
       setPermit(fetchedPermit)
       if (fetchedPermit?.paymentInfo?.orNumber) {
-        setOrNumberInput(fetchedPermit.paymentInfo.orNumber)
+        setOrNumberInput(normalizeOrNumber(fetchedPermit.paymentInfo.orNumber))
       }
       if (fetchedPermit?.paymentInfo?.paymentMethod) {
         setPaymentMethodInput(fetchedPermit.paymentInfo.paymentMethod)
@@ -91,9 +92,11 @@ const PermitStatus = () => {
 
     try {
       setIsSubmittingPayment(true)
+      const rawOr = orNumberInput.trim() || permit?.paymentInfo?.orNumber || ''
+      const normalizedOr = normalizeOrNumber(rawOr)
       const fd = new FormData()
       if (receiptFile) fd.append('receipt', receiptFile)
-      fd.append('orNumber', orNumberInput.trim() || permit?.paymentInfo?.orNumber || '')
+      fd.append('orNumber', normalizedOr)
       fd.append('paymentMethod', paymentMethodInput)
       fd.append('receiptDate', receiptDateInput)
 
@@ -385,7 +388,7 @@ const PermitStatus = () => {
                             Payment Verified by Municipal Treasury
                           </p>
                           <p className="text-xs text-emerald-800">
-                            Official Receipt (OR) No: <strong>{permit.paymentInfo?.orNumber || 'Recorded in Treasury'}</strong> • Method: <strong>{permit.paymentInfo?.paymentMethod || 'Treasury Cashier'}</strong>
+                            Official Receipt (OR) No: <strong>{normalizeOrNumber(permit.paymentInfo?.orNumber) || 'Recorded in Treasury'}</strong> • Method: <strong>{permit.paymentInfo?.paymentMethod || 'Treasury Cashier'}</strong>
                           </p>
                         </div>
                       </div>
@@ -410,7 +413,7 @@ const PermitStatus = () => {
                             Payment Receipt Submitted • Treasury Verification in Progress
                           </p>
                           <p className="text-xs text-sky-800">
-                            OR No: <strong>{permit.paymentInfo?.orNumber || orNumberInput || 'Under audit'}</strong> • Date Paid: <strong>{permit.paymentInfo?.receiptDate ? new Date(permit.paymentInfo.receiptDate).toLocaleDateString() : 'Today'}</strong>
+                            OR No: <strong>{normalizeOrNumber(permit.paymentInfo?.orNumber || orNumberInput) || 'Under audit'}</strong> • Date Paid: <strong>{permit.paymentInfo?.receiptDate ? new Date(permit.paymentInfo.receiptDate).toLocaleDateString() : 'Today'}</strong>
                           </p>
                         </div>
                       </div>
@@ -452,6 +455,11 @@ const PermitStatus = () => {
                             placeholder="e.g., OR-2026-8812"
                             value={orNumberInput}
                             onChange={(e) => setOrNumberInput(e.target.value)}
+                            onBlur={() => {
+                              if (orNumberInput.trim()) {
+                                setOrNumberInput(normalizeOrNumber(orNumberInput))
+                              }
+                            }}
                             required
                             className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-mono font-bold outline-none focus:border-primary-500 bg-white"
                           />
